@@ -37,8 +37,7 @@ public class MainActivity extends ActionBarActivity {
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.drawer_list);
 
-        // Set the adapter for the list view
-/*        drawerList.setAdapter(new ArrayAdapter<>(this, R.layout.drawer_row, drawerItems));*/
+        // Set the adapter for the list view.
         drawerList.setAdapter(new DrawerAdapter (this, drawerItems));
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());

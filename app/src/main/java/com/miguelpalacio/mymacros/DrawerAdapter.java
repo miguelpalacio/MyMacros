@@ -1,6 +1,6 @@
 package com.miguelpalacio.mymacros;
 
-import android.content.Context;
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +13,16 @@ import android.widget.TextView;
  */
 public class DrawerAdapter extends ArrayAdapter<String> {
 
-    private final Context context;
+    private final Activity context;
     private final String[] values;
 
-    public DrawerAdapter(Context context, String[] values) {
+    // ViewHolder pattern implementation.
+    private static class ViewHolder {
+        public TextView text;
+        public ImageView image;
+    }
+
+    public DrawerAdapter(Activity context, String[] values) {
         super(context, R.layout.drawer_row, values);
         this.context = context;
         this.values = values;
@@ -24,19 +30,28 @@ public class DrawerAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context.
-                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View rowView = inflater.inflate(R.layout.drawer_row, parent, false);
-        TextView textView = (TextView) rowView.findViewById(R.id.drawer_item_text);
-        ImageView imageView = (ImageView) rowView.findViewById(R.id.drawer_item_icon);
-        textView.setText(values[position]);
 
-        // Test
+        View rowView = convertView;
+
+        // Reuse views.
+        if (rowView == null) {
+            LayoutInflater inflater = context.getLayoutInflater();
+            rowView = inflater.inflate(R.layout.drawer_row, null);
+            // Configure view holder.
+            ViewHolder viewHolder = new ViewHolder();
+            viewHolder.text = (TextView) rowView.findViewById(R.id.drawer_item_text);
+            viewHolder.image = (ImageView) rowView.findViewById(R.id.drawer_item_icon);
+            rowView.setTag(viewHolder);
+        }
+
+        // Fill data.
+        ViewHolder holder = (ViewHolder) rowView.getTag();
         String s = values[position];
+        holder.text.setText(s);
         if (s.startsWith("Meal")) {
-            imageView.setImageResource(R.drawable.abc_ic_menu_share_mtrl_alpha);
+            holder.image.setImageResource(R.drawable.planner);
         } else {
-            imageView.setImageResource(R.drawable.abc_ic_menu_cut_mtrl_alpha);
+            holder.image.setImageResource(R.drawable.stats);
         }
 
         return rowView;
