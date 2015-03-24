@@ -3,4 +3,18 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="open_drawer">Opened</string>
+    <string name="close_drawer">MyMacros</string>
+
+    <!-- Navigation Drawer entries. -->
+    <string-array name="drawer_items">
+        <item>Stats</item>
+        <item>Meal planner</item>
+        <item>Meal creator</item>
+        <item>Food database</item>
+        <item>Profile</item>
+        <item>Settings</item>
+        <item>FAQ</item>
+    </string-array>
 </resources>
