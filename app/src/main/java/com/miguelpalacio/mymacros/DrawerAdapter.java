@@ -49,8 +49,7 @@ public class DrawerAdapter extends ArrayAdapter<String> {
 
         // Fill data.
         ViewHolder holder = (ViewHolder) rowView.getTag();
-        String s = labels[position];
-        holder.text.setText(s);
+        holder.text.setText(labels[position]);
         holder.image.setImageDrawable(icons.getDrawable(position));
 
         return rowView;
