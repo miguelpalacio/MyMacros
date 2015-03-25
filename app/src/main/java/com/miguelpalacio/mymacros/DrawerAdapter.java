@@ -14,7 +14,7 @@ import android.widget.TextView;
 public class DrawerAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
-    private final String[] values;
+    private final String[] labels;
 
     // ViewHolder pattern implementation.
     private static class ViewHolder {
@@ -22,10 +22,10 @@ public class DrawerAdapter extends ArrayAdapter<String> {
         public ImageView image;
     }
 
-    public DrawerAdapter(Activity context, String[] values) {
-        super(context, R.layout.drawer_row, values);
+    public DrawerAdapter(Activity context, String[] labels) {
+        super(context, R.layout.drawer_row, labels);
         this.context = context;
-        this.values = values;
+        this.labels = labels;
     }
 
     @Override
@@ -46,10 +46,10 @@ public class DrawerAdapter extends ArrayAdapter<String> {
 
         // Fill data.
         ViewHolder holder = (ViewHolder) rowView.getTag();
-        String s = values[position];
+        String s = labels[position];
         holder.text.setText(s);
         if (s.startsWith("Meal")) {
-            holder.image.setImageResource(R.drawable.planner);
+            holder.image.setImageResource(R.drawable.create_meal);
         } else {
             holder.image.setImageResource(R.drawable.stats);
         }
