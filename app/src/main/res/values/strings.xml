@@ -8,7 +8,7 @@
     <string name="close_drawer">MyMacros</string>
 
     <!-- Navigation Drawer entries. -->
-    <string-array name="drawer_items">
+    <string-array name="drawer_labels">
         <item>Stats</item>
         <item>Meal planner</item>
         <item>Meal creator</item>

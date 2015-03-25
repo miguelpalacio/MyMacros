@@ -1,6 +1,7 @@
 package com.miguelpalacio.mymacros;
 
 import android.app.Activity;
+import android.content.res.TypedArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ public class DrawerAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
     private final String[] labels;
+    private final TypedArray icons;
 
     // ViewHolder pattern implementation.
     private static class ViewHolder {
@@ -22,10 +24,11 @@ public class DrawerAdapter extends ArrayAdapter<String> {
         public ImageView image;
     }
 
-    public DrawerAdapter(Activity context, String[] labels) {
+    public DrawerAdapter(Activity context, String[] labels, TypedArray icons) {
         super(context, R.layout.drawer_row, labels);
         this.context = context;
         this.labels = labels;
+        this.icons = icons;
     }
 
     @Override
@@ -48,11 +51,7 @@ public class DrawerAdapter extends ArrayAdapter<String> {
         ViewHolder holder = (ViewHolder) rowView.getTag();
         String s = labels[position];
         holder.text.setText(s);
-        if (s.startsWith("Meal")) {
-            holder.image.setImageResource(R.drawable.create_meal);
-        } else {
-            holder.image.setImageResource(R.drawable.stats);
-        }
+        holder.image.setImageDrawable(icons.getDrawable(position));
 
         return rowView;
     }

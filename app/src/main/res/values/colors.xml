@@ -6,5 +6,5 @@
     <color name="accent">#FF4081</color>
 
     <color name="drawer_background">#EEEEEE</color>
-    <color name="drawer_item_text">#333333</color>
+    <color name="drawer_item_label">#333333</color>
 </resources>

@@ -1,8 +1,8 @@
 package com.miguelpalacio.mymacros;
 
+import android.content.res.TypedArray;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.Menu;
@@ -19,7 +19,8 @@ public class MainActivity extends ActionBarActivity {
 
     private DrawerLayout drawerLayout;
     private ListView drawerList;
-    private String[] drawerItems;
+    private String[] drawerLabels;
+    private TypedArray drawerIcons;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +34,13 @@ public class MainActivity extends ActionBarActivity {
         }
 
         // Navigation Drawer.
-        drawerItems = getResources().getStringArray(R.array.drawer_items);
+        drawerLabels = getResources().getStringArray(R.array.drawer_labels);
+        drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawerList = (ListView) findViewById(R.id.drawer_list);
 
         // Set the adapter for the list view.
-        drawerList.setAdapter(new DrawerAdapter (this, drawerItems));
+        drawerList.setAdapter(new DrawerAdapter (this, drawerLabels, drawerIcons));
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
     }
