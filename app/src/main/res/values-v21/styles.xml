@@ -3,12 +3,9 @@
     <!-- Base application theme. Applied only for API version >= 21. -->
     <style name="AppTheme" parent="AppTheme.Base">
 
-        <!-- Translucent Status bar for navigation drawer effect. -->
+        <!-- Translucent Status Bar for navigation drawer effect. -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
-<!--        <item name="android:statusBarColor">@color/primaryDark</item>-->
-<!--        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>-->
 
         <!-- Enable Lollipop effects. -->
         <item name="android:windowContentTransitions">true</item>

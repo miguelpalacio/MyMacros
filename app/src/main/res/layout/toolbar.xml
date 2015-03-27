@@ -9,4 +9,3 @@
     android:elevation="1dp"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/Theme.AppCompat.Light" />
-<!--    android:paddingTop="@dimen/toolbar_top_padding"-->
