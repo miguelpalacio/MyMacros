@@ -7,6 +7,6 @@
     android:layout_height="wrap_content"
     android:background="@color/primary"
     android:elevation="1dp"
-    android:paddingTop="@dimen/toolbar_top_padding"
     app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
     app:popupTheme="@style/Theme.AppCompat.Light" />
+<!--    android:paddingTop="@dimen/toolbar_top_padding"-->

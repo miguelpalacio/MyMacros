@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <!-- Activity UI. -->
     <LinearLayout
@@ -28,17 +29,29 @@
     </LinearLayout>
 
     <!-- Side Navigation Drawer UI. -->
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/drawer_recycler"
+    <com.miguelpalacio.mymacros.ScrimInsetsFrameLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/scrimInsetsFrameLayout"
         android:layout_width="305dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/drawer_background"
-        android:choiceMode="singleChoice"
-        android:divider="@android:color/transparent"
         android:elevation="4dp"
-        android:dividerHeight="0dp"/>
+        android:background="@color/drawer_background"
+        android:fitsSystemWindows="true"
+        app:insetForeground="#4000">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/drawer_recycler"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:minHeight="?android:attr/listPreferredItemHeight"
+            android:fitsSystemWindows="true"
+            android:choiceMode="singleChoice"
+            android:divider="@null"
+            android:dividerHeight="0dp"/>
+    </com.miguelpalacio.mymacros.ScrimInsetsFrameLayout>
+
+<!--    android:divider="@android:color/transparent"-->
 </android.support.v4.widget.DrawerLayout>
 
 
