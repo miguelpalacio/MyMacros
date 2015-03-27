@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
         drawerLabels = getResources().getStringArray(R.array.drawer_labels);
         drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
 
-        drawerRecyclerView = (RecyclerView) findViewById(R.id.drawer_list);
+        drawerRecyclerView = (RecyclerView) findViewById(R.id.drawer_recycler);
         drawerRecyclerView.setHasFixedSize(true);
 
         // Set the adapter for the Drawer's recycler view.

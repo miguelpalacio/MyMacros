@@ -29,7 +29,7 @@
 
     <!-- Side Navigation Drawer UI. -->
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/drawer_list"
+        android:id="@+id/drawer_recycler"
         android:layout_width="305dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
