@@ -8,7 +8,6 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,16 +29,13 @@ public class MainActivity extends ActionBarActivity {
 
     private Window window;
 
+    private float r1, g1, b1;
+    private float r2, g2, b2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Preparation for setting status bar color.
-        window = this.getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
 
         // Toolbar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -52,12 +48,27 @@ public class MainActivity extends ActionBarActivity {
         drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
         drawerList = (ListView) findViewById(R.id.drawer_list);
 
-        // Set the adapter for the list view.
+        // Set the adapter for the drawer's list view.
         drawerList.setAdapter(new DrawerAdapter (this, drawerLabels, drawerIcons));
+
         // Set the list's click listener
         drawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        // Drawer toggler.
+        // Preparation for setting status bar's color.
+        window = this.getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        // Extract status bar color components to calculate color according to
+        // the navigation drawer's position.
+        r1 = (float) Color.red(getResources().getColor(R.color.primaryDark));
+        g1 = (float) Color.green(getResources().getColor(R.color.primaryDark));
+        b1 = (float) Color.blue(getResources().getColor(R.color.primaryDark));
+        r2 = (float) Color.red(getResources().getColor(R.color.primaryDarkDrawer));
+        g2 = (float) Color.green(getResources().getColor(R.color.primaryDarkDrawer));
+        b2 = (float) Color.blue(getResources().getColor(R.color.primaryDarkDrawer));
+
+        // Drawer toggle.
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.open_drawer, R.string.close_drawer) {
@@ -74,7 +85,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // Elighten the Status Bar's color.
+                // Enlighten the Status Bar's color.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     window.setStatusBarColor(getResources().getColor(R.color.primaryDark));
                 }
@@ -86,31 +97,20 @@ public class MainActivity extends ActionBarActivity {
                 // Darken/Enlighten Status Bar's color according to the drawer's position.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-                    float r1, r2, rr;
-                    float g1, g2, gr;
-                    float b1, b2, br;
+                    float r, g, b;
 
-                    r1 = (float) Color.red(getResources().getColor(R.color.primaryDark));
-                    r2 = (float) Color.red(getResources().getColor(R.color.primaryDarkDrawer));
-                    g1 = (float) Color.green(getResources().getColor(R.color.primaryDark));
-                    g2 = (float) Color.green(getResources().getColor(R.color.primaryDarkDrawer));
-                    b1 = (float) Color.blue(getResources().getColor(R.color.primaryDark));
-                    b2 = (float) Color.blue(getResources().getColor(R.color.primaryDarkDrawer));
+                    r = r1 *(1-slideOffset) + r2 *slideOffset;
+                    g = g1 *(1-slideOffset) + g2 *slideOffset;
+                    b = b1 *(1-slideOffset) + b2 *slideOffset;
 
-                    rr = r1*(1-slideOffset) + r2*slideOffset;
-                    gr = g1*(1-slideOffset) + g2*slideOffset;
-                    br = b1*(1-slideOffset) + b2*slideOffset;
-
-                    window.setStatusBarColor(Color.rgb((int) rr, (int) gr, (int) br));
+                    window.setStatusBarColor(Color.rgb((int) r, (int) g, (int) b));
                 }
             }
         };
 
-        // Set drawer toggler and sync state.
+        // Set drawer toggle and sync state.
         drawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
-
-
     }
 
 
@@ -144,4 +144,5 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void selectItem(int position) {}
+
 }

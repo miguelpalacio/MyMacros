@@ -34,6 +34,15 @@ public class DrawerAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
+        if (position == 0) {
+            View headView = convertView;
+
+            LayoutInflater inflater = context.getLayoutInflater();
+            headView = inflater.inflate(R.layout.drawer_header, null);
+            return headView;
+
+        }
+
         View rowView = convertView;
 
         // Reuse views.
