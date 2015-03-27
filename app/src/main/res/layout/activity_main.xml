@@ -28,7 +28,7 @@
     </LinearLayout>
 
     <!-- Side Navigation Drawer UI. -->
-    <ListView
+    <android.support.v7.widget.RecyclerView
         android:id="@+id/drawer_list"
         android:layout_width="305dp"
         android:layout_height="match_parent"

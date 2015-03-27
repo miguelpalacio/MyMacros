@@ -6,6 +6,8 @@ import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,18 +15,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.ListView;
-import android.widget.AdapterView;
 
 public class MainActivity extends ActionBarActivity {
 
     private Toolbar toolbar;
 
-    private ListView drawerList;
     private String[] drawerLabels;
     private TypedArray drawerIcons;
 
+    private RecyclerView drawerRecyclerView;
+    private RecyclerView.Adapter drawerAdapter;
+    private RecyclerView.LayoutManager drawerLayoutManager;
     private DrawerLayout drawer;
+
     private ActionBarDrawerToggle mDrawerToggle;
 
     private Window window;
@@ -46,13 +49,21 @@ public class MainActivity extends ActionBarActivity {
         // Navigation Drawer.
         drawerLabels = getResources().getStringArray(R.array.drawer_labels);
         drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
-        drawerList = (ListView) findViewById(R.id.drawer_list);
 
-        // Set the adapter for the drawer's list view.
-        drawerList.setAdapter(new DrawerAdapter (this, drawerLabels, drawerIcons));
+        drawerRecyclerView = (RecyclerView) findViewById(R.id.drawer_list);
+        drawerRecyclerView.setHasFixedSize(true);
+
+        // Set the adapter for the Drawer's recycler view.
+        drawerAdapter = new DrawerAdapter(drawerLabels, drawerIcons,
+                "Miguel Palacio", "miguelpalacio@outlook.com");
+        drawerRecyclerView.setAdapter(drawerAdapter);
+
+        // Set the layout manager for the Drawer's recycler view.
+        drawerLayoutManager = new LinearLayoutManager(this);
+        drawerRecyclerView.setLayoutManager(drawerLayoutManager);
 
         // Set the list's click listener
-        drawerList.setOnItemClickListener(new DrawerItemClickListener());
+/*        drawerList.setOnItemClickListener(new DrawerItemClickListener());*/
 
         // Preparation for setting status bar's color.
         window = this.getWindow();
@@ -136,13 +147,13 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+/*    private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
             selectItem(position);
         }
     }
 
-    private void selectItem(int position) {}
+    private void selectItem(int position) {}*/
 
 }

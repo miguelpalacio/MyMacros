@@ -9,7 +9,6 @@
 
     <!-- Navigation Drawer entries. -->
     <string-array name="drawer_labels">
-        <item>Header String</item>
         <item>Stats</item>
         <item>Meal planner</item>
         <item>Meal creator</item>

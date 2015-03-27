@@ -1,66 +1,99 @@
 package com.miguelpalacio.mymacros;
 
-import android.app.Activity;
 import android.content.res.TypedArray;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
  * Adapter for the lateral navigation drawer.
  */
-public class DrawerAdapter extends ArrayAdapter<String> {
+public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder> {
 
-    private final Activity context;
+    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ROW = 1;
+
     private final String[] labels;
     private final TypedArray icons;
 
-    // ViewHolder pattern implementation.
-    private static class ViewHolder {
-        public TextView text;
-        public ImageView image;
+    private String nameLabel;
+    private String emailLabel;
+
+    // ViewHolder.
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        int holderId;
+
+        TextView textView;
+        ImageView imageView;
+        TextView name;
+        TextView email;
+
+        public ViewHolder(View itemView, int viewType) {
+            super(itemView);
+
+            // Set the view according with its type.
+            if (viewType == TYPE_ROW) {
+                textView = (TextView) itemView.findViewById(R.id.drawer_item_text);
+                imageView = (ImageView) itemView.findViewById(R.id.drawer_item_icon);
+                holderId = 1;
+            } else {
+                name = (TextView) itemView.findViewById(R.id.name);
+                email = (TextView) itemView.findViewById(R.id.email);
+                holderId = 0;
+            }
+        }
     }
 
-    public DrawerAdapter(Activity context, String[] labels, TypedArray icons) {
-        super(context, R.layout.drawer_row, labels);
-        this.context = context;
+    // DrawerAdapter's constructor.
+    public DrawerAdapter(String[] labels, TypedArray icons, String nameLabel, String emailLabel) {
+
         this.labels = labels;
         this.icons = icons;
+        this.nameLabel = nameLabel;
+        this.emailLabel = emailLabel;
     }
 
+    // Inflate either drawer_header.xml or drawer_row.xml in accordance with viewType.
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public DrawerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        if (position == 0) {
-            View headView = convertView;
-
-            LayoutInflater inflater = context.getLayoutInflater();
-            headView = inflater.inflate(R.layout.drawer_header, null);
-            return headView;
-
+        if (viewType == TYPE_ROW) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_row, parent, false);
+            return new ViewHolder(v, viewType);
+        } else {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_header, parent, false);
+            return new ViewHolder(v, viewType);
         }
+    }
 
-        View rowView = convertView;
+    // This method is called when the item in a row needs to be displayed.
+    @Override
+    public void onBindViewHolder(DrawerAdapter.ViewHolder holder, int position) {
 
-        // Reuse views.
-        if (rowView == null) {
-            LayoutInflater inflater = context.getLayoutInflater();
-            rowView = inflater.inflate(R.layout.drawer_row, null);
-            // Configure view holder.
-            ViewHolder viewHolder = new ViewHolder();
-            viewHolder.text = (TextView) rowView.findViewById(R.id.drawer_item_text);
-            viewHolder.image = (ImageView) rowView.findViewById(R.id.drawer_item_icon);
-            rowView.setTag(viewHolder);
+        if(holder.holderId == 1) {
+            holder.textView.setText(labels[position - 1]);
+            holder.imageView.setImageDrawable(icons.getDrawable(position - 1));
+        } else {
+            holder.name.setText(nameLabel);
+            holder.email.setText(emailLabel);
         }
+    }
 
-        // Fill data.
-        ViewHolder holder = (ViewHolder) rowView.getTag();
-        holder.text.setText(labels[position]);
-        holder.image.setImageDrawable(icons.getDrawable(position));
+    // Return the number of items present in the list (rows + header).
+    @Override
+    public int getItemCount() {
+        return labels.length + 1;
+    }
 
-        return rowView;
+    // Return the type of the view that is being passed.
+    @Override
+    public int getItemViewType(int position) {
+        if (position == 0)
+            return TYPE_HEADER;
+        return TYPE_ROW;
     }
 }
