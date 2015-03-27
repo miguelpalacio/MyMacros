@@ -89,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
                 super.onDrawerOpened(drawerView);
                 // Darken the Status Bar's color.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.setStatusBarColor(getResources().getColor(R.color.primaryDarkDrawer));
+/*                    window.setStatusBarColor(getResources().getColor(R.color.primaryDarkDrawer));*/
                 }
             }
 
@@ -98,7 +98,7 @@ public class MainActivity extends ActionBarActivity {
                 super.onDrawerClosed(drawerView);
                 // Enlighten the Status Bar's color.
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.setStatusBarColor(getResources().getColor(R.color.primaryDark));
+/*                    window.setStatusBarColor(getResources().getColor(R.color.primaryDark));*/
                 }
             }
 
@@ -106,7 +106,7 @@ public class MainActivity extends ActionBarActivity {
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
                 // Darken/Enlighten Status Bar's color according to the drawer's position.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+/*                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
                     float r, g, b;
 
@@ -115,7 +115,7 @@ public class MainActivity extends ActionBarActivity {
                     b = b1 *(1-slideOffset) + b2 *slideOffset;
 
                     window.setStatusBarColor(Color.rgb((int) r, (int) g, (int) b));
-                }
+                }*/
             }
         };
 

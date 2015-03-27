@@ -2,7 +2,12 @@
 
     <!-- Base application theme. Applied only for API version >= 21. -->
     <style name="AppTheme" parent="AppTheme.Base">
-        <!-- Customize your theme here. -->
+
+        <!-- Translucent Status bar for navigation drawer effect. -->
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
+
+        <!-- Enable Lollipop effects. -->
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowAllowEnterTransitionOverlap">true</item>
         <item name="android:windowAllowReturnTransitionOverlap">true</item>

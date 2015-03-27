@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="178dp"
-    android:background="@color/accent"
+    android:background="@color/primary"
     android:orientation="vertical"
     android:weightSum="1">
 
@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:textColor="#ffff00"
+            android:textColor="@color/drawer_background"
             android:text="Miguel Palacio"
             android:textSize="14sp"
             android:textStyle="bold"/>
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="5dp"
-            android:textColor="#ffff00"
+            android:textColor="@color/drawer_background"
             android:text="palaciodelgado@gmail.com"
             android:textSize="14sp"
             android:textStyle="normal"/>
