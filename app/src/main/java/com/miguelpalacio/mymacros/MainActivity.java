@@ -8,9 +8,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -51,9 +55,37 @@ public class MainActivity extends ActionBarActivity {
         drawerLayoutManager = new LinearLayoutManager(this);
         drawerView.setLayoutManager(drawerLayoutManager);
 
-        // Set the list's click listener
-/*        drawerList.setOnItemClickListener(new DrawerItemClickListener());*/
+        // Define and set the item's OnClick listener.
+        final GestureDetector mGestureDetector = new GestureDetector(this,
+                new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent e) {
+                return true;
+            }
+        });
 
+        drawerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+
+            @Override
+            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
+                if (child != null && mGestureDetector.onTouchEvent(motionEvent)) {
+                    drawer.closeDrawer(Gravity.LEFT);
+                    Toast.makeText(MainActivity.this, "The item clicked is: " + recyclerView.getChildPosition(child),
+                            Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
+
+            }
+        });
+
+        // Set the Navigation Drawer's layout.
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // Since Status Bar is transparent in styles.xml, set its color.
@@ -71,11 +103,6 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-            }
-
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                super.onDrawerSlide(drawerView, slideOffset);
             }
         };
 
@@ -106,5 +133,4 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
 }

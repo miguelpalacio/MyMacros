@@ -4,6 +4,8 @@
     android:layout_height="wrap_content"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
+    android:clickable="true"
+    android:background="?attr/selectableItemBackground"
     android:orientation="horizontal">
 
     <ImageView
