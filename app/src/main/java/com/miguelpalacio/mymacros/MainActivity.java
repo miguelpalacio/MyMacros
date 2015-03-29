@@ -1,8 +1,6 @@
 package com.miguelpalacio.mymacros;
 
 import android.content.res.TypedArray;
-import android.graphics.Color;
-import android.os.Build;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,24 +11,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 
 public class MainActivity extends ActionBarActivity {
 
-    private Toolbar toolbar;
+    Toolbar toolbar;
 
-    private String[] drawerLabels;
-    private TypedArray drawerIcons;
+    String[] drawerLabels;
+    TypedArray drawerIcons;
 
-    private RecyclerView drawerRecyclerView;
-    private RecyclerView.Adapter drawerAdapter;
-    private RecyclerView.LayoutManager drawerLayoutManager;
-    private DrawerLayout drawer;
+    RecyclerView drawerView;
+    RecyclerView.Adapter drawerAdapter;
+    RecyclerView.LayoutManager drawerLayoutManager;
+    DrawerLayout drawer;
 
-    private ActionBarDrawerToggle mDrawerToggle;
-
-    private Window window;
+    ActionBarDrawerToggle mDrawerToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,38 +33,31 @@ public class MainActivity extends ActionBarActivity {
 
         // Toolbar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
+        setSupportActionBar(toolbar);
 
         // Navigation Drawer.
         drawerLabels = getResources().getStringArray(R.array.drawer_labels);
         drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
 
-        drawerRecyclerView = (RecyclerView) findViewById(R.id.drawer_recycler);
-        drawerRecyclerView.setHasFixedSize(true);
+        drawerView = (RecyclerView) findViewById(R.id.drawer_recycler);
+        drawerView.setHasFixedSize(true);
 
         // Set the adapter for the Drawer's recycler view.
         drawerAdapter = new DrawerAdapter(drawerLabels, drawerIcons,
                 "Miguel Palacio", "miguelpalacio@outlook.com");
-        drawerRecyclerView.setAdapter(drawerAdapter);
+        drawerView.setAdapter(drawerAdapter);
 
         // Set the layout manager for the Drawer's recycler view.
         drawerLayoutManager = new LinearLayoutManager(this);
-        drawerRecyclerView.setLayoutManager(drawerLayoutManager);
+        drawerView.setLayoutManager(drawerLayoutManager);
 
         // Set the list's click listener
 /*        drawerList.setOnItemClickListener(new DrawerItemClickListener());*/
 
-        // Preparation for setting status bar's color.
-        window = this.getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // Since Status Bar is transparent in styles.xml, set its color.
-        drawer.setStatusBarBackgroundColor(getResources().getColor(R.color.primaryDark));
+        drawer.setStatusBarBackgroundColor(getResources().getColor(R.color.primary_dark));
 
         // Drawer toggle.
         mDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar,

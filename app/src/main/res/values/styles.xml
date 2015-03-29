@@ -8,7 +8,7 @@
 
         <!-- Toolbar will be used instead of ActionBar. -->
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
         <item name="windowActionModeOverlay">true</item>
 

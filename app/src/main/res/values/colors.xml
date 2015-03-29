@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="primary">#00BCD4</color>
-    <color name="primaryDark">#0097A7</color>
-    <color name="primaryDarkDrawer">#006064</color>
+    <color name="primary_dark">#0097A7</color>
+    <color name="primary_dark_drawer">#006064</color>
     <color name="highlight">#00BCD4</color>
     <color name="accent">#FF4081</color>
 
     <color name="drawer_background">#EEEEEE</color>
     <color name="drawer_item_label">#333333</color>
+    <color name="inset_foreground">#4000</color>
 </resources>

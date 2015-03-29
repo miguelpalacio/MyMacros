@@ -29,6 +29,7 @@
     </LinearLayout>
 
     <!-- Side Navigation Drawer UI. -->
+    <!-- ScrimInsetsFrameLayout allows 'drawer under the status bar' effect. -->
     <com.miguelpalacio.mymacros.ScrimInsetsFrameLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/scrimInsetsFrameLayout"
@@ -38,8 +39,9 @@
         android:elevation="4dp"
         android:background="@color/drawer_background"
         android:fitsSystemWindows="true"
-        app:insetForeground="#4000">
+        app:insetForeground="@color/inset_foreground">
 
+        <!-- Actual Navigation Drawer view. -->
         <android.support.v7.widget.RecyclerView
             android:id="@+id/drawer_recycler"
             android:layout_width="fill_parent"
@@ -51,7 +53,6 @@
             android:dividerHeight="0dp"/>
     </com.miguelpalacio.mymacros.ScrimInsetsFrameLayout>
 
-<!--    android:divider="@android:color/transparent"-->
 </android.support.v4.widget.DrawerLayout>
 
 
