@@ -1,5 +1,6 @@
 package com.miguelpalacio.mymacros;
 
+import android.app.Fragment;
 import android.content.res.TypedArray;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -56,34 +57,18 @@ public class MainActivity extends ActionBarActivity {
         drawerView.setLayoutManager(drawerLayoutManager);
 
         // Define and set the item's OnClick listener.
-        final GestureDetector mGestureDetector = new GestureDetector(this,
-                new GestureDetector.SimpleOnGestureListener() {
-            @Override
-            public boolean onSingleTapUp(MotionEvent e) {
-                return true;
-            }
-        });
-
-        drawerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-
-                View child = recyclerView.findChildViewUnder(motionEvent.getX(), motionEvent.getY());
-                if (child != null && mGestureDetector.onTouchEvent(motionEvent)) {
-                    drawer.closeDrawer(Gravity.LEFT);
-                    Toast.makeText(MainActivity.this, "The item clicked is: " + recyclerView.getChildPosition(child),
-                            Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView recyclerView, MotionEvent motionEvent) {
-
-            }
-        });
+/*        drawerOnClickListener();*/
+        drawerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        // Do whatever
+/*                        drawer.closeDrawer(Gravity.START);*/
+                        Toast.makeText(MainActivity.this, "The item clicked is: " + position,
+                                Toast.LENGTH_SHORT).show();
+                    }
+                })
+        );
 
         // Set the Navigation Drawer's layout.
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -133,4 +118,14 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    // ----
+/*    private void selectItem(final int position) {
+        mPendingRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Update the main content by replacing fragments.
+            }
+        };
+    }*/
 }
