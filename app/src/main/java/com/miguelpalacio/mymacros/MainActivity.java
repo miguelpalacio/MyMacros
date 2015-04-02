@@ -1,6 +1,5 @@
 package com.miguelpalacio.mymacros;
 
-import android.app.Fragment;
 import android.content.res.TypedArray;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -9,11 +8,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
-import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
@@ -57,13 +53,12 @@ public class MainActivity extends ActionBarActivity {
         drawerView.setLayoutManager(drawerLayoutManager);
 
         // Define and set the item's OnClick listener.
-/*        drawerOnClickListener();*/
         drawerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
                         // Do whatever
-/*                        drawer.closeDrawer(Gravity.START);*/
+/*                        drawer.closeDrawers();*/
                         Toast.makeText(MainActivity.this, "The item clicked is: " + position,
                                 Toast.LENGTH_SHORT).show();
                     }
@@ -95,7 +90,6 @@ public class MainActivity extends ActionBarActivity {
         drawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

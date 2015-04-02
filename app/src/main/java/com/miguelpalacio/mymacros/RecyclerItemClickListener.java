@@ -26,12 +26,6 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
             public boolean onSingleTapUp(MotionEvent e) {
                 return true;
             }
-
-            @Override
-            public boolean onDoubleTapEvent(MotionEvent e) {
-                return true;
-            }
-
         });
     }
 
@@ -40,7 +34,7 @@ public class RecyclerItemClickListener implements RecyclerView.OnItemTouchListen
         View childView = view.findChildViewUnder(e.getX(), e.getY());
         if (childView != null && mListener != null && mGestureDetector.onTouchEvent(e)) {
             mListener.onItemClick(childView, view.getChildPosition(childView));
-            return true;
+            /*return true;*/
         }
         return false;
     }

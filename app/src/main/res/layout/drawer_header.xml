@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
-            android:textColor="@color/drawer_background"
+            android:textColor="@color/text_background"
             android:text="Miguel Palacio"
             android:textSize="14sp"
             android:textStyle="bold"/>
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="5dp"
-            android:textColor="@color/drawer_background"
+            android:textColor="@color/text_background"
             android:text="palaciodelgado@gmail.com"
             android:textSize="14sp"
             android:textStyle="normal"/>
