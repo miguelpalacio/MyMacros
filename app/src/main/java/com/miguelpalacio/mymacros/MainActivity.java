@@ -1,5 +1,8 @@
 package com.miguelpalacio.mymacros;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.res.TypedArray;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -32,6 +35,19 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // FRAGMENT TEST!
+        if (findViewById(R.id.fragment_container) != null) {
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            ProfileFragment profileFragment = new ProfileFragment();
+
+            profileFragment.setArguments(getIntent().getExtras());
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, profileFragment).commit();
+        }
+
         // Toolbar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -58,9 +74,33 @@ public class MainActivity extends ActionBarActivity {
                     @Override
                     public void onItemClick(View view, int position) {
                         // Do whatever
-/*                        drawer.closeDrawers();*/
+                        drawer.closeDrawers();
                         Toast.makeText(MainActivity.this, "The item clicked is: " + position,
                                 Toast.LENGTH_SHORT).show();
+
+                        // FRAGMENT TEST!
+                        MealPlannerFragment mealPlannerFragment = new MealPlannerFragment();
+
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fragment_container, mealPlannerFragment)
+                                .addToBackStack(null)
+                                .commit();
+
+                        // ------
+                        Runnable mPendingRunnable = new Runnable() {
+
+                            @Override
+                            public void run() {
+/*                                // Update content by replacing fragments.
+                                FragmentManager fragmentManager = getFragmentManager();
+                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                                ProfileFragment fragment = new ProfileFragment();
+                                fragmentTransaction.add(R.id.fragment_container, fragment);*/
+
+                            }
+                        };
                     }
                 })
         );
@@ -112,14 +152,4 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-    // ----
-/*    private void selectItem(final int position) {
-        mPendingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                // Update the main content by replacing fragments.
-            }
-        };
-    }*/
 }

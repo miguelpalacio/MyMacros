@@ -17,4 +17,8 @@
         <item>Settings</item>
         <item>FAQ</item>
     </string-array>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Profile Fragment</string>
+    <string name="hello_blank_fragment1">Meal Planner Fragment</string>
 </resources>
