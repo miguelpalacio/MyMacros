@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.res.TypedArray;
+import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
 
 public class MainActivity extends ActionBarActivity {
 
@@ -30,12 +32,20 @@ public class MainActivity extends ActionBarActivity {
 
     ActionBarDrawerToggle mDrawerToggle;
 
+    // TODO: correct this.
+    Runnable mPendingRunnable;
+    Handler mHandler = new Handler();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // FRAGMENT TEST!
+        // Toolbar.
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        // Set initial fragment.
         if (findViewById(R.id.fragment_container) != null) {
             if (savedInstanceState != null) {
                 return;
@@ -47,10 +57,6 @@ public class MainActivity extends ActionBarActivity {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, profileFragment).commit();
         }
-
-        // Toolbar.
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         // Navigation Drawer.
         drawerLabels = getResources().getStringArray(R.array.drawer_labels);
@@ -73,34 +79,22 @@ public class MainActivity extends ActionBarActivity {
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        // Do whatever
-                        drawer.closeDrawers();
-                        Toast.makeText(MainActivity.this, "The item clicked is: " + position,
-                                Toast.LENGTH_SHORT).show();
 
-                        // FRAGMENT TEST!
-                        MealPlannerFragment mealPlannerFragment = new MealPlannerFragment();
-
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.fragment_container, mealPlannerFragment)
-                                .addToBackStack(null)
-                                .commit();
-
-                        // ------
-                        Runnable mPendingRunnable = new Runnable() {
-
+                        // Set a runnable that runs once the drawer closes after clicking on item.
+                        mPendingRunnable = new Runnable() {
                             @Override
                             public void run() {
-/*                                // Update content by replacing fragments.
-                                FragmentManager fragmentManager = getFragmentManager();
-                                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                                ProfileFragment fragment = new ProfileFragment();
-                                fragmentTransaction.add(R.id.fragment_container, fragment);*/
-
+                                // TODO: Load a different fragment for each option.
+                                MealPlannerFragment mealPlannerFragment = new MealPlannerFragment();
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.fragment_container, mealPlannerFragment)
+                                        .commit();
                             }
                         };
+
+                        // Update selected item and title, then close the drawer.
+                        drawer.closeDrawers();
                     }
                 })
         );
@@ -122,13 +116,23 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
+/*                super.onDrawerClosed(drawerView);*/
+
+                // If mPendingRunnable is not null, then add to the message queue.
+                if (mPendingRunnable != null) {
+                    mHandler.post(mPendingRunnable);
+                    mPendingRunnable = null;
+                }
             }
         };
 
         // Set drawer toggle and sync state.
         drawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+
+        // Runnable support.
+        // TODO: read about this runnable interface and Handler class.
+        mHandler.post(mPendingRunnable);
     }
 
     @Override
