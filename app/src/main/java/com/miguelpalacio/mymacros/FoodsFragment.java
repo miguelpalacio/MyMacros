@@ -1,7 +1,5 @@
 package com.miguelpalacio.mymacros;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,18 +10,18 @@ import android.view.ViewGroup;
 /*
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link MealCreatorFragment.OnFragmentInteractionListener} interface
+ * {@link FoodDatabaseFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link MealCreatorFragment#newInstance} factory method to
+ * Use the {@link FoodDatabaseFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class MealCreatorFragment extends Fragment {
+public class FoodsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
-        return inflater.inflate(R.layout.fragment_meal_creator, container, false);
+        return inflater.inflate(R.layout.fragment_foods, container, false);
     }
 /*
     // TODO: Rename parameter arguments, choose names that match
@@ -44,12 +42,12 @@ public class MealCreatorFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment MealCreatorFragment.
+     * @return A new instance of fragment FoodDatabaseFragment.
      *//*
 
     // TODO: Rename and change types and number of parameters
-    public static MealCreatorFragment newInstance(String param1, String param2) {
-        MealCreatorFragment fragment = new MealCreatorFragment();
+    public static FoodDatabaseFragment newInstance(String param1, String param2) {
+        FoodDatabaseFragment fragment = new FoodDatabaseFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -57,7 +55,7 @@ public class MealCreatorFragment extends Fragment {
         return fragment;
     }
 
-    public MealCreatorFragment() {
+    public FoodDatabaseFragment() {
         // Required empty public constructor
     }
 
@@ -74,7 +72,7 @@ public class MealCreatorFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_meal_creator, container, false);
+        return inflater.inflate(R.layout.fragment_foods, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

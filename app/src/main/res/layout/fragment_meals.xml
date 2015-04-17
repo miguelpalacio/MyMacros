@@ -1,11 +1,11 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.miguelpalacio.mymacros.MealPlannerFragment">
+    tools:context="com.miguelpalacio.mymacros.MealsFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment2"
-        android:textColor="@color/accent"/>
+        android:text="@string/hello_blank_fragment3"
+        android:textColor="#BB00BB"/>
 
 </FrameLayout>

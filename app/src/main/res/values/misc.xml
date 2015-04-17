@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="drawer_icons">
-        <item>@drawable/stats</item>
         <item>@drawable/planner</item>
-        <item>@drawable/create_meal</item>
-        <item>@drawable/food_database</item>
+        <item>@drawable/stats</item>
         <item>@drawable/profile</item>
-        <item>@drawable/settings</item>
-        <item>@drawable/faq</item>
+        <item>@drawable/meals</item>
+        <item>@drawable/foods</item>
     </array>
 </resources>

@@ -1,9 +1,5 @@
 package com.miguelpalacio.mymacros;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
@@ -16,7 +12,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -52,11 +47,11 @@ public class MainActivity extends ActionBarActivity {
                 return;
             }
 
-            StatsFragment statsFragment = new StatsFragment();
+            PlannerFragment plannerFragment = new PlannerFragment();
 
-            statsFragment.setArguments(getIntent().getExtras());
+            plannerFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, statsFragment).commit();
+                    .add(R.id.fragment_container, plannerFragment).commit();
         }
 
         // Navigation Drawer.
@@ -155,7 +150,8 @@ public class MainActivity extends ActionBarActivity {
 
     /**
      * Open the respective fragment according to the item selected.
-     * If item selected corresponds to open fragment, don't replace.
+     * If item selected corresponds to the fragment currently shown, don't replace it.
+     * @param position item clicked by the user on the navigation drawer.
      */
     private void openFragment(int position) {
 
@@ -163,6 +159,18 @@ public class MainActivity extends ActionBarActivity {
         switch (position) {
 
             case 1:
+                if (!(getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_container) instanceof PlannerFragment)) {
+
+                    PlannerFragment plannerFragment = new PlannerFragment();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, plannerFragment)
+                            .commit();
+                }
+                break;
+
+            case 2:
                 if (!(getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container) instanceof StatsFragment)) {
 
@@ -174,43 +182,7 @@ public class MainActivity extends ActionBarActivity {
                 }
                 break;
 
-            case 2:
-                if (!(getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container) instanceof MealPlannerFragment)) {
-
-                    MealPlannerFragment mealPlannerFragment = new MealPlannerFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, mealPlannerFragment)
-                            .commit();
-                }
-                break;
-
             case 3:
-                if (!(getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container) instanceof MealCreatorFragment)) {
-
-                    MealCreatorFragment mealCreatorFragment = new MealCreatorFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, mealCreatorFragment)
-                            .commit();
-                }
-                break;
-
-            case 4:
-                if (!(getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container) instanceof FoodDatabaseFragment)) {
-
-                    FoodDatabaseFragment foodDatabaseFragment = new FoodDatabaseFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, foodDatabaseFragment)
-                            .commit();
-                }
-                break;
-
-            case 5:
                 if (!(getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container) instanceof ProfileFragment)) {
 
@@ -218,6 +190,30 @@ public class MainActivity extends ActionBarActivity {
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.fragment_container, profileFragment)
+                            .commit();
+                }
+                break;
+
+            case 4:
+                if (!(getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_container) instanceof MealsFragment)) {
+
+                    MealsFragment mealsFragment = new MealsFragment();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, mealsFragment)
+                            .commit();
+                }
+                break;
+
+            case 5:
+                if (!(getSupportFragmentManager()
+                        .findFragmentById(R.id.fragment_container) instanceof FoodsFragment)) {
+
+                    FoodsFragment foodsFragment = new FoodsFragment();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, foodsFragment)
                             .commit();
                 }
                 break;
