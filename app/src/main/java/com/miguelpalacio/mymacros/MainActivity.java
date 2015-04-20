@@ -1,6 +1,7 @@
 package com.miguelpalacio.mymacros;
 
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -12,6 +13,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewParent;
+import android.widget.LinearLayout;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -74,15 +77,23 @@ public class MainActivity extends ActionBarActivity {
         drawerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
-                    public void onItemClick(View view, final int position) {
+                    public void onItemClick(final View view, final int position) {
 
                         // Set a runnable that runs once the drawer closes after clicking on item.
                         mPendingRunnable = new Runnable() {
                             @Override
                             public void run() {
                                 openFragment(position);
+                                view.setBackgroundColor(getResources().getColor(R.color.selected_item));
                             }
                         };
+
+                        // TODO: improve the implementation of item selected.
+                        // Restore default background for items.
+                        for (int i = 1; i < drawerLayoutManager.getChildCount(); i++) {
+                            View childView = drawerLayoutManager.getChildAt(i);
+                            childView.setBackgroundResource(R.drawable.custom_bg);
+                        }
 
                         // Update selected item and title, then close the drawer.
                         drawer.closeDrawers();
@@ -156,6 +167,7 @@ public class MainActivity extends ActionBarActivity {
     private void openFragment(int position) {
 
 /*                                Toast.makeText(MainActivity.this, "Fragment " + position + " not replaced.", Toast.LENGTH_SHORT).show();*/
+
         switch (position) {
 
             case 1:

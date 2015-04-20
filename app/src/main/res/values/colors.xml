@@ -5,6 +5,7 @@
     <color name="primary_light">#B2EBF2</color>
 
     <color name="highlight">#B6B6B6</color>
+    <color name="selected_item">#EAEAEA</color>
     <color name="accent">#7C4DFF</color>
 
     <color name="primary_text">#212121</color>
