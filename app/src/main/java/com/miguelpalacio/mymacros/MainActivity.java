@@ -1,7 +1,6 @@
 package com.miguelpalacio.mymacros;
 
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
@@ -13,9 +12,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewParent;
-import android.widget.LinearLayout;
-
 
 public class MainActivity extends ActionBarActivity {
 
@@ -24,10 +20,12 @@ public class MainActivity extends ActionBarActivity {
     String[] drawerLabels;
     TypedArray drawerIcons;
 
-    RecyclerView drawerView;
+    RecyclerView drawerRecyclerView;
     RecyclerView.Adapter drawerAdapter;
     RecyclerView.LayoutManager drawerLayoutManager;
-    DrawerLayout drawer;
+    DrawerLayout drawerLayout;
+
+    View previousSelectedChild;
 
     ActionBarDrawerToggle mDrawerToggle;
 
@@ -44,37 +42,24 @@ public class MainActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Set initial fragment.
-        if (findViewById(R.id.fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
-
-            PlannerFragment plannerFragment = new PlannerFragment();
-
-            plannerFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, plannerFragment).commit();
-        }
-
         // Navigation Drawer.
         drawerLabels = getResources().getStringArray(R.array.drawer_labels);
         drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
 
-        drawerView = (RecyclerView) findViewById(R.id.drawer_recycler);
-        drawerView.setHasFixedSize(true);
+        drawerRecyclerView = (RecyclerView) findViewById(R.id.drawer_recycler);
+        drawerRecyclerView.setHasFixedSize(true);
 
         // Set the adapter for the Drawer's recycler view.
         drawerAdapter = new DrawerAdapter(drawerLabels, drawerIcons,
                 "Miguel Palacio", "miguelpalacio@outlook.com");
-        drawerView.setAdapter(drawerAdapter);
+        drawerRecyclerView.setAdapter(drawerAdapter);
 
         // Set the layout manager for the Drawer's recycler view.
         drawerLayoutManager = new LinearLayoutManager(this);
-        drawerView.setLayoutManager(drawerLayoutManager);
+        drawerRecyclerView.setLayoutManager(drawerLayoutManager);
 
         // Define and set the item's OnClick listener.
-        drawerView.addOnItemTouchListener(
+        drawerRecyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(final View view, final int position) {
@@ -84,31 +69,33 @@ public class MainActivity extends ActionBarActivity {
                             @Override
                             public void run() {
                                 openFragment(position);
-                                view.setBackgroundColor(getResources().getColor(R.color.selected_item));
+/*                                view.setBackgroundColor(getResources().getColor(R.color.selected_item));*/
+
                             }
                         };
 
                         // TODO: improve the implementation of item selected.
-                        // Restore default background for items.
-                        for (int i = 1; i < drawerLayoutManager.getChildCount(); i++) {
+                        // Restore default background for previously selected item.
+/*                        for (int i = 1; i < drawerLayoutManager.getChildCount(); i++) {
                             View childView = drawerLayoutManager.getChildAt(i);
                             childView.setBackgroundResource(R.drawable.custom_bg);
-                        }
+                        }*/
+/*                        previousSelectedChild.setBackgroundResource(R.drawable.custom_bg);*/
 
                         // Update selected item and title, then close the drawer.
-                        drawer.closeDrawers();
+                        drawerLayout.closeDrawers();
                     }
                 })
         );
 
         // Set the Navigation Drawer's layout.
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         // Since Status Bar is transparent in styles.xml, set its color.
-        drawer.setStatusBarBackgroundColor(getResources().getColor(R.color.primary_dark));
+        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary_dark));
 
         // Drawer toggle.
-        mDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.open_drawer, R.string.close_drawer) {
 
             @Override
@@ -118,7 +105,9 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onDrawerClosed(View drawerView) {
-/*                super.onDrawerClosed(drawerView);*/
+/*                super.onDrawerClosed(drawerRecyclerView);*/
+
+                // TODO: CHANGE TOOLBAR TITLE HERE
 
                 // If mPendingRunnable is not null, then add to the message queue.
                 if (mPendingRunnable != null) {
@@ -129,13 +118,32 @@ public class MainActivity extends ActionBarActivity {
         };
 
         // Set drawer toggle and sync state.
-        drawer.setDrawerListener(mDrawerToggle);
+        drawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
         // Runnable support.
         // TODO: read about this runnable interface and Handler class.
         mHandler.post(mPendingRunnable);
+
+        // Set initial fragment.
+        if (findViewById(R.id.fragment_container) != null) {
+            if (savedInstanceState != null) {
+                return;
+            }
+
+/*            // Highlight item in Drawer corresponding to initial fragment.
+            previousSelectedChild = drawerLayoutManager.getChildAt(1);
+            previousSelectedChild.setBackgroundColor(getResources().getColor(R.color.selected_item));*/
+
+            PlannerFragment plannerFragment = new PlannerFragment();
+
+            plannerFragment.setArguments(getIntent().getExtras());
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, plannerFragment).commit();
+        }
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -167,7 +175,6 @@ public class MainActivity extends ActionBarActivity {
     private void openFragment(int position) {
 
 /*                                Toast.makeText(MainActivity.this, "Fragment " + position + " not replaced.", Toast.LENGTH_SHORT).show();*/
-
         switch (position) {
 
             case 1:

@@ -13,8 +13,8 @@ import android.widget.TextView;
  */
 public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder> {
 
-    private static final int TYPE_HEADER = 0;
     private static final int TYPE_ROW = 1;
+    private static final int TYPE_HEADER = 0;
 
     private final String[] labels;
     private final TypedArray icons;
@@ -59,22 +59,19 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
 
     // Inflate either drawer_header.xml or drawer_row.xml in accordance with viewType.
     @Override
-    public DrawerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        if (viewType == TYPE_ROW) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_row, parent, false);
-            return new ViewHolder(v, viewType);
-        } else {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.drawer_header, parent, false);
-            return new ViewHolder(v, viewType);
-        }
+        final int layout = viewType == TYPE_ROW ? R.layout.drawer_row : R.layout.drawer_header;
+
+        View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+        return new ViewHolder(v, viewType);
     }
 
     // This method is called when the item in a row needs to be displayed.
     @Override
-    public void onBindViewHolder(DrawerAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
 
-        if(holder.holderId == 1) {
+        if (holder.holderId == 1) {
             holder.textView.setText(labels[position - 1]);
             holder.imageView.setImageDrawable(icons.getDrawable(position - 1));
         } else {
