@@ -7,8 +7,4 @@
         <item>@drawable/meals</item>
         <item>@drawable/foods</item>
     </array>
-    <array name="drawer_backgrounds">
-        <item>@drawable/custom_bg</item>
-        <item>@drawable/custom_bg_selected</item>
-    </array>
 </resources>

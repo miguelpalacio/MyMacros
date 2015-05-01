@@ -1,16 +1,12 @@
 package com.miguelpalacio.mymacros;
 
-import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
  * Adapter for the lateral navigation drawer.
@@ -22,7 +18,6 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
 
     private final String[] labels;
     private final TypedArray icons;
-    private final TypedArray backgrounds;
 
     private String nameLabel;
     private String emailLabel;
@@ -30,13 +25,12 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
     private ViewHolder.ClickListener clickListener;
 
     // Class constructor.
-    public DrawerAdapter(String[] labels, TypedArray icons, TypedArray backgrounds, String nameLabel, String emailLabel,
+    public DrawerAdapter(String[] labels, TypedArray icons, String nameLabel, String emailLabel,
                          ViewHolder.ClickListener clickListener) {
         super();
 
         this.labels = labels;
         this.icons = icons;
-        this.backgrounds = backgrounds;
 
         this.nameLabel = nameLabel;
         this.emailLabel = emailLabel;
@@ -54,7 +48,6 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
         TextView name;
         TextView email;
 
-        View selectedOverlay;
         View itemView;
 
         private ClickListener listener;
@@ -70,7 +63,6 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
 
                 textView = (TextView) itemView.findViewById(R.id.drawer_item_text);
                 imageView = (ImageView) itemView.findViewById(R.id.drawer_item_icon);
-                selectedOverlay = itemView.findViewById(R.id.selected_overlay);
 
                 // Set click listener for the row.
                 this.listener = listener;
@@ -86,14 +78,14 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
         @Override
         public void onClick(View v) {
             if (listener != null) {
-                listener.onItemClicked(getAdapterPosition());
+                listener.onDrawerItemClick(getAdapterPosition());
 /*                Log.d("Some", "Item clicked at position " + getAdapterPosition());*/
             }
         }
 
         // Interface to route back click events to Activity.
         public interface ClickListener {
-            public void onItemClicked(int position);
+            public void onDrawerItemClick(int position);
         }
     }
 
@@ -116,10 +108,8 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
             holder.imageView.setImageDrawable(icons.getDrawable(position - 1));
 
             // Highlight row if it is selected.
-            //holder.selectedOverlay.setVisibility(isSelected(position) ? View.VISIBLE : View.INVISIBLE);
             if (isSelected(position)) {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg_selected);
-                //holder.itemView.setBackgroundColor(Color.RED);
             } else {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg);
             }
