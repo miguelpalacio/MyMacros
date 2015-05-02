@@ -18,6 +18,7 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
 
     private final String[] labels;
     private final TypedArray icons;
+    private final TypedArray icons_selected;
 
     private String nameLabel;
     private String emailLabel;
@@ -25,12 +26,13 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
     private ViewHolder.ClickListener clickListener;
 
     // Class constructor.
-    public DrawerAdapter(String[] labels, TypedArray icons, String nameLabel, String emailLabel,
-                         ViewHolder.ClickListener clickListener) {
+    public DrawerAdapter(String[] labels, TypedArray icons, TypedArray icons_selected,
+                         String nameLabel, String emailLabel,  ViewHolder.ClickListener clickListener) {
         super();
 
         this.labels = labels;
         this.icons = icons;
+        this.icons_selected = icons_selected;
 
         this.nameLabel = nameLabel;
         this.emailLabel = emailLabel;
@@ -85,7 +87,7 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
 
         // Interface to route back click events to Activity.
         public interface ClickListener {
-            public void onDrawerItemClick(int position);
+            void onDrawerItemClick(int position);
         }
     }
 
@@ -105,13 +107,14 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
 
         if (holder.holderId == 1) {
             holder.textView.setText(labels[position - 1]);
-            holder.imageView.setImageDrawable(icons.getDrawable(position - 1));
 
-            // Highlight row if it is selected.
+            // For selected row, highlight background and icon.
             if (isSelected(position)) {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg_selected);
+                holder.imageView.setImageDrawable(icons_selected.getDrawable(position - 1));
             } else {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg);
+                holder.imageView.setImageDrawable(icons.getDrawable(position - 1));
             }
         } else {
             holder.name.setText(nameLabel);

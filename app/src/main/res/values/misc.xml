@@ -7,4 +7,11 @@
         <item>@drawable/meals</item>
         <item>@drawable/foods</item>
     </array>
+    <array name="drawer_icons_selected">
+        <item>@drawable/planner_selected</item>
+        <item>@drawable/stats_selected</item>
+        <item>@drawable/profile_selected</item>
+        <item>@drawable/meals_selected</item>
+        <item>@drawable/foods_selected</item>
+    </array>
 </resources>

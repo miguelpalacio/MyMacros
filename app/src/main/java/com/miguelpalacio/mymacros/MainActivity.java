@@ -19,6 +19,7 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
     String[] drawerLabels;
     TypedArray drawerIcons;
+    TypedArray drawerIconsSelected;
 
     RecyclerView drawerView;
     RecyclerView.LayoutManager drawerLayoutManager;
@@ -43,12 +44,13 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         // Navigation Drawer.
         drawerLabels = getResources().getStringArray(R.array.drawer_labels);
         drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
+        drawerIconsSelected = getResources().obtainTypedArray(R.array.drawer_icons_selected);
 
         drawerView = (RecyclerView) findViewById(R.id.drawer_recycler);
         drawerView.setHasFixedSize(true);
 
         // Set the adapter for the Drawer's recycler view.
-        drawerAdapter = new DrawerAdapter(drawerLabels, drawerIcons,
+        drawerAdapter = new DrawerAdapter(drawerLabels, drawerIcons, drawerIconsSelected,
                 "Miguel Palacio", "miguelpalacio@outlook.com", this);
         drawerView.setAdapter(drawerAdapter);
 
@@ -100,7 +102,6 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
             }
 
             PlannerFragment plannerFragment = new PlannerFragment();
-
             plannerFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fragment_container, plannerFragment).commit();
