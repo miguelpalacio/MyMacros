@@ -16,11 +16,22 @@
         <item>Foods</item>
     </string-array>
 
+    <!-- Settings strings. -->
+    <string name="pref_units_category">Units</string>
+    <string name="pref_weight">Weight</string>
+    <string name="pref_weight_default">Kg</string>
+
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">Stats Fragment</string>
     <string name="hello_blank_fragment2">Daily Planner Fragment</string>
     <string name="hello_blank_fragment3">My Meals Fragment</string>
     <string name="hello_blank_fragment4">Foods Fragment</string>
     <string name="hello_blank_fragment5">Profile Fragment</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <string name="hello_world">Hello world!</string>
 
 </resources>

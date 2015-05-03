@@ -1,7 +1,9 @@
 package com.miguelpalacio.mymacros;
 
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,14 +30,16 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
     ActionBarDrawerToggle mDrawerToggle;
 
-    // TODO: correct this.
-    Runnable mPendingRunnable;
+    Runnable onDrawerClosedRunnable;
     Handler mHandler = new Handler();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Set default values for preferences.
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
         // Toolbar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -75,14 +79,12 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
             @Override
             public void onDrawerClosed(View drawerView) {
-/*                super.onDrawerClosed(drawerView);*/
+                super.onDrawerClosed(drawerView);
 
-                // TODO: CHANGE TOOLBAR TITLE HERE
-
-                // If mPendingRunnable is not null, then add to the message queue.
-                if (mPendingRunnable != null) {
-                    mHandler.post(mPendingRunnable);
-                    mPendingRunnable = null;
+                // If onDrawerClosedRunnable is not null, then add it to the message queue.
+                if (onDrawerClosedRunnable != null) {
+                    mHandler.post(onDrawerClosedRunnable);
+                    onDrawerClosedRunnable = null;
                 }
             }
         };
@@ -92,8 +94,7 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         mDrawerToggle.syncState();
 
         // Runnable support.
-        // TODO: read about this runnable interface and Handler class.
-        mHandler.post(mPendingRunnable);
+        // mHandler.post(onDrawerClosedRunnable);
 
         // Set initial fragment.
         if (findViewById(R.id.fragment_container) != null) {
@@ -126,7 +127,15 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
+
+        // Open the Settings activity.
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        // Open the FAQ activity.
+        else if (id == R.id.action_faq) {
             return true;
         }
 
@@ -140,7 +149,7 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         drawerAdapter.toggleSelection(position);
 
         // Set a runnable that runs once the drawer closes after clicking on item.
-        mPendingRunnable = new Runnable() {
+        onDrawerClosedRunnable = new Runnable() {
             @Override
             public void run() {
                 openFragment(position);
