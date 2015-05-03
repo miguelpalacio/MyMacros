@@ -1,11 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Units. -->
     <PreferenceCategory
-        android:title="@string/pref_units_category"
+        android:title="@string/pref_category_units"
         android:key="pref_units_settings">
         <ListPreference
             android:key="pref_weight"
             android:title="@string/pref_weight"
-            android:defaultValue="@string/pref_weight_default" />
+            android:defaultValue="@string/pref_weight_default"
+            android:summary="@string/pref_weight_default"
+            android:entries="@array/pref_weight_entries"
+            android:entryValues="@array/pref_weight_entry_values" />
+        <ListPreference
+            android:key="pref_height"
+            android:title="@string/pref_height"
+            android:defaultValue="@string/pref_height_default"
+            android:summary="@string/pref_height_default"
+            android:entries="@array/pref_height_entries"
+            android:entryValues="@array/pref_height_entry_values" />
+        <ListPreference
+            android:key="pref_energy"
+            android:title="@string/pref_energy"
+            android:defaultValue="@string/pref_energy_default"
+            android:summary="@string/pref_energy_default"
+            android:entries="@array/pref_energy_entries"
+            android:entryValues="@array/pref_energy_entry_values" />
+        <ListPreference
+            android:key="pref_liquid"
+            android:title="@string/pref_liquid"
+            android:defaultValue="@string/pref_liquid_default"
+            android:summary="@string/pref_liquid_default"
+            android:entries="@array/pref_liquid_entries"
+            android:entryValues="@array/pref_liquid_entry_values" />
+    </PreferenceCategory>
+
+    <!-- Other Settings. -->
+    <PreferenceCategory
+        android:title="@string/pref_category_others"
+        android:key="pref_others_settings">
+        <ListPreference
+            android:key="pref_weekday"
+            android:title="@string/pref_weekday"
+            android:defaultValue="@string/pref_weekday_default"
+            android:summary="@string/pref_weekday_default"
+            android:entries="@array/pref_weekday_entries"
+            android:entryValues="@array/pref_weekday_entries" />
+    </PreferenceCategory>
+
+    <!-- Online Storage Settings. -->
+    <PreferenceCategory
+        android:title="@string/pref_category_online_storage"
+        android:key="pref_category_online_storage_settings">
+        <ListPreference
+            android:key="pref_gdrive"
+            android:title="@string/pref_gdrive"
+            android:defaultValue="@string/pref_gdrive_default"
+            android:summary="@string/pref_gdrive_default"
+            android:entries="@array/pref_gdrive_entries"
+            android:entryValues="@array/pref_gdrive_entry_default" />
     </PreferenceCategory>
 </PreferenceScreen>

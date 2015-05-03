@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Navigation Drawer icons arrays. -->
     <array name="drawer_icons">
         <item>@drawable/planner</item>
         <item>@drawable/stats</item>

@@ -4,7 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_faq">FAQ</string>
 
-    <string name="open_drawer">Opened</string>
+    <string name="open_drawer"></string>
     <string name="close_drawer">MyMacros</string>
 
     <!-- Navigation Drawer entries. -->
@@ -16,10 +16,100 @@
         <item>Foods</item>
     </string-array>
 
+    <!-- ************************************* -->
     <!-- Settings strings. -->
-    <string name="pref_units_category">Units</string>
+
+    <!-- Units category. -->
+    <string name="pref_category_units">Units</string>
+
+    <!-- Weight preference. -->
     <string name="pref_weight">Weight</string>
-    <string name="pref_weight_default">Kg</string>
+    <string name="pref_weight_default">kg</string>
+
+    <string-array name="pref_weight_entries">
+        <item>Kilograms (kg)</item>
+        <item>Pounds (lb)</item>
+    </string-array>
+
+    <string-array name="pref_weight_entry_values">
+        <item>kg</item>
+        <item>lb</item>
+    </string-array>
+
+    <!-- Height preference. -->
+    <string name="pref_height">Height</string>
+    <string name="pref_height_default">cm</string>
+
+    <string-array name="pref_height_entries">
+        <item>Centimeters (cm)</item>
+        <item>Feet, Inches (ft, in)</item>
+    </string-array>
+
+    <string-array name="pref_height_entry_values">
+        <item>cm</item>
+        <item>ft, in</item>
+    </string-array>
+
+    <!-- Energy preference. -->
+    <string name="pref_energy">Energy</string>
+    <string name="pref_energy_default">kcal</string>
+
+    <string-array name="pref_energy_entries">
+        <item>Calories (kcal)</item>
+        <item>joules (kJ)</item>
+    </string-array>
+
+    <string-array name="pref_energy_entry_values">
+        <item>kcal</item>
+        <item>kJ</item>
+    </string-array>
+
+    <!-- Liquid preference. -->
+    <string name="pref_liquid">Liquid</string>
+    <string name="pref_liquid_default">ml</string>
+
+    <string-array name="pref_liquid_entries">
+        <item>Milliliters (ml)</item>
+        <item>Ounces (oz)</item>
+    </string-array>
+
+    <string-array name="pref_liquid_entry_values">
+        <item>ml</item>
+        <item>oz</item>
+    </string-array>
+
+    <!-- Other Settings category. -->
+    <string name="pref_category_others">Other Settings</string>
+
+    <!-- Starting Weekday preference. -->
+    <string name="pref_weekday">Week starts on</string>
+    <string name="pref_weekday_default">Monday</string>
+
+    <string-array name="pref_weekday_entries">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
+
+    <!-- Online Storage category. -->
+    <string name="pref_category_online_storage">Online Storage</string>
+
+    <!-- Google Drive preference. -->
+    <string name="pref_gdrive">Google Drive</string>
+    <string name="pref_gdrive_default">Tap to sign in</string>
+
+    <string-array name="pref_gdrive_entries">
+        <item>Coming soon.</item>
+    </string-array>
+
+    <string-array name="pref_gdrive_entry_default">
+        <item>Tap to sign in</item>
+    </string-array>
+
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">Stats Fragment</string>
