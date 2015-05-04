@@ -93,23 +93,11 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         drawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        // Runnable support.
-        // mHandler.post(onDrawerClosedRunnable);
-
         // Set initial fragment.
-        if (findViewById(R.id.fragment_container) != null) {
-            if (savedInstanceState != null) {
-                return;
-            }
+        openFragment(1);
 
-            PlannerFragment plannerFragment = new PlannerFragment();
-            plannerFragment.setArguments(getIntent().getExtras());
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.fragment_container, plannerFragment).commit();
-
-            // Highlight entry on Navigation Drawer.
-            drawerAdapter.toggleSelection(1);
-        }
+        // Highlight corresponding entry on Navigation Drawer.
+        drawerAdapter.toggleSelection(1);
     }
 
     @Override
@@ -160,8 +148,9 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
     }
 
     /**
-     * Open the respective fragment according to the item selected.
-     * If item selected corresponds to the fragment currently shown, don't replace it.
+     * Opens the respective fragment according to the item selected.
+     * If item selected corresponds to the fragment currently shown, don't re-open (replace) it.
+     * Also sets the title on the Toolbar for the corresponding fragment.
      * @param position item clicked by the user on the navigation drawer.
      */
     private void openFragment(int position) {
@@ -171,6 +160,8 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
             case 1:
                 if (!(getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container) instanceof PlannerFragment)) {
+
+                    getSupportActionBar().setTitle(R.string.toolbar_planner);
 
                     PlannerFragment plannerFragment = new PlannerFragment();
                     getSupportFragmentManager()
@@ -184,6 +175,8 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
                 if (!(getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container) instanceof StatsFragment)) {
 
+                    getSupportActionBar().setTitle(R.string.toolbar_stats);
+
                     StatsFragment statsFragment = new StatsFragment();
                     getSupportFragmentManager()
                             .beginTransaction()
@@ -195,6 +188,8 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
             case 3:
                 if (!(getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container) instanceof ProfileFragment)) {
+
+                    getSupportActionBar().setTitle(R.string.toolbar_profile);
 
                     ProfileFragment profileFragment = new ProfileFragment();
                     getSupportFragmentManager()
@@ -208,6 +203,8 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
                 if (!(getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container) instanceof MealsFragment)) {
 
+                    getSupportActionBar().setTitle(R.string.toolbar_meals);
+
                     MealsFragment mealsFragment = new MealsFragment();
                     getSupportFragmentManager()
                             .beginTransaction()
@@ -219,6 +216,8 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
             case 5:
                 if (!(getSupportFragmentManager()
                         .findFragmentById(R.id.fragment_container) instanceof FoodsFragment)) {
+
+                    getSupportActionBar().setTitle(R.string.toolbar_foods);
 
                     FoodsFragment foodsFragment = new FoodsFragment();
                     getSupportFragmentManager()

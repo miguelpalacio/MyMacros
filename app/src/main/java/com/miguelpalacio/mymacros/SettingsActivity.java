@@ -1,7 +1,6 @@
 package com.miguelpalacio.mymacros;
 
 import android.os.Build;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -51,12 +50,17 @@ public class SettingsActivity extends ActionBarActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-/*        int id = item.getItemId();
+        int id = item.getItemId();
 
-        // Back button.
+/*        // Home button. (Behaves differently from hardware back button).
         if (id == android.R.id.home) {
             NavUtils.navigateUpFromSameTask(this);
         }*/
+
+        // Make Home button behave as hardware Back button.
+        if (id == android.R.id.home) {
+            onBackPressed();
+        }
 
         return super.onOptionsItemSelected(item);
     }

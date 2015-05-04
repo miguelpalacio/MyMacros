@@ -8,6 +8,11 @@
     <string name="close_drawer">MyMacros</string>
 
     <!-- Toolbar Titles -->
+    <string name="toolbar_planner">Daily Planner</string>
+    <string name="toolbar_stats">Stats</string>
+    <string name="toolbar_profile">Profile</string>
+    <string name="toolbar_meals">My Meals</string>
+    <string name="toolbar_foods">Foods</string>
     <string name="toolbar_settings">Settings</string>
 
     <!-- Navigation Drawer entries. -->
