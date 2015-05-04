@@ -22,9 +22,7 @@
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingLeft="8dp" />
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

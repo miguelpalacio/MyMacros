@@ -1,6 +1,7 @@
 package com.miguelpalacio.mymacros;
 
 import android.os.Build;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -21,6 +22,10 @@ public class SettingsActivity extends ActionBarActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        getSupportActionBar().setTitle(R.string.toolbar_settings);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Since Status Bar is transparent in styles.xml, set its color.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setStatusBarColor(getResources().getColor(R.color.primary_dark));
@@ -35,8 +40,9 @@ public class SettingsActivity extends ActionBarActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Do not create menu.
-        return false;
+        // Do not inflate any menu.
+        // Returns true to enable the home (back) button on Toolbar.
+        return true;
     }
 
     @Override
@@ -44,12 +50,13 @@ public class SettingsActivity extends ActionBarActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+/*        int id = item.getItemId();
+
+        // Back button.
+        if (id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+        }*/
 
         return super.onOptionsItemSelected(item);
     }

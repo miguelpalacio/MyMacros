@@ -7,6 +7,9 @@
     <string name="open_drawer"></string>
     <string name="close_drawer">MyMacros</string>
 
+    <!-- Toolbar Titles -->
+    <string name="toolbar_settings">Settings</string>
+
     <!-- Navigation Drawer entries. -->
     <string-array name="drawer_labels">
         <item>Daily Planner</item>

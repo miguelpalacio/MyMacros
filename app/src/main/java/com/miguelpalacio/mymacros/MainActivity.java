@@ -130,8 +130,7 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
         // Open the Settings activity.
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         // Open the FAQ activity.
