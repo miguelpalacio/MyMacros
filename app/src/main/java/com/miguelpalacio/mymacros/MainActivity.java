@@ -33,6 +33,8 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
     Runnable onDrawerClosedRunnable;
     Handler mHandler = new Handler();
 
+    int currentFragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,14 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
         // Set default values for preferences.
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+
+        // Load savedInstanceState data.
+        if (savedInstanceState != null) {
+            currentFragment = savedInstanceState.getInt("currentFragment");
+        } else {
+            // Default fragment when activity starts.
+            currentFragment = 1;
+        }
 
         // Toolbar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -93,11 +103,11 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         drawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        // Set initial fragment.
-        openFragment(1);
+        // Open fragment.
+        openFragment(currentFragment);
 
         // Highlight corresponding entry on Navigation Drawer.
-        drawerAdapter.toggleSelection(1);
+        drawerAdapter.toggleSelection(currentFragment);
     }
 
     @Override
@@ -147,6 +157,13 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         drawerLayout.closeDrawers();
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // Save current fragment before phone's re-orientation.
+        outState.putInt("currentFragment", currentFragment);
+    }
+
     /**
      * Opens the respective fragment according to the item selected.
      * If item selected corresponds to the fragment currently shown, don't re-open (replace) it.
@@ -154,6 +171,9 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
      * @param position item clicked by the user on the navigation drawer.
      */
     private void openFragment(int position) {
+
+        // Remember which fragment was opened.
+        currentFragment = position;
 
         switch (position) {
 
