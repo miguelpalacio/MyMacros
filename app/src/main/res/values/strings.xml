@@ -118,6 +118,29 @@
         <item>Tap to sign in</item>
     </string-array>
 
+    <!-- ************************************* -->
+    <!-- Profile strings. -->
+
+    <!-- Your Data category. -->
+    <string name="profile_category_your_data">Your Data</string>
+
+    <!-- Weight preference. -->
+    <string name="profile_weight">Weight</string>
+    <string name="profile_weight_default">kg</string>
+
+    <string-array name="profile_weight_entries">
+        <item>Kilograms (kg)</item>
+        <item>Pounds (lb)</item>
+    </string-array>
+
+    <string-array name="profile_weight_entry_values">
+        <item>kg</item>
+        <item>lb</item>
+    </string-array>
+
+
+
+
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">Stats Fragment</string>

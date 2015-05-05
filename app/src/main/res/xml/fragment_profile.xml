@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Your Data. -->
+    <PreferenceCategory
+        android:title="@string/pref_category_units"
+        android:key="pref_units_settings">
+        <ListPreference
+            android:key="profile_weight"
+            android:title="@string/profile_weight"
+            android:defaultValue="@string/profile_weight_default"
+            android:summary="@string/profile_weight_default"
+            android:entries="@array/profile_weight_entries"
+            android:entryValues="@array/profile_weight_entry_values" />
+    </PreferenceCategory>
+</PreferenceScreen>

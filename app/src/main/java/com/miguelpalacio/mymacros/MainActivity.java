@@ -1,5 +1,7 @@
 package com.miguelpalacio.mymacros;
 
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Handler;
@@ -47,8 +49,8 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         if (savedInstanceState != null) {
             currentFragment = savedInstanceState.getInt("currentFragment");
         } else {
-            // Default fragment when activity starts.
-            currentFragment = 1;
+            // Set to 0 to init in openFragment() when activity starts.
+            currentFragment = 0;
         }
 
         // Toolbar.
@@ -172,80 +174,56 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
      */
     private void openFragment(int position) {
 
-        // Remember which fragment was opened.
-        currentFragment = position;
+        // Select initial fragment upon Activity creation.
+        if (position == 0) {
+            position = 1;
+        }
+
+        // If item selected is the current selected, skip.
+        if (currentFragment == position) {
+            return;
+        } else {
+            // Remember the fragment opened.
+            currentFragment = position;
+        }
+
+        Fragment fragment;
 
         switch (position) {
 
             case 1:
-                if (!(getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container) instanceof PlannerFragment)) {
-
-                    getSupportActionBar().setTitle(R.string.toolbar_planner);
-
-                    PlannerFragment plannerFragment = new PlannerFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, plannerFragment)
-                            .commit();
-                }
+                getSupportActionBar().setTitle(R.string.toolbar_planner);
+                fragment = new PlannerFragment();
                 break;
 
             case 2:
-                if (!(getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container) instanceof StatsFragment)) {
-
-                    getSupportActionBar().setTitle(R.string.toolbar_stats);
-
-                    StatsFragment statsFragment = new StatsFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, statsFragment)
-                            .commit();
-                }
+                getSupportActionBar().setTitle(R.string.toolbar_stats);
+                fragment = new StatsFragment();
                 break;
 
             case 3:
-                if (!(getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container) instanceof ProfileFragment)) {
-
-                    getSupportActionBar().setTitle(R.string.toolbar_profile);
-
-                    ProfileFragment profileFragment = new ProfileFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, profileFragment)
-                            .commit();
-                }
+                getSupportActionBar().setTitle(R.string.toolbar_profile);
+                fragment = new ProfileFragment();
                 break;
 
             case 4:
-                if (!(getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container) instanceof MealsFragment)) {
-
-                    getSupportActionBar().setTitle(R.string.toolbar_meals);
-
-                    MealsFragment mealsFragment = new MealsFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, mealsFragment)
-                            .commit();
-                }
+                getSupportActionBar().setTitle(R.string.toolbar_meals);
+                fragment = new MealsFragment();
                 break;
 
             case 5:
-                if (!(getSupportFragmentManager()
-                        .findFragmentById(R.id.fragment_container) instanceof FoodsFragment)) {
-
-                    getSupportActionBar().setTitle(R.string.toolbar_foods);
-
-                    FoodsFragment foodsFragment = new FoodsFragment();
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.fragment_container, foodsFragment)
-                            .commit();
-                }
+                getSupportActionBar().setTitle(R.string.toolbar_foods);
+                fragment = new FoodsFragment();
                 break;
+
+            default:
+                fragment = new Fragment();
         }
+
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
     }
 }
