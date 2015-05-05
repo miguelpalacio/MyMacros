@@ -168,8 +168,10 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
     /**
      * Opens the respective fragment according to the item selected.
-     * If item selected corresponds to the fragment currently shown, don't re-open (replace) it.
-     * Also sets the title on the Toolbar for the corresponding fragment.
+     * <p>
+     *      If item selected corresponds to the fragment currently shown, don't reopen it.
+     *      Also sets the title on the Toolbar for the corresponding fragment.
+     * </p>
      * @param position item clicked by the user on the navigation drawer.
      */
     private void openFragment(int position) {

@@ -34,7 +34,6 @@ public class SettingsActivity extends ActionBarActivity {
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new SettingsFragment())
                 .commit();
-/*        .replace(android.R.id.content, new SettingsFragment())*/
     }
 
     @Override

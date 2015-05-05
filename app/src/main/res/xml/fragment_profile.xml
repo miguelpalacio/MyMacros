@@ -2,14 +2,49 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Your Data. -->
     <PreferenceCategory
-        android:title="@string/pref_category_units"
-        android:key="pref_units_settings">
+        android:title="@string/profile_category_your_data"
+        android:key="profile_your_data">
         <ListPreference
+            android:key="profile_gender"
+            android:title="@string/profile_gender"
+            android:defaultValue="@string/profile_gender_default"
+            android:summary="@string/profile_gender_summary"
+            android:entries="@array/profile_gender_entries"
+            android:entryValues="@array/profile_gender_entries" />
+        <EditTextPreference
+            android:key="profile_age"
+            android:title="@string/profile_age"
+            android:summary="@string/profile_age_summary"
+            android:defaultValue="@integer/profile_age_default"
+            android:inputType="number" />
+        <EditTextPreference
+            android:key="profile_height"
+            android:title="@string/profile_height"
+            android:summary="@string/profile_height_summary"
+            android:defaultValue="@integer/profile_height_default"
+            android:inputType="number" />
+        <EditTextPreference
             android:key="profile_weight"
             android:title="@string/profile_weight"
-            android:defaultValue="@string/profile_weight_default"
-            android:summary="@string/profile_weight_default"
-            android:entries="@array/profile_weight_entries"
-            android:entryValues="@array/profile_weight_entry_values" />
+            android:summary="@string/profile_weight_summary"
+            android:defaultValue="@integer/profile_height_default"
+            android:inputType="numberDecimal" />
+        <ListPreference
+            android:key="profile_activity_level"
+            android:title="@string/profile_activity_level"
+            android:defaultValue="@string/profile_activity_level_default"
+            android:summary="@string/profile_activity_level_summary"
+            android:entries="@array/profile_activity_level_entries"
+            android:entryValues="@array/profile_activity_level_entry_values" />
+        <Preference
+            android:key="profile_bmr"
+            android:title="@string/profile_bmr"
+            android:editable="false" />
+    </PreferenceCategory>
+
+    <!-- Daily Calorie Needs. -->
+    <PreferenceCategory
+        android:title="@string/profile_category_daily_calorie_needs"
+        android:key="profile_daily_calorie_needs">
     </PreferenceCategory>
 </PreferenceScreen>

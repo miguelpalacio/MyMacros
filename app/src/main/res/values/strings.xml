@@ -119,24 +119,56 @@
     </string-array>
 
     <!-- ************************************* -->
-    <!-- Profile strings. -->
+    <!-- Profile Page strings. -->
 
     <!-- Your Data category. -->
     <string name="profile_category_your_data">Your Data</string>
 
+    <!-- Gender preference. -->
+    <string name="profile_gender">Gender</string>
+    <string name="profile_gender_summary">Tap to set</string>
+    <string-array name="profile_gender_entries">
+        <item>Female</item>
+        <item>Male</item>
+    </string-array>
+    <string name="profile_gender_default">Female</string>
+
+    <!-- Age preference. -->
+    <string name="profile_age">Age</string>
+    <string name="profile_age_summary">Tap to set</string>
+
     <!-- Weight preference. -->
     <string name="profile_weight">Weight</string>
-    <string name="profile_weight_default">kg</string>
+    <string name="profile_weight_summary">Tap to set</string>
 
-    <string-array name="profile_weight_entries">
-        <item>Kilograms (kg)</item>
-        <item>Pounds (lb)</item>
-    </string-array>
+    <!-- Weight preference. -->
+    <string name="profile_height">Height</string>
+    <string name="profile_height_summary">Tap to set</string>
 
-    <string-array name="profile_weight_entry_values">
-        <item>kg</item>
-        <item>lb</item>
+    <!-- Activity Level preference. -->
+    <string name="profile_activity_level">Activity Level</string>
+    <string name="profile_activity_level_summary">Tap to set</string>
+    <string-array name="profile_activity_level_entries">
+        <item>Hyperactive (+2 hours daily)</item>
+        <item>Intense (6&#8211;7 days/week)</item>
+        <item>Normal (3&#8211;5 days/week)</item>
+        <item>Low (1&#8211;2 days/week)</item>
+        <item>Sedentary</item>
     </string-array>
+    <string-array name="profile_activity_level_entry_values">
+        <item>H</item>
+        <item>I</item>
+        <item>N</item>
+        <item>L</item>
+        <item>S</item>
+    </string-array>
+    <string name="profile_activity_level_default">N</string>
+
+    <!-- BMR preference. -->
+    <string name="profile_bmr">Basal Metabolic Rate</string>
+
+    <!-- Daily Calorie Needs category. -->
+    <string name="profile_category_daily_calorie_needs">Your Data</string>
 
 
 
@@ -147,7 +179,6 @@
     <string name="hello_blank_fragment2">Daily Planner Fragment</string>
     <string name="hello_blank_fragment3">My Meals Fragment</string>
     <string name="hello_blank_fragment4">Foods Fragment</string>
-    <string name="hello_blank_fragment5">Profile Fragment</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
