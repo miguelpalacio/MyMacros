@@ -114,13 +114,15 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // TODO: Find something useful for this menu, remove otherwise.
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        return false;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO: see previous TODO.
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -144,8 +146,11 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
     @Override
     public void onDrawerItemClick(final int position) {
         // Highlight selected item.
-        drawerAdapter.clearSelection();
-        drawerAdapter.toggleSelection(position);
+        // Don't set highlighting for Settings and FAQ.
+        if (position < 6) {
+            drawerAdapter.clearSelection();
+            drawerAdapter.toggleSelection(position);
+        }
 
         // Set a runnable that runs once the drawer closes after clicking on item.
         onDrawerClosedRunnable = new Runnable() {
@@ -217,6 +222,13 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
                 getSupportActionBar().setTitle(R.string.toolbar_foods);
                 fragment = new FoodsFragment();
                 break;
+
+            case 7:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return;
+
+            case 8:
+                return;
 
             default:
                 fragment = new Fragment();

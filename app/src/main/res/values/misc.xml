@@ -7,6 +7,8 @@
         <item>@drawable/profile</item>
         <item>@drawable/meals</item>
         <item>@drawable/foods</item>
+        <item>@drawable/settings</item>
+        <item>@drawable/faq</item>
     </array>
     <array name="drawer_icons_selected">
         <item>@drawable/planner_selected</item>

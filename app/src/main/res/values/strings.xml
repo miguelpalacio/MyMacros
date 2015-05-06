@@ -4,7 +4,7 @@
     <string name="action_settings">Settings</string>
     <string name="action_faq">FAQ</string>
 
-    <string name="open_drawer"></string>
+    <string name="open_drawer"> </string>
     <string name="close_drawer">MyMacros</string>
 
     <!-- Toolbar Titles -->
@@ -22,6 +22,8 @@
         <item>Profile</item>
         <item>My Meals</item>
         <item>Foods</item>
+        <item>Settings</item>
+        <item>Help &amp; Feedback</item>
     </string-array>
 
     <!-- ************************************* -->

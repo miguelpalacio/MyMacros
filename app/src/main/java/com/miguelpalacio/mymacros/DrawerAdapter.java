@@ -8,13 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 /**
  * Adapter for the lateral navigation drawer.
  */
 public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
 
-    private static final int TYPE_ROW = 1;
     private static final int TYPE_HEADER = 0;
+    private static final int TYPE_ROW = 1;
+    private static final int TYPE_DIVIDER = 2;
 
     private final String[] labels;
     private final TypedArray icons;
@@ -47,6 +49,7 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
 
         TextView textView;
         ImageView imageView;
+
         TextView name;
         TextView email;
 
@@ -69,7 +72,10 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
                 // Set click listener for the row.
                 this.listener = listener;
                 itemView.setOnClickListener(this);
-            } else {
+            } else if (viewType == TYPE_DIVIDER) {
+                holderId = 2;
+            }
+            else {
                 holderId = 0;
 
                 name = (TextView) itemView.findViewById(R.id.name);
@@ -81,7 +87,6 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
         public void onClick(View v) {
             if (listener != null) {
                 listener.onDrawerItemClick(getAdapterPosition());
-/*                Log.d("Some", "Item clicked at position " + getAdapterPosition());*/
             }
         }
 
@@ -91,11 +96,20 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
         }
     }
 
-    // Inflate either drawer_header.xml or drawer_row.xml in accordance with viewType.
+    // Inflate drawer_header.xml, drawer_row.xml or drawer_divider in accordance with viewType.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        final int layout = viewType == TYPE_ROW ? R.layout.drawer_row : R.layout.drawer_header;
+        //final int layout = viewType == TYPE_ROW ? R.layout.drawer_row : R.layout.drawer_header;
+        final int layout;
+
+        if (viewType == TYPE_ROW) {
+            layout = R.layout.drawer_row;
+        } else if (viewType == TYPE_DIVIDER) {
+            layout = R.layout.drawer_divider;
+        } else {
+            layout = R.layout.drawer_header;
+        }
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
         return new ViewHolder(v, viewType, clickListener);
@@ -106,33 +120,48 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         if (holder.holderId == 1) {
-            holder.textView.setText(labels[position - 1]);
+
+            int pos;
+            if (position < 6) {
+                // Main entries.
+                pos = position - 1;
+            } else {
+                // Settings and FAQ.
+                pos = position - 2;
+            }
+
+            holder.textView.setText(labels[pos]);
 
             // For selected row, highlight background and icon.
-            if (isSelected(position)) {
+            if (isSelected(position) && position < 6) {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg_selected);
-                holder.imageView.setImageDrawable(icons_selected.getDrawable(position - 1));
+                holder.imageView.setImageDrawable(icons_selected.getDrawable(pos));
             } else {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg);
-                holder.imageView.setImageDrawable(icons.getDrawable(position - 1));
+                holder.imageView.setImageDrawable(icons.getDrawable(pos));
             }
-        } else {
+        } else if (holder.holderId == 0) {
+
             holder.name.setText(nameLabel);
             holder.email.setText(emailLabel);
         }
     }
 
-    // Return the number of items present in the list (rows + header).
+    // Return the number of items present in the list (rows + header + divider).
     @Override
     public int getItemCount() {
-        return labels.length + 1;
+        return labels.length + 2;
     }
 
     // Return the type of the view that is being passed.
     @Override
     public int getItemViewType(int position) {
-        if (position == 0)
+        if (position == 0) {
             return TYPE_HEADER;
-        return TYPE_ROW;
+        } else if (position == 6) {
+            return TYPE_DIVIDER;
+        } else {
+            return TYPE_ROW;
+        }
     }
 }
