@@ -44,7 +44,45 @@
 
     <!-- Daily Calorie Needs. -->
     <PreferenceCategory
-        android:title="@string/profile_category_daily_calorie_needs"
-        android:key="profile_daily_calorie_needs">
+        android:title="@string/profile_category_calorie_needs"
+        android:key="profile_calorie_needs">
+        <ListPreference
+            android:key="profile_goal"
+            android:title="@string/profile_goal"
+            android:defaultValue="@string/profile_goal_default"
+            android:summary="@string/profile_goal_summary"
+            android:entries="@array/profile_goal_entries"
+            android:entryValues="@array/profile_goal_entry_values" />
+        <Preference
+            android:key="profile_daily_calorie_need"
+            android:title="@string/profile_daily_calorie_need"
+            android:editable="false" />
+    </PreferenceCategory>
+
+    <!-- Nutrient Distribution. -->
+    <PreferenceCategory
+        android:title="@string/profile_category_nutrient_distribution"
+        android:key="profile_nutrient_distribution">
+        <EditTextPreference
+            android:key="profile_protein"
+            android:title="@string/profile_protein"
+            android:summary="@string/profile_protein_summary"
+            android:defaultValue="@integer/profile_protein_default"
+            android:inputType="number"
+            android:layout="@layout/single_line_preference" />
+        <EditTextPreference
+            android:key="profile_carbohydrates"
+            android:title="@string/profile_carbohydrates"
+            android:summary="@string/profile_carbohydrates_summary"
+            android:defaultValue="@integer/profile_carbohydrates_default"
+            android:inputType="number"
+            android:layout="@layout/single_line_preference" />
+        <EditTextPreference
+            android:key="profile_fat"
+            android:title="@string/profile_fat"
+            android:summary="@string/profile_fat_summary"
+            android:defaultValue="@integer/profile_fat_default"
+            android:inputType="number"
+            android:layout="@layout/single_line_preference" />
     </PreferenceCategory>
 </PreferenceScreen>

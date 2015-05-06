@@ -5,4 +5,7 @@
     <integer name="profile_age_default">0</integer>
     <integer name="profile_height_default">0</integer>
     <integer name="profile_weight_default">0</integer>
+    <integer name="profile_protein_default">20</integer>
+    <integer name="profile_carbohydrates_default">55</integer>
+    <integer name="profile_fat_default">25</integer>
 </resources>

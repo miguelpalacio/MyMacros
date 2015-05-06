@@ -170,10 +170,38 @@
     <string name="profile_bmr">Basal Metabolic Rate</string>
 
     <!-- Daily Calorie Needs category. -->
-    <string name="profile_category_daily_calorie_needs">Your Data</string>
+    <string name="profile_category_calorie_needs">Calorie Needs</string>
 
+    <!-- Goal preference. -->
+    <string name="profile_goal">Goal</string>
+    <string name="profile_goal_summary">Tap to set</string>
+    <string-array name="profile_goal_entries">
+        <item>Fat Loss</item>
+        <item>Bulking</item>
+    </string-array>
+    <string-array name="profile_goal_entry_values">
+        <item>F</item>
+        <item>B</item>
+    </string-array>
+    <string name="profile_goal_default">F</string>
 
+    <!-- Daily Calorie Need preference. -->
+    <string name="profile_daily_calorie_need">Daily Calorie Need</string>
 
+    <!-- Nutrient Distribution category. -->
+    <string name="profile_category_nutrient_distribution">Nutrient Distribution</string>
+
+    <!-- Protein % -->
+    <string name="profile_protein">Protein</string>
+    <string name="profile_protein_summary">20%</string>
+
+    <!-- Carbohydrates % -->
+    <string name="profile_carbohydrates">Protein</string>
+    <string name="profile_carbohydrates_summary">55%</string>
+
+    <!-- Fat % -->
+    <string name="profile_fat">Fat</string>
+    <string name="profile_fat_summary">25%</string>
 
 
 <!-- TODO: Remove or change this placeholder text -->
