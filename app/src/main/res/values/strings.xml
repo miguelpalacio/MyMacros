@@ -188,20 +188,52 @@
     <!-- Daily Calorie Need preference. -->
     <string name="profile_daily_calorie_need">Daily Calorie Need</string>
 
-    <!-- Nutrient Distribution category. -->
-    <string name="profile_category_nutrient_distribution">Nutrient Distribution</string>
+    <!-- Macronutrient Distribution category. -->
+    <string name="profile_category_macronutrient_distribution">Macronutrient Distribution</string>
 
-    <!-- Protein % -->
-    <string name="profile_protein">Protein</string>
-    <string name="profile_protein_summary">20%</string>
+    <!-- Protein % preference. -->
+    <string name="profile_protein_dist">Protein</string>
+    <string name="profile_protein_dist_summary">20%</string>
 
-    <!-- Carbohydrates % -->
-    <string name="profile_carbohydrates">Protein</string>
-    <string name="profile_carbohydrates_summary">55%</string>
+    <!-- Carbohydrates % preference. -->
+    <string name="profile_carbohydrates_dist">Protein</string>
+    <string name="profile_carbohydrates_dist_summary">55%</string>
 
-    <!-- Fat % -->
-    <string name="profile_fat">Fat</string>
-    <string name="profile_fat_summary">25%</string>
+    <!-- Fat % preference. -->
+    <string name="profile_fat_dist">Fat</string>
+    <string name="profile_fat_dist_summary">25%</string>
+
+    <!-- Recommended distribution. -->
+    <string name="profile_recommended_dist">Recommended Distribution</string>
+    <string name="profile_recommended_dist_summary">Tap to see</string>
+
+    <!-- Grams Per Macronutrient category. -->
+    <string name="profile_category_macronutrient_grams">Grams Per Macronutrient</string>
+
+    <!-- Protein gr preference. -->
+    <string name="profile_protein_grams">Protein</string>
+    <string name="profile_protein_grams_summary">132 g/day</string>
+
+    <!-- Carbohydrates gr preference. -->
+    <string name="profile_carbohydrates_grams">Protein</string>
+    <string name="profile_carbohydrates_grams_summary">368 g/day</string>
+
+    <!-- Fat gr preference. -->
+    <string name="profile_fat_grams">Fat</string>
+    <string name="profile_fat_grams_summary">74 g/day</string>
+
+    <!-- Recommended Intakes category. -->
+    <string name="profile_category_recommended_intakes">Recommended Intakes</string>
+
+    <!-- Fiber preference. -->
+    <string name="profile_fiber">Fiber</string>
+    <string name="profile_fiber_summary">38 g/day</string>
+
+    <!-- Water preference. -->
+    <string name="profile_water">Water</string>
+    <string name="profile_water_summary">2366 ml/day</string>
+
+
 
 
 <!-- TODO: Remove or change this placeholder text -->

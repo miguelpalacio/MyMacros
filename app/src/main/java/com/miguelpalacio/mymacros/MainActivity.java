@@ -189,9 +189,6 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         // If item selected is the current selected, skip.
         if (currentFragment == position) {
             return;
-        } else {
-            // Remember the fragment opened.
-            currentFragment = position;
         }
 
         Fragment fragment;
@@ -233,6 +230,9 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
             default:
                 fragment = new Fragment();
         }
+
+        // Remember the fragment opened. Neither Settings nor FAQ are taken remembered.
+        currentFragment = position;
 
         getFragmentManager()
                 .beginTransaction()
