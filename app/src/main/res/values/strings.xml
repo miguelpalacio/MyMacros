@@ -133,7 +133,12 @@
         <item>Female</item>
         <item>Male</item>
     </string-array>
-    <string name="profile_gender_default">Female</string>
+    <string-array name="profile_gender_entry_values">
+        <item>Female</item>
+        <item>Male</item>
+        <item>ND</item>
+    </string-array>
+    <string name="profile_gender_default">ND</string>
 
     <!-- Age preference. -->
     <string name="profile_age">Age</string>
@@ -158,13 +163,14 @@
         <item>Sedentary</item>
     </string-array>
     <string-array name="profile_activity_level_entry_values">
-        <item>H</item>
-        <item>I</item>
-        <item>N</item>
-        <item>L</item>
-        <item>S</item>
+        <item>Hyperactive</item>
+        <item>Intense</item>
+        <item>Normal</item>
+        <item>Low</item>
+        <item>Sedentary</item>
+        <item>ND</item>
     </string-array>
-    <string name="profile_activity_level_default">N</string>
+    <string name="profile_activity_level_default">ND</string>
 
     <!-- BMR preference. -->
     <string name="profile_bmr">Basal Metabolic Rate</string>
@@ -180,10 +186,11 @@
         <item>Bulking</item>
     </string-array>
     <string-array name="profile_goal_entry_values">
-        <item>F</item>
-        <item>B</item>
+        <item>Fat Loss</item>
+        <item>Bulking</item>
+        <item>ND</item>
     </string-array>
-    <string name="profile_goal_default">F</string>
+    <string name="profile_goal_default">ND</string>
 
     <!-- Daily Calorie Need preference. -->
     <string name="profile_daily_calorie_need">Daily Calorie Need</string>

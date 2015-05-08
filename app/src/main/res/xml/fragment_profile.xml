@@ -10,7 +10,7 @@
             android:defaultValue="@string/profile_gender_default"
             android:summary="@string/profile_gender_summary"
             android:entries="@array/profile_gender_entries"
-            android:entryValues="@array/profile_gender_entries" />
+            android:entryValues="@array/profile_gender_entry_values" />
         <EditTextPreference
             android:key="profile_age"
             android:title="@string/profile_age"
