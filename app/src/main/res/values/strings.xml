@@ -241,7 +241,11 @@
     <string name="profile_water_summary">2366 ml/day</string>
 
 
+    <!-- ************************************* -->
+    <!-- Custom Two-Input Preference. -->
 
+    <string name="button_positive">OK</string>
+    <string name="button_negative">Cancel</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">Stats Fragment</string>
