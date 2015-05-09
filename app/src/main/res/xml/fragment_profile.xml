@@ -38,7 +38,9 @@
             android:entryValues="@array/profile_activity_level_entry_values" />
         <com.miguelpalacio.mymacros.TwoInputPreference
             android:summary="My custom preference"
-            android:title="My Dialog" />
+            android:key="profile_height_pounds"
+            android:title="Height"
+            android:defaultValue="5-2"/>
         <Preference
             android:key="profile_bmr"
             android:title="@string/profile_bmr"

@@ -13,32 +13,13 @@
     <EditText
         android:id="@+id/input_one"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/input_two"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-
-<!--    <LinearLayout
-        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/two_input_button_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Cancel" />
-
-        <Button
-            android:id="@+id/two_input_button_ok"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="OK" />
-
-    </LinearLayout>-->
-
+        android:inputType="number" />
 
 </LinearLayout>
