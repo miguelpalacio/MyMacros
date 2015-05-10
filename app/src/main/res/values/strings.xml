@@ -242,8 +242,11 @@
     <!-- *************************************************************************************** -->
     <!-- Misc Strings. -->
 
+    <!-- TwoInputPreference Strings. -->
     <string name="button_positive">OK</string>
     <string name="button_negative">Cancel</string>
+    <string name="two_input_pref_label_one">ft</string>
+    <string name="two_input_pref_label_two">in</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment1">Stats Fragment</string>

@@ -1,9 +1,10 @@
 <resources>
 
+    <!-- Inherited theme applied for API version < 21. -->
     <style name="AppTheme" parent="AppTheme.Base">
     </style>
 
-    <!-- Base theme applied for API version < 21. -->
+    <!-- Base theme.  -->
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
 
         <!-- Toolbar will be used instead of ActionBar. -->
@@ -12,5 +13,9 @@
         <item name="colorAccent">@color/accent</item>
         <item name="windowActionModeOverlay">true</item>
 
+        <item name="android:editTextStyle">@style/EditTextStyle</item>
+
     </style>
+
+    <style name="EditTextStyle" parent="Widget.AppCompat.EditText" />
 </resources>

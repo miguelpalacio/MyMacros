@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 /**
@@ -29,19 +28,15 @@ public class TwoInputPreference extends DialogPreference {
     private EditText inputOne;
     private EditText inputTwo;
 
-    InputMethodManager imm;
-
     // Class constructor.
     public TwoInputPreference(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        super(context, attrs, R.style.Platform_AppCompat_Dialog);
 
         setDialogLayoutResource(R.layout.preference_two_input);
         setPositiveButtonText(R.string.button_positive);
         setNegativeButtonText(R.string.button_negative);
 
         setDialogIcon(null);
-
-        imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     @Override
@@ -74,19 +69,6 @@ public class TwoInputPreference extends DialogPreference {
         inputTwo = (EditText) view.findViewById(R.id.input_two);
     }
 
-    /**
-     * Called when the user selects either the positive or negative button.
-     * @param positiveResult true if positive button selected, false otherwise.
-     */
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        // When the user selects "OK", persist the new values.
-        if (positiveResult) {
-            // Parse the two inputs into a single string by using a '-' as separator.
-            persistString(inputOne.getText() + "-" + inputTwo.getText());
-        }
-    }
-
     protected void showDialog(Bundle state) {
         super.showDialog(state);
 
@@ -103,6 +85,28 @@ public class TwoInputPreference extends DialogPreference {
         // Show soft keyboard.
         getDialog().getWindow().
                 setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
+
+    /**
+     * Called when the user selects either the positive or negative button.
+     * @param positiveResult true if positive button selected, false otherwise.
+     */
+    @Override
+    protected void onDialogClosed(boolean positiveResult) {
+        // When the user selects "OK", persist the new values.
+        if (positiveResult) {
+            String i1 = inputOne.getText().toString();
+            String i2 = inputTwo.getText().toString();
+
+            // Check for empty strings. If empty, set the default value.
+            if (i1.equals(""))
+                i1 = "0";
+            if (i2.equals(""))
+                i2 = "0";
+
+            // Parse the two inputs into a single string by using a '-' as separator.
+            persistString(i1 + "-" + i2);
+        }
     }
 
 }
