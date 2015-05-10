@@ -26,7 +26,7 @@
         <item>Help &amp; Feedback</item>
     </string-array>
 
-    <!-- ************************************* -->
+    <!-- *************************************************************************************** -->
     <!-- Settings strings. -->
 
     <!-- Units category. -->
@@ -120,13 +120,13 @@
         <item>Tap to sign in</item>
     </string-array>
 
-    <!-- ************************************* -->
+    <!-- *************************************************************************************** -->
     <!-- Profile Page strings. -->
 
     <!-- Your Data category. -->
     <string name="profile_category_your_data">Your Data</string>
 
-    <!-- Gender preference. -->
+    <!-- Gender. -->
     <string name="profile_gender">Gender</string>
     <string name="profile_gender_summary">Tap to set</string>
     <string-array name="profile_gender_entries">
@@ -136,23 +136,24 @@
     <string-array name="profile_gender_entry_values">
         <item>Female</item>
         <item>Male</item>
-        <item>ND</item>
     </string-array>
     <string name="profile_gender_default">ND</string>
 
-    <!-- Age preference. -->
+    <!-- Age. -->
     <string name="profile_age">Age</string>
     <string name="profile_age_summary">Tap to set</string>
 
-    <!-- Weight preference. -->
+    <!-- Weight. -->
     <string name="profile_weight">Weight</string>
     <string name="profile_weight_summary">Tap to set</string>
 
-    <!-- Weight preference. -->
+    <!-- Height. -->
     <string name="profile_height">Height</string>
     <string name="profile_height_summary">Tap to set</string>
+    <!-- for English units. -->
+    <string name="profile_height_eng_default">0-0</string>
 
-    <!-- Activity Level preference. -->
+    <!-- Activity Level. -->
     <string name="profile_activity_level">Activity Level</string>
     <string name="profile_activity_level_summary">Tap to set</string>
     <string-array name="profile_activity_level_entries">
@@ -168,17 +169,16 @@
         <item>Normal</item>
         <item>Low</item>
         <item>Sedentary</item>
-        <item>ND</item>
     </string-array>
     <string name="profile_activity_level_default">ND</string>
 
-    <!-- BMR preference. -->
+    <!-- BMR. -->
     <string name="profile_bmr">Basal Metabolic Rate</string>
 
     <!-- Daily Calorie Needs category. -->
     <string name="profile_category_calorie_needs">Calorie Needs</string>
 
-    <!-- Goal preference. -->
+    <!-- Goal. -->
     <string name="profile_goal">Goal</string>
     <string name="profile_goal_summary">Tap to set</string>
     <string-array name="profile_goal_entries">
@@ -188,7 +188,6 @@
     <string-array name="profile_goal_entry_values">
         <item>Fat Loss</item>
         <item>Bulking</item>
-        <item>ND</item>
     </string-array>
     <string name="profile_goal_default">ND</string>
 
@@ -240,9 +239,8 @@
     <string name="profile_water">Water</string>
     <string name="profile_water_summary">2366 ml/day</string>
 
-
-    <!-- ************************************* -->
-    <!-- Custom Two-Input Preference. -->
+    <!-- *************************************************************************************** -->
+    <!-- Misc Strings. -->
 
     <string name="button_positive">OK</string>
     <string name="button_negative">Cancel</string>
@@ -258,5 +256,6 @@
     <string name="title_activity_settings">SettingsActivity</string>
 
     <string name="hello_world">Hello world!</string>
+
 
 </resources>

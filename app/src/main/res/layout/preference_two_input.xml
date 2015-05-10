@@ -4,11 +4,11 @@
     android:layout_height="200dp"
     android:orientation="vertical" >
 
-   <TextView
+<!--   <TextView
        android:id="@+id/two_input_title"
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
-       android:text="Two input title" />
+       android:text="Two input title" />-->
 
     <EditText
         android:id="@+id/input_one"

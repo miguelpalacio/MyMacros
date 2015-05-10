@@ -23,6 +23,11 @@
             android:summary="@string/profile_height_summary"
             android:defaultValue="@integer/profile_height_default"
             android:inputType="number" />
+        <com.miguelpalacio.mymacros.TwoInputPreference
+            android:key="profile_height_eng"
+            android:title="@string/profile_height"
+            android:summary="@string/profile_height_summary"
+            android:defaultValue="@string/profile_height_eng_default" />
         <EditTextPreference
             android:key="profile_weight"
             android:title="@string/profile_weight"
@@ -36,11 +41,6 @@
             android:summary="@string/profile_activity_level_summary"
             android:entries="@array/profile_activity_level_entries"
             android:entryValues="@array/profile_activity_level_entry_values" />
-        <com.miguelpalacio.mymacros.TwoInputPreference
-            android:summary="My custom preference"
-            android:key="profile_height_pounds"
-            android:title="Height"
-            android:defaultValue="5-2"/>
         <Preference
             android:key="profile_bmr"
             android:title="@string/profile_bmr"

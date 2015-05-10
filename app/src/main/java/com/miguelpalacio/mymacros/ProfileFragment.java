@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
 
 import java.text.DecimalFormat;
 
@@ -19,9 +21,11 @@ import java.text.DecimalFormat;
  */
 public class ProfileFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
+    public static final String KEY_YOUR_DATA = "profile_your_data";
     public static final String KEY_GENDER = "profile_gender";
     public static final String KEY_AGE = "profile_age";
     public static final String KEY_HEIGHT = "profile_height";
+    public static final String KEY_HEIGHT_ENG = "profile_height_eng";
     public static final String KEY_WEIGHT = "profile_weight";
     public static final String KEY_ACTIVITY_LEVEL = "profile_activity_level";
     public static final String KEY_BMR = "profile_bmr";
@@ -29,18 +33,24 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private static final String defaultSummary1 = "Tap to set";
     private static final String defaultSummary2 = "Waiting for data";
 
+    private SharedPreferences sharedPref;
+
+    private PreferenceCategory yourData;
     private ListPreference gender;
     private EditTextPreference age;
     private EditTextPreference height;
+    private TwoInputPreference heightEng;
     private EditTextPreference weight;
     private ListPreference activityLevel;
     private Preference bmr;
 
-    private SharedPreferences sharedPref;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Load the SharedPreferences file.
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // Load the profile data from an XML resource.
         addPreferencesFromResource(R.xml.fragment_profile);
@@ -48,15 +58,14 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         // Get references to the profile data.
 
         // Your Data.
-        gender = (ListPreference) getPreferenceScreen().findPreference(KEY_GENDER);
-        age = (EditTextPreference) getPreferenceScreen().findPreference(KEY_AGE);
-        height = (EditTextPreference) getPreferenceScreen().findPreference(KEY_HEIGHT);
-        weight = (EditTextPreference) getPreferenceScreen().findPreference(KEY_WEIGHT);
-        activityLevel = (ListPreference) getPreferenceScreen().findPreference(KEY_ACTIVITY_LEVEL);
-        bmr = getPreferenceScreen().findPreference(KEY_BMR);
-
-        // Load the SharedPreferences file.
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        yourData = (PreferenceCategory) findPreference(KEY_YOUR_DATA);
+        gender = (ListPreference) findPreference(KEY_GENDER);
+        age = (EditTextPreference) findPreference(KEY_AGE);
+        height = (EditTextPreference) findPreference(KEY_HEIGHT);
+        heightEng = (TwoInputPreference) findPreference(KEY_HEIGHT_ENG);
+        weight = (EditTextPreference) findPreference(KEY_WEIGHT);
+        activityLevel = (ListPreference) findPreference(KEY_ACTIVITY_LEVEL);
+        bmr = findPreference(KEY_BMR);
     }
 
     @Override
@@ -65,11 +74,17 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Set up the initial summary for the preferences.
 
-        gender.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_GENDER, ""));
-
         setPreferenceSummary(gender, KEY_GENDER, defaultSummary1, "ND");
         setPreferenceSummary(age, KEY_AGE, defaultSummary1, "0");
-        setPreferenceSummary(height, KEY_HEIGHT, defaultSummary1, "0");
+
+        PreferenceCategory mCategory = (PreferenceCategory) findPreference("profile_your_data");
+        if (sharedPref.getString(SettingsFragment.KEY_HEIGHT, "").equals("cm")) {
+            setPreferenceSummary(height, KEY_HEIGHT, defaultSummary1, "0");
+            getPreferenceScreen().removePreference(heightEng);
+        } else {
+            //screen.removePreference(height);
+            mCategory.removePreference(height);
+        }
         //setPreferenceSummary(weight, KEY_WEIGHT, defaultSummary1, "0");
         setWeightSummary();
         setPreferenceSummary(activityLevel, KEY_ACTIVITY_LEVEL, defaultSummary1, "ND");
