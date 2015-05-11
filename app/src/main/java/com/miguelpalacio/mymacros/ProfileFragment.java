@@ -39,7 +39,6 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private ListPreference gender;
     private EditTextPreference age;
     private EditTextPreference height;
-    private TwoInputPreference heightEng;
     private EditTextPreference weight;
     private ListPreference activityLevel;
     private Preference bmr;
@@ -62,7 +61,6 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         gender = (ListPreference) findPreference(KEY_GENDER);
         age = (EditTextPreference) findPreference(KEY_AGE);
         height = (EditTextPreference) findPreference(KEY_HEIGHT);
-        heightEng = (TwoInputPreference) findPreference(KEY_HEIGHT_ENG);
         weight = (EditTextPreference) findPreference(KEY_WEIGHT);
         activityLevel = (ListPreference) findPreference(KEY_ACTIVITY_LEVEL);
         bmr = findPreference(KEY_BMR);
@@ -80,7 +78,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         PreferenceCategory mCategory = (PreferenceCategory) findPreference("profile_your_data");
         if (sharedPref.getString(SettingsFragment.KEY_HEIGHT, "").equals("cm")) {
             setPreferenceSummary(height, KEY_HEIGHT, defaultSummary1, "0");
-            getPreferenceScreen().removePreference(heightEng);
+            //getPreferenceScreen().removePreference(heightEng);
         } else {
             //screen.removePreference(height);
             mCategory.removePreference(height);

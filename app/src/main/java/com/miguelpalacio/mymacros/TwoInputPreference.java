@@ -1,14 +1,19 @@
 package com.miguelpalacio.mymacros;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
+import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 /**
  * TwoInputPreference class.
@@ -25,14 +30,15 @@ public class TwoInputPreference extends DialogPreference {
 
     private String mCurrentValue;
 
+    //private LinearLayout layout;
     private EditText inputOne;
     private EditText inputTwo;
 
     // Class constructor.
     public TwoInputPreference(Context context, AttributeSet attrs) {
-        super(context, attrs, R.style.Platform_AppCompat_Dialog);
+        super(context, attrs);
 
-        setDialogLayoutResource(R.layout.preference_two_input);
+        //setDialogLayoutResource(R.layout.preference_two_input);
         setPositiveButtonText(R.string.button_positive);
         setNegativeButtonText(R.string.button_negative);
 
@@ -61,13 +67,95 @@ public class TwoInputPreference extends DialogPreference {
         }
     }
 
+    /**
+     * Creates the layout with the two EditText views corresponding to the inputs.
+     * @return The view to be shown in the dialog.
+     */
     @Override
+    protected View onCreateDialogView() {
+
+        // Create main LinearLayout.
+        LinearLayout mainLayout = new LinearLayout(getContext());
+
+        // Create children Layouts (they will hold both a TextView and an EditText).
+        LinearLayout childLayout1 = new LinearLayout(getContext());
+        LinearLayout childLayout2 = new LinearLayout(getContext());
+
+        // Create the EditText widgets.
+        inputOne = new EditText(getContext());
+        inputTwo = new EditText(getContext());
+
+        // Create the TextView widgets.
+        TextView labelOne = new TextView(getContext());
+        TextView labelTwo = new TextView(getContext());
+
+        // Define parameters for the layouts and views.
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 1);
+
+        LinearLayout.LayoutParams params3 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, 0);
+
+        // Set views' parameters.
+        mainLayout.setLayoutParams(params1);
+
+        childLayout1.setLayoutParams(params2);
+        childLayout2.setLayoutParams(params2);
+
+        inputOne.setLayoutParams(params2);
+        inputTwo.setLayoutParams(params2);
+
+        labelOne.setLayoutParams(params3);
+        labelTwo.setLayoutParams(params3);
+
+        // Set layouts' orientation.
+        mainLayout.setOrientation(LinearLayout.VERTICAL);
+        childLayout1.setOrientation(LinearLayout.HORIZONTAL);
+        childLayout2.setOrientation(LinearLayout.HORIZONTAL);
+
+        // Convert from dip to their equivalent px (needed for coherent padding).
+        Resources r = getContext().getResources();
+        int px4dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, r.getDisplayMetrics());
+        int px8dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, r.getDisplayMetrics());
+
+        // Set specific properties of each view.
+        childLayout1.setPadding(px8dp, px8dp, px8dp, 0);
+        childLayout2.setPadding(px8dp, px8dp, px8dp, 0);
+
+        labelOne.setPadding(px8dp, 0, px8dp, 0);
+        labelTwo.setPadding(px8dp, 0, px8dp, 0);
+        labelOne.setText(R.string.two_input_pref_label_one);
+        labelTwo.setText(R.string.two_input_pref_label_two);
+        labelOne.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
+        labelTwo.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
+
+        inputOne.setInputType(InputType.TYPE_CLASS_NUMBER);
+        inputTwo.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        // Add views to the layouts.
+        childLayout1.addView(inputOne);
+        childLayout1.addView(labelOne);
+        childLayout2.addView(inputTwo);
+        childLayout2.addView(labelTwo);
+        mainLayout.addView(childLayout1);
+        mainLayout.addView(childLayout2);
+
+        return mainLayout;
+    }
+
+/*    @Override
     protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
 
-        inputOne = (EditText) view.findViewById(R.id.input_one);
-        inputTwo = (EditText) view.findViewById(R.id.input_two);
-    }
+*//*        inputOne = (EditText) view.findViewById(R.id.input_one);
+        inputTwo = (EditText) view.findViewById(R.id.input_two);*//*
+    }*/
 
     protected void showDialog(Bundle state) {
         super.showDialog(state);
