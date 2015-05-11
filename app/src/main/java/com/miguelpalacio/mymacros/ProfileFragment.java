@@ -8,7 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.preference.PreferenceScreen;
+import android.support.annotation.NonNull;
 
 import java.text.DecimalFormat;
 
@@ -39,6 +39,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private ListPreference gender;
     private EditTextPreference age;
     private EditTextPreference height;
+    private TwoInputPreference heightEng;
     private EditTextPreference weight;
     private ListPreference activityLevel;
     private Preference bmr;
@@ -48,7 +49,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Load the SharedPreferences file.
+        // Load the global SharedPreferences file.
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // Load the profile data from an XML resource.
@@ -61,6 +62,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         gender = (ListPreference) findPreference(KEY_GENDER);
         age = (EditTextPreference) findPreference(KEY_AGE);
         height = (EditTextPreference) findPreference(KEY_HEIGHT);
+        heightEng = (TwoInputPreference) findPreference(KEY_HEIGHT_ENG);
         weight = (EditTextPreference) findPreference(KEY_WEIGHT);
         activityLevel = (ListPreference) findPreference(KEY_ACTIVITY_LEVEL);
         bmr = findPreference(KEY_BMR);
@@ -70,21 +72,15 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     public void onResume() {
         super.onResume();
 
-        // Set up the initial summary for the preferences.
+        // Set up the initial summary for the items.
 
         setPreferenceSummary(gender, KEY_GENDER, defaultSummary1, "ND");
-        setPreferenceSummary(age, KEY_AGE, defaultSummary1, "0");
+        //setPreferenceSummary(age, KEY_AGE, defaultSummary1, "0");
 
-        PreferenceCategory mCategory = (PreferenceCategory) findPreference("profile_your_data");
-        if (sharedPref.getString(SettingsFragment.KEY_HEIGHT, "").equals("cm")) {
-            setPreferenceSummary(height, KEY_HEIGHT, defaultSummary1, "0");
-            //getPreferenceScreen().removePreference(heightEng);
-        } else {
-            //screen.removePreference(height);
-            mCategory.removePreference(height);
-        }
-        //setPreferenceSummary(weight, KEY_WEIGHT, defaultSummary1, "0");
+        setAgeSummary();
+        setHeightSummary();
         setWeightSummary();
+
         setPreferenceSummary(activityLevel, KEY_ACTIVITY_LEVEL, defaultSummary1, "ND");
         setPreferenceSummary(bmr, KEY_BMR, defaultSummary2, "");
 
@@ -137,6 +133,21 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         }
     }
 
+    private void setListPrefSummary(ListPreference p, String key, String defVal) {
+        if (p.getValue().equals(defVal)) {
+            p.setSummary(defaultSummary1);
+        } else {
+            p.setSummary(sharedPref.getString(key, ""));
+        }
+    }
+
+    private void setAgeSummary() {
+        if (age.getText().equals("0")) {
+            age.setSummary(defaultSummary1);
+        } else {
+            age.setSummary(sharedPref.getString(KEY_AGE, ""));
+        }
+    }
 
     private void setWeightSummary() {
 
@@ -146,7 +157,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        double w = Double.parseDouble(sharedPref.getString(KEY_WEIGHT, ""));
+        double w = Double.parseDouble(getPreferenceScreen().getSharedPreferences().getString(KEY_WEIGHT, ""));
         String units = sharedPref.getString(SettingsFragment.KEY_WEIGHT, "");
 
         if (units.equals("lb")) {
@@ -158,19 +169,27 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
     private void setHeightSummary() {
 
-        if (height.getText().equals("0")) {
-            height.setSummary(defaultSummary1);
-            return;
-        }
-
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        double h = Double.parseDouble(sharedPref.getString(KEY_HEIGHT, ""));
         String units = sharedPref.getString(SettingsFragment.KEY_HEIGHT, "");
 
-        if (units.equals("ft")) {
-            weight.setSummary(decimalFormat.format(h) + " lb");
+        if (units.equals("cm")) {
+            yourData.addPreference(height);
+            yourData.removePreference(heightEng);
+            if (height.getText().equals("0")) {
+                height.setSummary(defaultSummary1);
+            } else {
+                height.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_HEIGHT, "") + " cm");
+            }
         } else {
-            weight.setSummary(decimalFormat.format(h) + " kg");
+            yourData.addPreference(heightEng);
+            yourData.removePreference(height);
+            String value = sharedPref.getString(KEY_HEIGHT_ENG, "");
+/*            if (heightEng.getValue().equals("0-0")) {*/
+            if (value.equals("0-0")) {
+                heightEng.setSummary(defaultSummary1);
+            } else {
+                String[] values = value.split("-");
+                heightEng.setSummary(values[0] + " ft, " + values[1] + " in");
+            }
         }
     }
 

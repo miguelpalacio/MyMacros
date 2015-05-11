@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.text.DecimalFormat;
 
@@ -29,8 +28,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private ListPreference weekday;
     private ListPreference gdrive;
 
-    private SharedPreferences sharedPref;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,32 +36,35 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         addPreferencesFromResource(R.xml.preferences);
 
         // Get a reference to the preferences.
-        weight = (ListPreference) getPreferenceScreen().findPreference(KEY_WEIGHT);
-        height = (ListPreference) getPreferenceScreen().findPreference(KEY_HEIGHT);
-        energy = (ListPreference) getPreferenceScreen().findPreference(KEY_ENERGY);
-        liquid = (ListPreference) getPreferenceScreen().findPreference(KEY_LIQUID);
-        weekday = (ListPreference) getPreferenceScreen().findPreference(KEY_WEEKDAY);
-        gdrive = (ListPreference) getPreferenceScreen().findPreference(KEY_GDRIVE);
+        weight = (ListPreference) findPreference(KEY_WEIGHT);
+        height = (ListPreference) findPreference(KEY_HEIGHT);
+        energy = (ListPreference) findPreference(KEY_ENERGY);
+        liquid = (ListPreference) findPreference(KEY_LIQUID);
+        weekday = (ListPreference) findPreference(KEY_WEEKDAY);
+        gdrive = (ListPreference) findPreference(KEY_GDRIVE);
 
-        // Load the SharedPreferences file.
-        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+/*        // Load the SharedPreferences file.
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());*/
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        // Get PreferenceScreen's SharedPreferences.
+        SharedPreferences screenPreferences = getPreferenceScreen().getSharedPreferences();
+
         // Set up the initial summary for the preferences.
         // Second parameter empty: default values are defined on preferences.xml.
-        weight.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_WEIGHT, ""));
-        height.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_HEIGHT, ""));
-        energy.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_ENERGY, ""));
-        liquid.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_LIQUID, ""));
-        weekday.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_WEEKDAY, ""));
-        gdrive.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_GDRIVE, ""));
+        weight.setSummary(screenPreferences.getString(KEY_WEIGHT, ""));
+        height.setSummary(screenPreferences.getString(KEY_HEIGHT, ""));
+        energy.setSummary(screenPreferences.getString(KEY_ENERGY, ""));
+        liquid.setSummary(screenPreferences.getString(KEY_LIQUID, ""));
+        weekday.setSummary(screenPreferences.getString(KEY_WEEKDAY, ""));
+        gdrive.setSummary(screenPreferences.getString(KEY_GDRIVE, ""));
 
         // Set up a listener whenever a key changes.
-        getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+        screenPreferences.registerOnSharedPreferenceChangeListener(this);
     }
 
     @Override
@@ -77,31 +77,43 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key.equals(KEY_WEIGHT)) {
+        switch (key) {
 
-            double w = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_WEIGHT,""));
-            DecimalFormat decimalFormat = new DecimalFormat("#.#");
-            SharedPreferences.Editor editor = sharedPreferences.edit();
+            case KEY_WEIGHT:
+                double w = Double.parseDouble(sharedPreferences.getString(ProfileFragment.KEY_WEIGHT, ""));
+                DecimalFormat decimalFormat = new DecimalFormat("#.#");
+                SharedPreferences.Editor editor = sharedPreferences.edit();
 
-            String units = getPreferenceScreen().getSharedPreferences().getString(key, "");
-            w = units.equals("lb") ? w * 2.2046 : w / 2.2046;
+                // Update the current value for weight in user profile data.
+                String units = sharedPreferences.getString(key, "");
+                w = units.equals("lb") ? w * 2.2046 : w / 2.2046;
+                editor.putString(ProfileFragment.KEY_WEIGHT, decimalFormat.format(w)).apply();
 
-            // Commit change to profile data.
-            editor.putString(ProfileFragment.KEY_WEIGHT, decimalFormat.format(w)).apply();
+                // Change summary.
+                weight.setSummary(units);
+                break;
 
-            // Change summary.
-            weight.setSummary(getPreferenceScreen().getSharedPreferences().getString(key, ""));
+            case KEY_HEIGHT:
+                height.setSummary(sharedPreferences.getString(key, ""));
+                break;
 
-        } else if (key.equals(KEY_HEIGHT)) {
-            height.setSummary(getPreferenceScreen().getSharedPreferences().getString(key, ""));
-        } else if (key.equals(KEY_ENERGY)) {
-            energy.setSummary(getPreferenceScreen().getSharedPreferences().getString(key, ""));
-        } else if (key.equals(KEY_LIQUID)) {
-            liquid.setSummary(getPreferenceScreen().getSharedPreferences().getString(key, ""));
-        } else if (key.equals(KEY_WEEKDAY)) {
-            weekday.setSummary(getPreferenceScreen().getSharedPreferences().getString(key, ""));
-        } else if (key.equals(KEY_GDRIVE)) {
-            gdrive.setSummary(getPreferenceScreen().getSharedPreferences().getString(key, ""));
+            case KEY_ENERGY:
+                energy.setSummary(sharedPreferences.getString(key, ""));
+                break;
+
+            case KEY_LIQUID:
+                liquid.setSummary(sharedPreferences.getString(key, ""));
+                break;
+
+            case KEY_WEEKDAY:
+                weekday.setSummary(sharedPreferences.getString(key, ""));
+                break;
+
+            case KEY_GDRIVE:
+                gdrive.setSummary(sharedPreferences.getString(key, ""));
+                break;
+
+            default: break;
         }
     }
 

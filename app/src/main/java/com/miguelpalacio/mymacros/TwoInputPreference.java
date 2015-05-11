@@ -5,10 +5,10 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.preference.DialogPreference;
-import android.support.annotation.NonNull;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -38,7 +38,7 @@ public class TwoInputPreference extends DialogPreference {
     public TwoInputPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        //setDialogLayoutResource(R.layout.preference_two_input);
+/*        setDialogLayoutResource(R.layout.preference_two_input);*/
         setPositiveButtonText(R.string.button_positive);
         setNegativeButtonText(R.string.button_negative);
 
@@ -121,7 +121,6 @@ public class TwoInputPreference extends DialogPreference {
 
         // Convert from dip to their equivalent px (needed for coherent padding).
         Resources r = getContext().getResources();
-        int px4dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 4, r.getDisplayMetrics());
         int px8dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, r.getDisplayMetrics());
 
         // Set specific properties of each view.
@@ -130,6 +129,8 @@ public class TwoInputPreference extends DialogPreference {
 
         labelOne.setPadding(px8dp, 0, px8dp, 0);
         labelTwo.setPadding(px8dp, 0, px8dp, 0);
+        labelOne.setGravity(Gravity.CENTER);
+        labelTwo.setGravity(Gravity.CENTER);
         labelOne.setText(R.string.two_input_pref_label_one);
         labelTwo.setText(R.string.two_input_pref_label_two);
         labelOne.setTextAppearance(getContext(), android.R.style.TextAppearance_Medium);
@@ -196,5 +197,24 @@ public class TwoInputPreference extends DialogPreference {
             persistString(i1 + "-" + i2);
         }
     }
+/*
+    public String getValue() {
+        return getPersistedString("0-0");
+    }
 
+    public void setValue(String s) {
+
+        String[] values = s.split("-");
+        String i1 = values[0];
+        String i2 = values[0];
+
+        // Check for empty strings. If empty, set the default value.
+        if (i1.equals(""))
+            i1 = "0";
+        if (i2.equals(""))
+            i2 = "0";
+
+        // Parse the two inputs into a single string by using a '-' as separator.
+        persistString(i1 + "-" + i2);
+    }*/
 }

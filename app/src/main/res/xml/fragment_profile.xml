@@ -25,25 +25,9 @@
             android:inputType="number" />
         <com.miguelpalacio.mymacros.TwoInputPreference
             android:key="profile_height_eng"
-            android:title="Height custom"
+            android:title="@string/profile_height"
             android:summary="@string/profile_height_summary"
             android:defaultValue="@string/profile_height_eng_default" />
-
-        <PreferenceScreen
-            android:key="profile_height_eng"
-            android:title="@string/profile_height"
-            android:persistent="false">
-            <EditTextPreference
-                android:key="profile_height_ft"
-                android:title="ft"
-                android:defaultValue="0"
-                android:inputType="number" />
-            <EditTextPreference
-                android:key="profile_height_in"
-                android:title="in"
-                android:defaultValue="0"
-                android:inputType="number" />
-        </PreferenceScreen>
         <EditTextPreference
             android:key="profile_weight"
             android:title="@string/profile_weight"
