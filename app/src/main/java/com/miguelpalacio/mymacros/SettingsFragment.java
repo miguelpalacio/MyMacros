@@ -28,6 +28,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private ListPreference weekday;
     private ListPreference gdrive;
 
+    private SharedPreferences sharedPref;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +45,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         weekday = (ListPreference) findPreference(KEY_WEEKDAY);
         gdrive = (ListPreference) findPreference(KEY_GDRIVE);
 
-/*        // Load the SharedPreferences file.
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());*/
+        // Load the SharedPreferences file.
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
     @Override
@@ -77,23 +79,46 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
         switch (key) {
 
             case KEY_WEIGHT:
-                double w = Double.parseDouble(sharedPreferences.getString(ProfileFragment.KEY_WEIGHT, ""));
+                double w = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_WEIGHT, "0"));
                 DecimalFormat decimalFormat = new DecimalFormat("#.#");
-                SharedPreferences.Editor editor = sharedPreferences.edit();
+                SharedPreferences.Editor wEditor = sharedPref.edit();
 
                 // Update the current value for weight in user profile data.
-                String units = sharedPreferences.getString(key, "");
-                w = units.equals("lb") ? w * 2.2046 : w / 2.2046;
-                editor.putString(ProfileFragment.KEY_WEIGHT, decimalFormat.format(w)).apply();
+                String wUnits = sharedPref.getString(key, "");
+                w = wUnits.equals("lb") ? w*2.2046 : w/2.2046;
+                wEditor.putString(ProfileFragment.KEY_WEIGHT, decimalFormat.format(w)).apply();
 
-                // Change summary.
-                weight.setSummary(units);
+                // Change preference summary.
+                weight.setSummary(wUnits);
                 break;
 
             case KEY_HEIGHT:
+                double h;
+                SharedPreferences.Editor hEditor = sharedPreferences.edit();
+                String hUnits = sharedPreferences.getString(key, "");
+
+                // Update the current value for height in user profile data.
+                if (hUnits.equals("cm")) {
+                    String[] values = sharedPreferences.
+                            getString(ProfileFragment.KEY_HEIGHT_ENG, "0-0").split("-");
+                    // Convert from ft-in into cm.
+                    h = Double.parseDouble(values[0])*12 + Double.parseDouble(values[1]);
+                    int cm = (int) (h/0.3937);
+                    hEditor.putString(ProfileFragment.KEY_HEIGHT, "" + cm).apply();
+                } else {
+                    h = Double.parseDouble(sharedPreferences.getString(ProfileFragment.KEY_HEIGHT, "0"));
+                    // Convert from cm into ft-in.
+                    h = h*0.3937/12;
+                    int ft = (int) h;
+                    int in = (int) Math.round((h - ft) * 12);
+                    hEditor.putString(ProfileFragment.KEY_HEIGHT_ENG, ft + "-" + in).apply();
+                }
+
+                // Change preference summary.
                 height.setSummary(sharedPreferences.getString(key, ""));
                 break;
 

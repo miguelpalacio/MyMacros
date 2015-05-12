@@ -183,7 +183,12 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
         // Select initial fragment upon Activity creation.
         if (position == 0) {
-            position = 1;
+            // If it's first time opening the app, open ProfileFragment.
+/*            if (PreferenceManager.getDefaultSharedPreferences(this). != null) {*/
+                position = 1;
+/*            } else {
+                position = 3;
+            }*/
         }
 
         // If item selected is the current selected, skip.

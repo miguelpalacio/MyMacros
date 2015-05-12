@@ -197,12 +197,11 @@ public class TwoInputPreference extends DialogPreference {
             persistString(i1 + "-" + i2);
         }
     }
-/*
     public String getValue() {
         return getPersistedString("0-0");
     }
 
-    public void setValue(String s) {
+/*    public void setValue(String s) {
 
         String[] values = s.split("-");
         String i1 = values[0];

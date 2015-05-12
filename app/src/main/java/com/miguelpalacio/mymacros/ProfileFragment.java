@@ -8,7 +8,6 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 
 import java.text.DecimalFormat;
 
@@ -27,8 +26,11 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     public static final String KEY_HEIGHT = "profile_height";
     public static final String KEY_HEIGHT_ENG = "profile_height_eng";
     public static final String KEY_WEIGHT = "profile_weight";
-    public static final String KEY_ACTIVITY_LEVEL = "profile_activity_level";
     public static final String KEY_BMR = "profile_bmr";
+
+    public static final String KEY_ACTIVITY_LEVEL = "profile_activity_level";
+    public static final String KEY_GOAL = "profile_goal";
+    public static final String KEY_CALORIE_NEED = "profile_daily_calorie_need";
 
     private static final String defaultSummary1 = "Tap to set";
     private static final String defaultSummary2 = "Waiting for data";
@@ -41,9 +43,15 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private EditTextPreference height;
     private TwoInputPreference heightEng;
     private EditTextPreference weight;
-    private ListPreference activityLevel;
     private Preference bmr;
 
+    private ListPreference activityLevel;
+    private ListPreference goal;
+    private Preference calorieNeed;
+
+    String unitsHeight;
+    String unitsWeight;
+    String unitsEnergy;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,25 +72,36 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         height = (EditTextPreference) findPreference(KEY_HEIGHT);
         heightEng = (TwoInputPreference) findPreference(KEY_HEIGHT_ENG);
         weight = (EditTextPreference) findPreference(KEY_WEIGHT);
-        activityLevel = (ListPreference) findPreference(KEY_ACTIVITY_LEVEL);
         bmr = findPreference(KEY_BMR);
+
+        // Calorie needs.
+        activityLevel = (ListPreference) findPreference(KEY_ACTIVITY_LEVEL);
+        goal = (ListPreference) findPreference(KEY_GOAL);
+        calorieNeed = findPreference(KEY_CALORIE_NEED);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // Set up the initial summary for the items.
+        // Load current measurement units.
+        unitsHeight = sharedPref.getString(SettingsFragment.KEY_HEIGHT, "");
+        unitsWeight = sharedPref.getString(SettingsFragment.KEY_WEIGHT, "");
+        unitsEnergy = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
 
-        setPreferenceSummary(gender, KEY_GENDER, defaultSummary1, "ND");
-        //setPreferenceSummary(age, KEY_AGE, defaultSummary1, "0");
+        // Set dialog title for items that depend on units.
+        height.setDialogTitle("Height (" + unitsHeight + ")");
+        weight.setDialogTitle("Weight (" + unitsWeight + ")");
 
+        // Set up items' summary.
+        setListPrefSummary(gender, KEY_GENDER, "ND");
         setAgeSummary();
         setHeightSummary();
         setWeightSummary();
+        setBmrSummary();
 
-        setPreferenceSummary(activityLevel, KEY_ACTIVITY_LEVEL, defaultSummary1, "ND");
-        setPreferenceSummary(bmr, KEY_BMR, defaultSummary2, "");
+        setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
+        setListPrefSummary(goal, KEY_GOAL, "ND");
 
         // Set up a listener whenever a key changes.
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
@@ -98,41 +117,48 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        switch (key) {
 
-        if (key.equals(KEY_WEIGHT)) {
-            setWeightSummary();
+            case KEY_GENDER:
+                setListPrefSummary(gender, KEY_GENDER, "ND");
+                setBmrSummary();
+                break;
+
+            case KEY_AGE:
+                setAgeSummary();
+                setBmrSummary();
+                break;
+
+            case KEY_HEIGHT:
+                setHeightSummary();
+                setBmrSummary();
+                break;
+
+            case KEY_HEIGHT_ENG:
+                setHeightSummary();
+                setBmrSummary();
+                break;
+
+            case KEY_WEIGHT:
+                setWeightSummary();
+                setBmrSummary();
+                // TODO: store weight changes.
+                break;
+
+            case KEY_ACTIVITY_LEVEL:
+                setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
+                setBmrSummary();
+                break;
+
+            case KEY_GOAL:
+                setListPrefSummary(goal, KEY_GOAL, "ND");
+                setBmrSummary();
+                break;
+
         }
     }
 
-    /**
-     * Sets the summary for the given preference.
-     *
-     * @param pref The preference whose summary will be set.
-     * @param key The reference to the preference.
-     * @param summary A string with the summary to be set.
-     * @param defVal A string with the default value of the preference.
-     */
-    private void setPreferenceSummary(Preference pref, String key, String summary, String defVal) {
-
-        if (pref instanceof EditTextPreference) {
-            EditTextPreference p = (EditTextPreference) pref;
-            if (p.getText().equals(defVal)) {
-                p.setSummary(summary);
-            } else {
-                p.setSummary(getPreferenceScreen().getSharedPreferences().getString(key, ""));
-            }
-        } else if (pref instanceof ListPreference) {
-            ListPreference p = (ListPreference) pref;
-            if (p.getValue().equals(defVal)) {
-                p.setSummary(summary);
-            } else {
-                p.setSummary(getPreferenceScreen().getSharedPreferences().getString(key, ""));
-            }
-        } else {
-            pref.setSummary(summary);
-        }
-    }
-
+    // Set summary for a generic ListPreference.
     private void setListPrefSummary(ListPreference p, String key, String defVal) {
         if (p.getValue().equals(defVal)) {
             p.setSummary(defaultSummary1);
@@ -149,29 +175,9 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         }
     }
 
-    private void setWeightSummary() {
-
-        if (weight.getText().equals("0")) {
-            weight.setSummary(defaultSummary1);
-            return;
-        }
-
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        double w = Double.parseDouble(getPreferenceScreen().getSharedPreferences().getString(KEY_WEIGHT, ""));
-        String units = sharedPref.getString(SettingsFragment.KEY_WEIGHT, "");
-
-        if (units.equals("lb")) {
-            weight.setSummary(decimalFormat.format(w) + " lb");
-        } else {
-            weight.setSummary(decimalFormat.format(w) + " kg");
-        }
-    }
-
     private void setHeightSummary() {
 
-        String units = sharedPref.getString(SettingsFragment.KEY_HEIGHT, "");
-
-        if (units.equals("cm")) {
+        if (unitsHeight.equals("cm")) {
             yourData.addPreference(height);
             yourData.removePreference(heightEng);
             if (height.getText().equals("0")) {
@@ -182,8 +188,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         } else {
             yourData.addPreference(heightEng);
             yourData.removePreference(height);
-            String value = sharedPref.getString(KEY_HEIGHT_ENG, "");
-/*            if (heightEng.getValue().equals("0-0")) {*/
+            String value = heightEng.getValue();
             if (value.equals("0-0")) {
                 heightEng.setSummary(defaultSummary1);
             } else {
@@ -193,12 +198,124 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         }
     }
 
-    private void calculateBMR() {
+    private void setWeightSummary() {
 
-        // Check for missing data.
-        if (gender.getValue().equals("ND") || age.getText().equals("0") || height.getText().equals("0") ||
-                weight.getText().equals("0") || activityLevel.getValue().equals("ND")) {
+        if (weight.getText().equals("0")) {
+            weight.setSummary(defaultSummary1);
             return;
         }
+
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+        double w = Double.parseDouble(getPreferenceScreen().getSharedPreferences().getString(KEY_WEIGHT, ""));
+
+        if (unitsWeight.equals("kg")) {
+            weight.setSummary(decimalFormat.format(w) + " kg");
+        } else {
+            weight.setSummary(decimalFormat.format(w) + " lb");
+        }
+    }
+
+    private void setBmrSummary() {
+
+        // If there's missing data, set the default summary.
+        if (gender.getValue().equals("ND") || age.getText().equals("0") ||
+                (height.getText().equals("0") &&  heightEng.getValue().equals("0-0")) ||
+                weight.getText().equals("0")) {
+            bmr.setSummary(defaultSummary2);
+            return;
+        }
+
+        int a;
+        double h;
+        double w;
+        double BMR;
+
+        // Get age.
+        a = Integer.parseInt(age.getText());
+
+        // Get height and convert it (if necessary) into cm.
+        if (unitsHeight.equals("cm")) {
+            h = Double.parseDouble(sharedPref.getString(KEY_HEIGHT, ""));
+        } else {
+            String[] values = sharedPref.getString(KEY_HEIGHT_ENG, "").split("-");
+            h = (Double.parseDouble(values[0])*12.0+Double.parseDouble(values[1]))/0.39370;
+        }
+
+        // Get weight and convert it (if necessary) into kg.
+        if (unitsWeight.equals("kg")) {
+            w = Double.parseDouble(sharedPref.getString(KEY_WEIGHT, ""));
+        } else {
+            w = (Double.parseDouble(sharedPref.getString(KEY_WEIGHT, "")))/2.2046;
+        }
+
+        // See formula for BMR: http://www.bmi-calculator.net/bmr-calculator/bmr-formula.php
+        // Calculate BMR for women.
+        if (gender.getValue().equals("Female")) {
+            BMR = 655 + 9.6*w + 1.8*h - 4.7*a;
+        }
+        // Calculate BMR for men.
+        else {
+            BMR = 66 + 13.7*w + 5*h - 6.8*a;
+        }
+
+        // Set summary.
+        if (unitsEnergy.equals("kJ")) {
+            BMR = BMR * 4.184;
+        }
+        bmr.setSummary((int) BMR + " " + unitsEnergy);
+
+        // Set Daily Calorie Need summary.
+        setCalorieNeedSummary(BMR);
+
+
+/*        SharedPreferences.Editor hEditor = sharedPref.edit();
+        hEditor.putString(KEY_BMR, "" + (int) BMR);*/
+    }
+
+    private void setCalorieNeedSummary(double BMR) {
+
+        // If there's missing data, set the default summary.
+        if (activityLevel.getValue().equals("ND") || goal.equals("ND")) {
+            calorieNeed.setSummary(defaultSummary2);
+            return;
+        }
+
+        double TDEE;
+
+        // See formula for TDEE: http://www.bmi-calculator.net/bmr-calculator/harris-benedict-equation/
+        switch (activityLevel.getValue()) {
+
+            case "Hyperactive":
+                TDEE = BMR * 1.9;
+                break;
+            case "Intense":
+                TDEE = BMR * 1.725;
+                break;
+            case "Normal":
+                TDEE = BMR * 1.55;
+                break;
+            case "Low":
+                TDEE = BMR * 1.375;
+                break;
+            case "Sedentary":
+                TDEE = BMR * 1.2;
+                break;
+            default:
+                TDEE = 0;
+                break;
+        }
+
+        // Calculate calorie intake according to goal.
+        if (goal.getValue().equals("Fat Loss")) {
+            TDEE = TDEE * 0.8;
+        } else if (goal.getValue().equals("Bulking")) {
+            TDEE = TDEE * 1.2;
+        }
+
+        // Set value in local variable.
+
+
+        // Set summary.
+        calorieNeed.setSummary((int) TDEE + " " + unitsEnergy);
     }
 }

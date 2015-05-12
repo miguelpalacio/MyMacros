@@ -146,10 +146,12 @@
     <!-- Weight. -->
     <string name="profile_weight">Weight</string>
     <string name="profile_weight_summary">Tap to set</string>
+    <string name="profile_weight_default">0</string>
 
     <!-- Height. -->
     <string name="profile_height">Height</string>
     <string name="profile_height_summary">Tap to set</string>
+    <string name="profile_height_default">0</string>
     <!-- for English units. -->
     <string name="profile_height_eng_default">0-0</string>
 
@@ -183,10 +185,12 @@
     <string name="profile_goal_summary">Tap to set</string>
     <string-array name="profile_goal_entries">
         <item>Fat Loss</item>
+        <item>Maintenance</item>
         <item>Bulking</item>
     </string-array>
     <string-array name="profile_goal_entry_values">
         <item>Fat Loss</item>
+        <item>Maintenance</item>
         <item>Bulking</item>
     </string-array>
     <string name="profile_goal_default">ND</string>

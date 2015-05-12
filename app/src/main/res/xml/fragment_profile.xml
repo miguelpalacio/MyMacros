@@ -34,6 +34,16 @@
             android:summary="@string/profile_weight_summary"
             android:defaultValue="@integer/profile_height_default"
             android:inputType="numberDecimal" />
+        <Preference
+            android:key="profile_bmr"
+            android:title="@string/profile_bmr"
+            android:editable="true" />
+    </PreferenceCategory>
+
+    <!-- Daily Calorie Needs. -->
+    <PreferenceCategory
+        android:title="@string/profile_category_calorie_needs"
+        android:key="profile_calorie_needs">
         <ListPreference
             android:key="profile_activity_level"
             android:title="@string/profile_activity_level"
@@ -41,16 +51,6 @@
             android:summary="@string/profile_activity_level_summary"
             android:entries="@array/profile_activity_level_entries"
             android:entryValues="@array/profile_activity_level_entry_values" />
-        <Preference
-            android:key="profile_bmr"
-            android:title="@string/profile_bmr"
-            android:editable="false" />
-    </PreferenceCategory>
-
-    <!-- Daily Calorie Needs. -->
-    <PreferenceCategory
-        android:title="@string/profile_category_calorie_needs"
-        android:key="profile_calorie_needs">
         <ListPreference
             android:key="profile_goal"
             android:title="@string/profile_goal"
@@ -93,7 +93,7 @@
             android:key="profile_recommended_dist"
             android:title="@string/profile_recommended_dist"
             android:summary="@string/profile_recommended_dist_summary"
-            android:editable="false" />
+            android:selectable="true" />
     </PreferenceCategory>
 
     <!-- Grams Per Macronutrient. -->
