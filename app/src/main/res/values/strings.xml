@@ -155,6 +155,13 @@
     <!-- for English units. -->
     <string name="profile_height_eng_default">0-0</string>
 
+    <!-- BMR. -->
+    <string name="profile_bmr">Basal Metabolic Rate</string>
+    <string name="profile_bmr_default">0</string>
+
+    <!-- Daily Calorie Needs category. -->
+    <string name="profile_category_calorie_needs">Calorie Needs</string>
+
     <!-- Activity Level. -->
     <string name="profile_activity_level">Activity Level</string>
     <string name="profile_activity_level_summary">Tap to set</string>
@@ -174,12 +181,6 @@
     </string-array>
     <string name="profile_activity_level_default">ND</string>
 
-    <!-- BMR. -->
-    <string name="profile_bmr">Basal Metabolic Rate</string>
-
-    <!-- Daily Calorie Needs category. -->
-    <string name="profile_category_calorie_needs">Calorie Needs</string>
-
     <!-- Goal. -->
     <string name="profile_goal">Goal</string>
     <string name="profile_goal_summary">Tap to set</string>
@@ -197,21 +198,25 @@
 
     <!-- Daily Calorie Need preference. -->
     <string name="profile_daily_calorie_need">Daily Calorie Need</string>
+    <string name="profile_daily_calorie_need_default">0</string>
 
     <!-- Macronutrient Distribution category. -->
     <string name="profile_category_macronutrient_distribution">Macronutrient Distribution</string>
 
     <!-- Protein % preference. -->
-    <string name="profile_protein_dist">Protein</string>
-    <string name="profile_protein_dist_summary">20%</string>
+    <string name="profile_protein_rate">Protein</string>
+    <string name="profile_protein_rate_default">25</string>
+    <string name="profile_protein_rate_summary">20%</string>
 
     <!-- Carbohydrates % preference. -->
-    <string name="profile_carbohydrates_dist">Protein</string>
-    <string name="profile_carbohydrates_dist_summary">55%</string>
+    <string name="profile_carbohydrates_rate">Carbohydrates</string>
+    <string name="profile_carbohydrates_rate_default">45</string>
+    <string name="profile_carbohydrates_rate_summary">55%</string>
 
     <!-- Fat % preference. -->
-    <string name="profile_fat_dist">Fat</string>
-    <string name="profile_fat_dist_summary">25%</string>
+    <string name="profile_fat_rate">Fat</string>
+    <string name="profile_fat_rate_default">30</string>
+    <string name="profile_fat_rate_summary">25%</string>
 
     <!-- Recommended distribution. -->
     <string name="profile_recommended_dist">Recommended Distribution</string>
@@ -225,7 +230,7 @@
     <string name="profile_protein_grams_summary">132 g/day</string>
 
     <!-- Carbohydrates gr preference. -->
-    <string name="profile_carbohydrates_grams">Protein</string>
+    <string name="profile_carbohydrates_grams">Carbohydrates</string>
     <string name="profile_carbohydrates_grams_summary">368 g/day</string>
 
     <!-- Fat gr preference. -->
@@ -237,10 +242,12 @@
 
     <!-- Fiber preference. -->
     <string name="profile_fiber">Fiber</string>
+    <string name="profile_fiber_default">0</string>
     <string name="profile_fiber_summary">38 g/day</string>
 
     <!-- Water preference. -->
     <string name="profile_water">Water</string>
+    <string name="profile_water_default">0</string>
     <string name="profile_water_summary">2366 ml/day</string>
 
     <!-- *************************************************************************************** -->

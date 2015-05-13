@@ -37,6 +37,7 @@
         <Preference
             android:key="profile_bmr"
             android:title="@string/profile_bmr"
+            android:defaultValue="@string/profile_bmr_default"
             android:editable="true" />
     </PreferenceCategory>
 
@@ -61,7 +62,8 @@
         <Preference
             android:key="profile_daily_calorie_need"
             android:title="@string/profile_daily_calorie_need"
-            android:editable="false" />
+            android:defaultValue="@string/profile_daily_calorie_need_default"
+            android:editable="true" />
     </PreferenceCategory>
 
     <!-- Macronutrient Distribution. -->
@@ -69,24 +71,24 @@
         android:title="@string/profile_category_macronutrient_distribution"
         android:key="profile_macronutrient_distribution">
         <EditTextPreference
-            android:key="profile_protein"
-            android:title="@string/profile_protein_dist"
-            android:summary="@string/profile_protein_dist_summary"
+            android:key="profile_protein_rate"
+            android:title="@string/profile_protein_rate"
+            android:summary="@string/profile_protein_rate_summary"
             android:defaultValue="@integer/profile_protein_dist_default"
             android:inputType="number"
             android:layout="@layout/single_line_preference" />
         <EditTextPreference
-            android:key="profile_carbohydrates"
-            android:title="@string/profile_carbohydrates_dist"
-            android:summary="@string/profile_carbohydrates_dist_summary"
+            android:key="profile_carbohydrates_rate"
+            android:title="@string/profile_carbohydrates_rate"
+            android:summary="@string/profile_carbohydrates_rate_summary"
             android:defaultValue="@integer/profile_carbohydrates_dist_default"
             android:inputType="number"
             android:layout="@layout/single_line_preference" />
         <EditTextPreference
-            android:key="profile_fat"
-            android:title="@string/profile_fat_dist"
-            android:summary="@string/profile_fat_dist_summary"
-            android:defaultValue="@integer/profile_fat_dist_default"
+            android:key="profile_fat_rate"
+            android:title="@string/profile_fat_rate"
+            android:summary="@string/profile_fat_rate_summary"
+            android:defaultValue="@string/profile_fat_rate_default"
             android:inputType="number"
             android:layout="@layout/single_line_preference" />
         <Preference
@@ -101,21 +103,21 @@
         android:title="@string/profile_category_macronutrient_grams"
         android:key="profile_macronutrient_grams">
         <EditTextPreference
-            android:key="profile_protein"
+            android:key="profile_protein_grams"
             android:title="@string/profile_protein_grams"
             android:summary="@string/profile_protein_grams_summary"
             android:defaultValue="@integer/profile_protein_grams_default"
             android:inputType="number"
             android:layout="@layout/single_line_preference" />
         <EditTextPreference
-            android:key="profile_carbohydrates"
+            android:key="profile_carbohydrates_grams"
             android:title="@string/profile_carbohydrates_grams"
             android:summary="@string/profile_carbohydrates_grams_summary"
             android:defaultValue="@integer/profile_carbohydrates_grams_default"
             android:inputType="number"
             android:layout="@layout/single_line_preference" />
         <EditTextPreference
-            android:key="profile_fat"
+            android:key="profile_fat_grams"
             android:title="@string/profile_fat_grams"
             android:summary="@string/profile_fat_grams_summary"
             android:defaultValue="@integer/profile_fat_grams_default"
@@ -127,19 +129,17 @@
     <PreferenceCategory
         android:title="@string/profile_category_recommended_intakes"
         android:key="profile_recommended_intakes">
-        <EditTextPreference
+        <Preference
             android:key="profile_fiber"
             android:title="@string/profile_fiber"
             android:summary="@string/profile_fiber_summary"
-            android:defaultValue="@integer/profile_fiber_default"
-            android:inputType="number"
+            android:defaultValue="@string/profile_fiber_default"
             android:layout="@layout/single_line_preference" />
-        <EditTextPreference
+        <Preference
             android:key="profile_water"
             android:title="@string/profile_water"
             android:summary="@string/profile_water_summary"
-            android:defaultValue="@integer/profile_water_default"
-            android:inputType="number"
+            android:defaultValue="@string/profile_water_default"
             android:layout="@layout/single_line_preference" />
     </PreferenceCategory>
 </PreferenceScreen>

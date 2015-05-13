@@ -8,6 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import java.text.DecimalFormat;
 
@@ -32,6 +33,17 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     public static final String KEY_GOAL = "profile_goal";
     public static final String KEY_CALORIE_NEED = "profile_daily_calorie_need";
 
+    public static final String KEY_PROTEIN_RATE = "profile_protein_rate";
+    public static final String KEY_CARBOS_RATE = "profile_carbohydrates_rate";
+    public static final String KEY_FAT_RATE = "profile_fat_rate";
+
+    public static final String KEY_PROTEIN_GRAMS = "profile_protein_grams";
+    public static final String KEY_CARBOS_GRAMS = "profile_carbohydrates_grams";
+    public static final String KEY_FAT_GRAMS = "profile_fat_grams";
+
+    public static final String KEY_FIBER = "profile_fiber";
+    public static final String KEY_WATER = "profile_water";
+
     private static final String defaultSummary1 = "Tap to set";
     private static final String defaultSummary2 = "Waiting for data";
 
@@ -49,9 +61,21 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private ListPreference goal;
     private Preference calorieNeed;
 
+    private EditTextPreference proteinRate;
+    private EditTextPreference carbosRate;
+    private EditTextPreference fatRate;
+
+    private EditTextPreference proteinGrams;
+    private EditTextPreference carbosGrams;
+    private EditTextPreference fatGrams;
+
+    private Preference fiber;
+    private Preference water;
+
     String unitsHeight;
     String unitsWeight;
     String unitsEnergy;
+    String unitsLiquid;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,6 +102,21 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         activityLevel = (ListPreference) findPreference(KEY_ACTIVITY_LEVEL);
         goal = (ListPreference) findPreference(KEY_GOAL);
         calorieNeed = findPreference(KEY_CALORIE_NEED);
+
+        // Macronutrient distribution.
+        proteinRate = (EditTextPreference) findPreference(KEY_PROTEIN_RATE);
+        carbosRate = (EditTextPreference) findPreference(KEY_CARBOS_RATE);
+        fatRate = (EditTextPreference) findPreference(KEY_FAT_RATE);
+
+        // Macronutrient intake.
+        proteinGrams = (EditTextPreference) findPreference(KEY_PROTEIN_GRAMS);
+        carbosGrams = (EditTextPreference) findPreference(KEY_CARBOS_GRAMS);
+        fatGrams = (EditTextPreference) findPreference(KEY_FAT_GRAMS);
+
+        // Recommended intakes.
+        fiber = findPreference(KEY_FIBER);
+        water = findPreference(KEY_WATER);
+
     }
 
     @Override
@@ -88,6 +127,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         unitsHeight = sharedPref.getString(SettingsFragment.KEY_HEIGHT, "");
         unitsWeight = sharedPref.getString(SettingsFragment.KEY_WEIGHT, "");
         unitsEnergy = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
+        unitsLiquid = sharedPref.getString(SettingsFragment.KEY_LIQUID, "");
 
         // Set dialog title for items that depend on units.
         height.setDialogTitle("Height (" + unitsHeight + ")");
@@ -102,6 +142,10 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
         setListPrefSummary(goal, KEY_GOAL, "ND");
+
+        setMacroSummary(proteinRate, " %");
+        setMacroSummary(carbosRate, " %");
+        setMacroSummary(fatRate, " %");
 
         // Set up a listener whenever a key changes.
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
@@ -142,6 +186,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             case KEY_WEIGHT:
                 setWeightSummary();
                 setBmrSummary();
+                setRecommendedIntakes();
                 // TODO: store weight changes.
                 break;
 
@@ -153,6 +198,24 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             case KEY_GOAL:
                 setListPrefSummary(goal, KEY_GOAL, "ND");
                 setBmrSummary();
+                break;
+
+            case KEY_PROTEIN_RATE:
+                setMacroSummary(proteinRate, " %");
+                checkMacroDistribution();
+                setMacroIntake();
+                break;
+
+            case KEY_CARBOS_RATE:
+                setMacroSummary(carbosRate, " %");
+                checkMacroDistribution();
+                setMacroIntake();
+                break;
+
+            case KEY_FAT_RATE:
+                setMacroSummary(fatRate, " %");
+                checkMacroDistribution();
+                setMacroIntake();
                 break;
 
         }
@@ -264,12 +327,15 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         }
         bmr.setSummary((int) BMR + " " + unitsEnergy);
 
+        // Store the bmr preference value.
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_BMR, "" + BMR).apply();
+
         // Set Daily Calorie Need summary.
         setCalorieNeedSummary(BMR);
 
-
-/*        SharedPreferences.Editor hEditor = sharedPref.edit();
-        hEditor.putString(KEY_BMR, "" + (int) BMR);*/
+        // Set macronutrient intakes' summaries.
+        setMacroIntake();
     }
 
     private void setCalorieNeedSummary(double BMR) {
@@ -305,17 +371,97 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
         }
 
-        // Calculate calorie intake according to goal.
+        // Calculate the calorie intake according to goal.
         if (goal.getValue().equals("Fat Loss")) {
             TDEE = TDEE * 0.8;
         } else if (goal.getValue().equals("Bulking")) {
             TDEE = TDEE * 1.2;
         }
 
-        // Set value in local variable.
-
+        // Store the bmr preference value.
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_CALORIE_NEED, "" + TDEE).apply();
 
         // Set summary.
         calorieNeed.setSummary((int) TDEE + " " + unitsEnergy);
+    }
+
+    public void setMacroSummary(EditTextPreference p, String macroUnits) {
+        p.setSummary(p.getText() + macroUnits);
+    }
+
+    // Check that proteinRate + carbosRate + fatRate = 100.
+    public void checkMacroDistribution() {
+        if (Integer.parseInt(proteinRate.getText()) + Integer.parseInt(carbosRate.getText()) +
+                Integer.parseInt(fatRate.getText()) != 100) {
+            Toast.makeText(getActivity(), "Macronutrient ditribution is not 100 %", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "Correct distribution", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void setMacroIntake() {
+
+        double TDEE;
+        if (sharedPref.getString(KEY_CALORIE_NEED, "0") != null) {
+            TDEE = Double.parseDouble(sharedPref.getString(KEY_CALORIE_NEED, "0"));
+        } else {
+            return;
+        }
+
+        double protein, carbos, fat;
+
+        protein = TDEE * Double.parseDouble(proteinRate.getText()) / 100;
+        carbos = TDEE * Double.parseDouble(carbosRate.getText()) / 100;
+        fat = TDEE * Double.parseDouble(fatRate.getText()) / 100;
+
+        // Convert to kcal if needed.
+        if (unitsEnergy.equals("kJ")) {
+            protein = protein / 4.184;
+            carbos = carbos / 4.184;
+            fat = fat / 4.184;
+        }
+
+        // Calculate grams per macro. 1 gram of protein/carbos = 4 kcal, 1 gram of fat = 9 kcal.
+        protein = protein / 4;
+        carbos = carbos / 4;
+        fat = fat / 9;
+
+        // Store the values in SharedPreferences.
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_PROTEIN_GRAMS, "" + (int) protein).apply();
+        editor.putString(KEY_CARBOS_GRAMS, "" + (int) carbos).apply();
+        editor.putString(KEY_FAT_GRAMS, "" + (int) fat).apply();
+
+        // Set the summaries.
+        proteinGrams.setSummary((int) protein + " g/day");
+        carbosGrams.setSummary((int) carbos + " g/day");
+        fatGrams.setSummary((int) fat + " g/day");
+    }
+
+    // Set recommended fiber and water intakes.
+    public void setRecommendedIntakes() {
+
+        // Calculate water intake. Formula taken from:
+        // http://www.myfooddiary.com/resources/ask_the_expert/recommended_daily_water_intake.asp
+        double w = Double.parseDouble(sharedPref.getString(KEY_WEIGHT, ""));
+        if (unitsWeight.equals("kg")) {
+            w = w * 2.2046;
+        }
+
+        // Get water intake in ounces.
+        w = w * 0.5;
+
+        // If units = ml, convert it.
+        if (unitsLiquid.equals("ml")) {
+            w = w / 0.033814;
+        }
+
+        // Store value in SharedPreferences.
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_WATER, "" + (int) w);
+
+        // Set summary.
+        water.setSummary((int) w + " " + unitsLiquid);
     }
 }
