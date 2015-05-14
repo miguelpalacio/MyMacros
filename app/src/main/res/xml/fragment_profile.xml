@@ -105,21 +105,18 @@
         <EditTextPreference
             android:key="profile_protein_grams"
             android:title="@string/profile_protein_grams"
-            android:summary="@string/profile_protein_grams_summary"
             android:defaultValue="@integer/profile_protein_grams_default"
             android:inputType="number"
             android:layout="@layout/single_line_preference" />
         <EditTextPreference
             android:key="profile_carbohydrates_grams"
             android:title="@string/profile_carbohydrates_grams"
-            android:summary="@string/profile_carbohydrates_grams_summary"
             android:defaultValue="@integer/profile_carbohydrates_grams_default"
             android:inputType="number"
             android:layout="@layout/single_line_preference" />
         <EditTextPreference
             android:key="profile_fat_grams"
             android:title="@string/profile_fat_grams"
-            android:summary="@string/profile_fat_grams_summary"
             android:defaultValue="@integer/profile_fat_grams_default"
             android:inputType="number"
             android:layout="@layout/single_line_preference" />
@@ -132,13 +129,11 @@
         <Preference
             android:key="profile_fiber"
             android:title="@string/profile_fiber"
-            android:summary="@string/profile_fiber_summary"
             android:defaultValue="@string/profile_fiber_default"
             android:layout="@layout/single_line_preference" />
         <Preference
             android:key="profile_water"
             android:title="@string/profile_water"
-            android:summary="@string/profile_water_summary"
             android:defaultValue="@string/profile_water_default"
             android:layout="@layout/single_line_preference" />
     </PreferenceCategory>

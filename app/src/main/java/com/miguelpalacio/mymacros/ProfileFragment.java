@@ -116,7 +116,6 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         // Recommended intakes.
         fiber = findPreference(KEY_FIBER);
         water = findPreference(KEY_WATER);
-
     }
 
     @Override
@@ -140,12 +139,18 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         setWeightSummary();
         setBmrSummary();
 
+        setCalorieNeedSummary();
+
         setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
         setListPrefSummary(goal, KEY_GOAL, "ND");
 
         setMacroSummary(proteinRate, " %");
         setMacroSummary(carbosRate, " %");
         setMacroSummary(fatRate, " %");
+
+        setMacroIntake();
+        setFiberIntake();
+        setWaterIntake();
 
         // Set up a listener whenever a key changes.
         getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
@@ -166,38 +171,45 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             case KEY_GENDER:
                 setListPrefSummary(gender, KEY_GENDER, "ND");
                 setBmrSummary();
+                setCalorieNeedSummary();
                 break;
 
             case KEY_AGE:
                 setAgeSummary();
                 setBmrSummary();
+                setCalorieNeedSummary();
                 break;
 
             case KEY_HEIGHT:
                 setHeightSummary();
                 setBmrSummary();
+                setCalorieNeedSummary();
                 break;
 
             case KEY_HEIGHT_ENG:
                 setHeightSummary();
                 setBmrSummary();
+                setCalorieNeedSummary();
                 break;
 
             case KEY_WEIGHT:
                 setWeightSummary();
                 setBmrSummary();
-                setRecommendedIntakes();
+                setCalorieNeedSummary();
+                setWaterIntake();
                 // TODO: store weight changes.
                 break;
 
             case KEY_ACTIVITY_LEVEL:
                 setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
                 setBmrSummary();
+                setCalorieNeedSummary();
                 break;
 
             case KEY_GOAL:
                 setListPrefSummary(goal, KEY_GOAL, "ND");
                 setBmrSummary();
+                setCalorieNeedSummary();
                 break;
 
             case KEY_PROTEIN_RATE:
@@ -278,6 +290,10 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         }
     }
 
+    /**
+     * Define the BMR according to the data input by the user.
+     * Dependencies: Gender, Age, Height, Weight.
+     */
     private void setBmrSummary() {
 
         // If there's missing data, set the default summary.
@@ -331,17 +347,26 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_BMR, "" + BMR).apply();
 
-        // Set Daily Calorie Need summary.
+/*        // Set Daily Calorie Need summary.
         setCalorieNeedSummary(BMR);
 
         // Set macronutrient intakes' summaries.
         setMacroIntake();
+
+        // Set recommended fiber intake.
+        setFiberIntake();*/
     }
 
-    private void setCalorieNeedSummary(double BMR) {
+    /**
+     * Set the Daily Calorie need (TDEE).
+     * Dependencies: bmr.
+     */
+    private void setCalorieNeedSummary() {
+
+        Double BMR = Double.parseDouble(sharedPref.getString(KEY_BMR, "0"));
 
         // If there's missing data, set the default summary.
-        if (activityLevel.getValue().equals("ND") || goal.equals("ND")) {
+        if (activityLevel.getValue().equals("ND") || goal.getValue().equals("ND") || BMR == 0) {
             calorieNeed.setSummary(defaultSummary2);
             return;
         }
@@ -400,6 +425,10 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         }
     }
 
+    /**
+     * Set the daily macronutrient intake in grams.
+     * Dependencies: calorieNeed.
+     */
     public void setMacroIntake() {
 
         double TDEE;
@@ -439,8 +468,35 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         fatGrams.setSummary((int) fat + " g/day");
     }
 
-    // Set recommended fiber and water intakes.
-    public void setRecommendedIntakes() {
+    /**
+     * Set the recommended daily fiber intake.
+     * Dependencies: calorieNeed.
+     */
+    public void setFiberIntake() {
+
+        // Calculate fiber intake. Formula taken from:
+        // http://healthyeating.sfgate.com/calculate-much-fiber-one-needs-day-4814.html
+        double f = Double.parseDouble(sharedPref.getString(KEY_CALORIE_NEED, "0"));
+        if (unitsEnergy.equals("kJ")) {
+            f = f / 4.184;
+        }
+
+        // 14 gr of fiber for each 1000 kcal consumed.
+        f = f * 14 / 1000;
+
+        // Store value in SharedPreferences
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(KEY_FIBER, "" + (int) f).apply();
+
+        // Set Fiber summary.
+        fiber.setSummary((int) f + " g/day");
+    }
+
+    /**
+     * Set the recommended daily water intake.
+     * Dependencies: Weight.
+     */
+    public void setWaterIntake() {
 
         // Calculate water intake. Formula taken from:
         // http://www.myfooddiary.com/resources/ask_the_expert/recommended_daily_water_intake.asp
@@ -459,9 +515,9 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Store value in SharedPreferences.
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(KEY_WATER, "" + (int) w);
+        editor.putString(KEY_WATER, "" + (int) w).apply();
 
         // Set summary.
-        water.setSummary((int) w + " " + unitsLiquid);
+        water.setSummary((int) w + " " + unitsLiquid + "/day");
     }
 }
