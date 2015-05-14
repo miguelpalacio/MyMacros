@@ -1,7 +1,7 @@
 package com.miguelpalacio.mymacros;
 
 import android.content.Context;
-import android.preference.Preference;
+import android.preference.EditTextPreference;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -12,11 +12,11 @@ import android.widget.TextView;
 /**
  * Created by miguel on 5/14/15.
  */
-public class SingleLinePreference extends Preference {
+public class SingleLineTextPreference extends EditTextPreference {
 
     float titleSize;
 
-    public SingleLinePreference(Context context, AttributeSet attrs) {
+    public SingleLineTextPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -40,9 +40,6 @@ public class SingleLinePreference extends Preference {
             }
             // Check that the TextView is the Summary.
             else if (textView.getId() == android.R.id.summary) {
-/*                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) textView.getLayoutParams();
-                layoutParams.addRule(RelativeLayout.BELOW);
-                layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);*/
 
                 RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                         RelativeLayout.LayoutParams.WRAP_CONTENT,

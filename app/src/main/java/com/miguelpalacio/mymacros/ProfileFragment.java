@@ -61,16 +61,18 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private ListPreference goal;
     private Preference calorieNeed;
 
-    private EditTextPreference proteinRate;
-    private EditTextPreference carbosRate;
-    private EditTextPreference fatRate;
+    private SingleLineTextPreference proteinRate;
+    private SingleLineTextPreference carbosRate;
+    private SingleLineTextPreference fatRate;
 
-    private EditTextPreference proteinGrams;
-    private EditTextPreference carbosGrams;
-    private EditTextPreference fatGrams;
+    private SingleLinePreference proteinGrams;
+    private SingleLinePreference carbosGrams;
+    private SingleLinePreference fatGrams;
 
-    private Preference fiber;
-    private Preference water;
+    private SingleLinePreference fiber;
+    private SingleLinePreference water;
+
+    //private SingleLinePreference test;
 
     String unitsHeight;
     String unitsWeight;
@@ -104,18 +106,20 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         calorieNeed = findPreference(KEY_CALORIE_NEED);
 
         // Macronutrient distribution.
-        proteinRate = (EditTextPreference) findPreference(KEY_PROTEIN_RATE);
-        carbosRate = (EditTextPreference) findPreference(KEY_CARBOS_RATE);
-        fatRate = (EditTextPreference) findPreference(KEY_FAT_RATE);
+        proteinRate = (SingleLineTextPreference) findPreference(KEY_PROTEIN_RATE);
+        carbosRate = (SingleLineTextPreference) findPreference(KEY_CARBOS_RATE);
+        fatRate = (SingleLineTextPreference) findPreference(KEY_FAT_RATE);
 
         // Macronutrient intake.
-        proteinGrams = (EditTextPreference) findPreference(KEY_PROTEIN_GRAMS);
-        carbosGrams = (EditTextPreference) findPreference(KEY_CARBOS_GRAMS);
-        fatGrams = (EditTextPreference) findPreference(KEY_FAT_GRAMS);
+        proteinGrams = (SingleLinePreference) findPreference(KEY_PROTEIN_GRAMS);
+        carbosGrams = (SingleLinePreference) findPreference(KEY_CARBOS_GRAMS);
+        fatGrams = (SingleLinePreference) findPreference(KEY_FAT_GRAMS);
 
         // Recommended intakes.
-        fiber = findPreference(KEY_FIBER);
-        water = findPreference(KEY_WATER);
+        fiber = (SingleLinePreference) findPreference(KEY_FIBER);
+        water = (SingleLinePreference) findPreference(KEY_WATER);
+
+        //test = (SingleLinePreference) findPreference("Test");
     }
 
     @Override
@@ -172,30 +176,35 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setListPrefSummary(gender, KEY_GENDER, "ND");
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setFiberIntake();
                 break;
 
             case KEY_AGE:
                 setAgeSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setFiberIntake();
                 break;
 
             case KEY_HEIGHT:
                 setHeightSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setFiberIntake();
                 break;
 
             case KEY_HEIGHT_ENG:
                 setHeightSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setFiberIntake();
                 break;
 
             case KEY_WEIGHT:
                 setWeightSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setFiberIntake();
                 setWaterIntake();
                 // TODO: store weight changes.
                 break;
@@ -204,12 +213,14 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setFiberIntake();
                 break;
 
             case KEY_GOAL:
                 setListPrefSummary(goal, KEY_GOAL, "ND");
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setFiberIntake();
                 break;
 
             case KEY_PROTEIN_RATE:
