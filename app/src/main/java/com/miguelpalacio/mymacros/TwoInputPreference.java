@@ -184,23 +184,38 @@ public class TwoInputPreference extends DialogPreference {
     protected void onDialogClosed(boolean positiveResult) {
         // When the user selects "OK", persist the new values.
         if (positiveResult) {
-            String i1 = inputOne.getText().toString();
-            String i2 = inputTwo.getText().toString();
+            String s1 = inputOne.getText().toString();
+            String s2 = inputTwo.getText().toString();
 
             // Check for empty strings. If empty, set the default value.
-            if (i1.equals(""))
-                i1 = "0";
-            if (i2.equals(""))
-                i2 = "0";
+            if (s1.equals(""))
+                s1 = "0";
+            if (s2.equals(""))
+                s2 = "0";
 
             // Parse the two inputs into a single string by using a '-' as separator.
-            persistString(i1 + "-" + i2);
+            persistString(s1 + "-" + s2);
         }
     }
+
     public String getValue() {
         return getPersistedString("0-0");
     }
 
+/*    public void setText(String s) {
+        String[] values = s.split("-");
+        String s1 = values[0];
+        String s2 = values[1];
+
+        // Check for empty strings.
+        if (s1.equals(""))
+            s1 = "0";
+        if (s2.equals(""))
+            s2 = "0";
+
+        inputOne.setText(s1);
+        inputTwo.setText(s2);
+    }*/
 /*    public void setValue(String s) {
 
         String[] values = s.split("-");

@@ -8,6 +8,7 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -72,12 +73,12 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private SingleLinePreference fiber;
     private SingleLinePreference water;
 
-    //private SingleLinePreference test;
-
     String unitsHeight;
     String unitsWeight;
     String unitsEnergy;
     String unitsLiquid;
+
+    boolean goalChanged;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,7 +120,25 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         fiber = (SingleLinePreference) findPreference(KEY_FIBER);
         water = (SingleLinePreference) findPreference(KEY_WATER);
 
-        //test = (SingleLinePreference) findPreference("Test");
+        // Set up listeners on macro rate preferences to enable checkMacroDistribution().
+        proteinRate.setOnPreferenceClickListener(new PreferenceCategory.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+                goalChanged = false;
+                return false;
+            }
+        });
+        carbosRate.setOnPreferenceClickListener(new PreferenceCategory.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+                goalChanged = false;
+                return false;
+            }
+        });
+        fatRate.setOnPreferenceClickListener(new PreferenceCategory.OnPreferenceClickListener() {
+            @Override public boolean onPreferenceClick(Preference preference) {
+                goalChanged = false;
+                return false;
+            }
+        });
     }
 
     @Override
@@ -136,6 +155,11 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         height.setDialogTitle("Height (" + unitsHeight + ")");
         weight.setDialogTitle("Weight (" + unitsWeight + ")");
 
+        // Set text for Height and Weight in case of change of units in SettingsActivity.
+        height.setText(sharedPref.getString(KEY_HEIGHT, ""));
+        //heightEng.setText(sharedPref.getString(KEY_HEIGHT_ENG, "0-0"));
+        weight.setText(sharedPref.getString(KEY_WEIGHT, ""));
+
         // Set up items' summary.
         setListPrefSummary(gender, KEY_GENDER, "ND");
         setAgeSummary();
@@ -148,9 +172,9 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
         setListPrefSummary(goal, KEY_GOAL, "ND");
 
-        setMacroSummary(proteinRate, " %");
-        setMacroSummary(carbosRate, " %");
-        setMacroSummary(fatRate, " %");
+        setMacroRateSummary(proteinRate);
+        setMacroRateSummary(carbosRate);
+        setMacroRateSummary(fatRate);
 
         setMacroIntake();
         setFiberIntake();
@@ -176,6 +200,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setListPrefSummary(gender, KEY_GENDER, "ND");
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setMacroIntake();
                 setFiberIntake();
                 break;
 
@@ -183,6 +208,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setAgeSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setMacroIntake();
                 setFiberIntake();
                 break;
 
@@ -190,6 +216,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setHeightSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setMacroIntake();
                 setFiberIntake();
                 break;
 
@@ -197,6 +224,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setHeightSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setMacroIntake();
                 setFiberIntake();
                 break;
 
@@ -204,6 +232,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setWeightSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setMacroIntake();
                 setFiberIntake();
                 setWaterIntake();
                 // TODO: store weight changes.
@@ -213,30 +242,33 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
                 setBmrSummary();
                 setCalorieNeedSummary();
+                setMacroIntake();
                 setFiberIntake();
                 break;
 
             case KEY_GOAL:
                 setListPrefSummary(goal, KEY_GOAL, "ND");
-                setBmrSummary();
+                goalChanged = true;
                 setCalorieNeedSummary();
+                redistributeMacroRate();
+                setMacroIntake();
                 setFiberIntake();
                 break;
 
             case KEY_PROTEIN_RATE:
-                setMacroSummary(proteinRate, " %");
+                setMacroRateSummary(proteinRate);
                 checkMacroDistribution();
                 setMacroIntake();
                 break;
 
             case KEY_CARBOS_RATE:
-                setMacroSummary(carbosRate, " %");
+                setMacroRateSummary(carbosRate);
                 checkMacroDistribution();
                 setMacroIntake();
                 break;
 
             case KEY_FAT_RATE:
-                setMacroSummary(fatRate, " %");
+                setMacroRateSummary(fatRate);
                 checkMacroDistribution();
                 setMacroIntake();
                 break;
@@ -357,15 +389,6 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         // Store the bmr preference value.
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_BMR, "" + BMR).apply();
-
-/*        // Set Daily Calorie Need summary.
-        setCalorieNeedSummary(BMR);
-
-        // Set macronutrient intakes' summaries.
-        setMacroIntake();
-
-        // Set recommended fiber intake.
-        setFiberIntake();*/
     }
 
     /**
@@ -422,12 +445,17 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         calorieNeed.setSummary((int) TDEE + " " + unitsEnergy);
     }
 
-    public void setMacroSummary(EditTextPreference p, String macroUnits) {
-        p.setSummary(p.getText() + macroUnits);
+    private void setMacroRateSummary(EditTextPreference p) {
+        p.setSummary(p.getText() + " %");
     }
 
-    // Check that proteinRate + carbosRate + fatRate = 100.
-    public void checkMacroDistribution() {
+
+    private void checkMacroDistribution() {
+        // Check that macros weren't change programmatically by setting a new goal.
+        if (goalChanged) {
+            return;
+        }
+        // Check that proteinRate + carbosRate + fatRate = 100.
         if (Integer.parseInt(proteinRate.getText()) + Integer.parseInt(carbosRate.getText()) +
                 Integer.parseInt(fatRate.getText()) != 100) {
             Toast.makeText(getActivity(), "Macronutrient ditribution is not 100 %", Toast.LENGTH_SHORT).show();
@@ -440,7 +468,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
      * Set the daily macronutrient intake in grams.
      * Dependencies: calorieNeed.
      */
-    public void setMacroIntake() {
+    private void setMacroIntake() {
 
         double TDEE;
         if (sharedPref.getString(KEY_CALORIE_NEED, "0") != null) {
@@ -479,11 +507,37 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         fatGrams.setSummary((int) fat + " g/day");
     }
 
+    // Called when the goal changes.
+    private void redistributeMacroRate() {
+
+        String pRate, cRate, fRate;
+
+        // Recommended macro distribution for each goal.
+        if (goal.getValue().equals("Fat Loss")) {
+            pRate = "35";
+            cRate = "40";
+            fRate = "25";
+        } else if (goal.getValue().equals("Bulking")) {
+            pRate = "20";
+            cRate = "55";
+            fRate = "25";
+        } else {
+            pRate = "30";
+            cRate = "45";
+            fRate = "25";
+        }
+
+        // Set the values in the corresponding preference items.
+        proteinRate.setText(pRate);
+        carbosRate.setText(cRate);
+        fatRate.setText(fRate);
+    }
+
     /**
      * Set the recommended daily fiber intake.
      * Dependencies: calorieNeed.
      */
-    public void setFiberIntake() {
+    private void setFiberIntake() {
 
         // Calculate fiber intake. Formula taken from:
         // http://healthyeating.sfgate.com/calculate-much-fiber-one-needs-day-4814.html
@@ -507,7 +561,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
      * Set the recommended daily water intake.
      * Dependencies: Weight.
      */
-    public void setWaterIntake() {
+    private void setWaterIntake() {
 
         // Calculate water intake. Formula taken from:
         // http://www.myfooddiary.com/resources/ask_the_expert/recommended_daily_water_intake.asp
