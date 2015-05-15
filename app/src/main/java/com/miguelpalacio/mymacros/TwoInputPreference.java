@@ -122,13 +122,14 @@ public class TwoInputPreference extends DialogPreference {
         // Convert from dip to their equivalent px (needed for coherent padding).
         Resources r = getContext().getResources();
         int px8dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, r.getDisplayMetrics());
+        int px6dp = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 6, r.getDisplayMetrics());
 
         // Set specific properties of each view.
         childLayout1.setPadding(px8dp, px8dp, px8dp, 0);
         childLayout2.setPadding(px8dp, px8dp, px8dp, 0);
 
-        labelOne.setPadding(px8dp, 0, px8dp, 0);
-        labelTwo.setPadding(px8dp, 0, px8dp, 0);
+        labelOne.setPadding(px8dp, px8dp, px8dp, 0);
+        labelTwo.setPadding(px8dp, px8dp, px6dp, 0);
         labelOne.setGravity(Gravity.CENTER);
         labelTwo.setGravity(Gravity.CENTER);
         labelOne.setText(R.string.two_input_pref_label_one);
@@ -202,7 +203,7 @@ public class TwoInputPreference extends DialogPreference {
         return getPersistedString("0-0");
     }
 
-/*    public void setText(String s) {
+    public void setText(String s) {
         String[] values = s.split("-");
         String s1 = values[0];
         String s2 = values[1];
@@ -214,8 +215,8 @@ public class TwoInputPreference extends DialogPreference {
             s2 = "0";
 
         inputOne.setText(s1);
-        inputTwo.setText(s2);
-    }*/
+        inputTwo.setText(s1);
+    }
 /*    public void setValue(String s) {
 
         String[] values = s.split("-");

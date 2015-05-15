@@ -221,6 +221,14 @@
     <!-- Recommended distribution. -->
     <string name="profile_recommended_dist">Recommended Distribution</string>
     <string name="profile_recommended_dist_summary">Tap to see</string>
+    <string name="profile_recommended_dist_dialog">
+        <b>Fat Loss</b>\n
+        35\u0025 Protein, 40\u0025 Carbohydrates, 25\u0025 Fat.\n\n
+        <b>Maintenance</b>\n
+        30\u0025 Protein, 45\u0025 Carbohydrates, 25\u0025 Fat.\n\n
+        <b>Bulking</b>\n
+        20\u0025 Protein, 55\u0025 Carbohydrates, 25\u0025 Fat.
+    </string>
 
     <!-- Grams Per Macronutrient category. -->
     <string name="profile_category_macronutrient_grams">Grams Per Macronutrient</string>
@@ -249,6 +257,7 @@
     <string name="profile_water">Water</string>
     <string name="profile_water_default">0</string>
     <string name="profile_water_summary">2366 ml/day</string>
+
 
     <!-- *************************************************************************************** -->
     <!-- Misc Strings. -->

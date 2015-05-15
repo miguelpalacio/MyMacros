@@ -92,7 +92,12 @@
             android:summary="@string/profile_fat_rate_summary"
             android:defaultValue="@string/profile_fat_rate_default"
             android:inputType="number" />
-        <Preference
+<!--        <Preference
+            android:key="profile_recommended_dist"
+            android:title="@string/profile_recommended_dist"
+            android:summary="@string/profile_recommended_dist_summary"
+            android:selectable="true" />-->
+        <com.miguelpalacio.mymacros.InfoDialogPreference
             android:key="profile_recommended_dist"
             android:title="@string/profile_recommended_dist"
             android:summary="@string/profile_recommended_dist_summary"
