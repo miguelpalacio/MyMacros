@@ -268,17 +268,9 @@
     <string name="two_input_pref_label_one">ft</string>
     <string name="two_input_pref_label_two">in</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment1">Stats Fragment</string>
-    <string name="hello_blank_fragment2">Daily Planner Fragment</string>
-    <string name="hello_blank_fragment3">My Meals Fragment</string>
-    <string name="hello_blank_fragment4">Foods Fragment</string>
+    <!-- Activity titles. -->
+    <string name="title_activity_settings">Settings</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-
-    <string name="hello_world">Hello world!</string>
 
 
 </resources>

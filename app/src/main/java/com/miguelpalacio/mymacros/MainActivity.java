@@ -19,6 +19,7 @@ import android.view.View;
 
 public class MainActivity extends ActionBarActivity implements DrawerAdapter.ViewHolder.ClickListener {
 
+
     Toolbar toolbar;
 
     String[] drawerLabels;
@@ -98,6 +99,12 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
                     mHandler.post(onDrawerClosedRunnable);
                     onDrawerClosedRunnable = null;
                 }
+            }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                // Disable the Hamburguer-BackToArrow animation on Toolbar.
+                super.onDrawerSlide(drawerView, 0);
             }
         };
 
@@ -191,11 +198,6 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
             }*/
         }
 
-        // If item selected is the current selected, skip.
-        if (currentFragment == position) {
-            return;
-        }
-
         Fragment fragment;
 
         switch (position) {
@@ -234,6 +236,12 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
             default:
                 fragment = new Fragment();
+        }
+
+        // If item selected is the current selected, no need to replace fragment.
+        if (currentFragment == position) {
+            // Only title was set.
+            return;
         }
 
         // Remember the fragment opened. Neither Settings nor FAQ are taken remembered.
