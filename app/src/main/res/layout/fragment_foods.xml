@@ -1,16 +1,152 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.miguelpalacio.mymacros.FoodsFragment">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Food fragment"
-            android:textColor="#AAAA00"/>
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Food fragment"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:textColor="@android:color/holo_blue_dark"/>
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Food Name"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/accent"/>
+
+            <EditText android:id="@+id/food_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:inputType="text"
+                android:textAppearance="@android:style/TextAppearance.Small" />
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Portion"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/accent"/>
+
+            <EditText android:id="@+id/portion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:inputType="numberDecimal"
+                android:textAppearance="@android:style/TextAppearance.Small" />
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Portion Units (gr, oz, lb, ml, units)"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/accent"/>
+
+            <EditText android:id="@+id/portion_units"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:inputType="number"
+                android:textAppearance="@android:style/TextAppearance.Small" />
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Protein"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/accent"/>
+
+            <EditText android:id="@+id/protein"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:inputType="numberDecimal"
+                android:textAppearance="@android:style/TextAppearance.Small" />
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Carbohydrates"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/accent"/>
+
+            <EditText android:id="@+id/carbohydrates"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:inputType="numberDecimal"
+                android:textAppearance="@android:style/TextAppearance.Small" />
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fat"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/accent"/>
+
+            <EditText android:id="@+id/fat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:inputType="numberDecimal"
+                android:textAppearance="@android:style/TextAppearance.Small" />
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fiber"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:textAppearance="@android:style/TextAppearance.Small"
+                android:textColor="@color/accent"/>
+
+            <EditText android:id="@+id/fiber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:inputType="numberDecimal"
+                android:textAppearance="@android:style/TextAppearance.Small" />
+
+            <Button
+                android:id="@+id/add_food"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:text="Add Food" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="24dp"/>
+
+        </LinearLayout>
+    </ScrollView>
 </FrameLayout>

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
@@ -38,6 +39,8 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
     int currentFragment;
 
+    //DatabaseAdapter databaseAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +56,12 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
             // Set to 0 to init in openFragment() when activity starts.
             currentFragment = 0;
         }
+
+        // Create or upgrade database.
+        //databaseAdapter = new DatabaseAdapter(this);
+
+        // If database doesn't exist, onCreate in helper is called.
+        //SQLiteDatabase sqLiteDatabase = databaseAdapter.getWritableDatabase();
 
         // Toolbar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
