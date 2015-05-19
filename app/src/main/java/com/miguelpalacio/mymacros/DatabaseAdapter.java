@@ -2,6 +2,7 @@ package com.miguelpalacio.mymacros;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -26,6 +27,7 @@ public class DatabaseAdapter {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
+        // TODO: possible number convertion format goes here.
         contentValues.put(DatabaseHelper.NAME, name);
         contentValues.put(DatabaseHelper.PROTEIN, protein);
         contentValues.put(DatabaseHelper.CARBOHYDRATES, carbohydrates);
@@ -35,6 +37,71 @@ public class DatabaseAdapter {
         contentValues.put(DatabaseHelper.PORTION_UNITS, portionUnits);
 
         return db.insert(DatabaseHelper.TABLE_FOODS, null, contentValues);
+    }
+
+    public String getAllData() {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // Select foodUid, Name, Protein, Carbohydrates, Fat from Foods;
+        String[] columns = {DatabaseHelper.FOOD_UID, DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
+                DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
+        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns, null, null, null, null, null);
+        StringBuffer buffer = new StringBuffer();
+
+        while (cursor.moveToNext()) {
+            int index1 = cursor.getColumnIndex(DatabaseHelper.FOOD_UID);
+            int uid = cursor.getInt(index1);
+            int index2 = cursor.getColumnIndex(DatabaseHelper.NAME);
+            String name = cursor.getString(index2);
+            int index3 = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
+            int protein = cursor.getInt(index3);
+            int index4 = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
+            int carbohydrates = cursor.getInt(index4);
+            int index5 = cursor.getColumnIndex(DatabaseHelper.FAT);
+            int fat = cursor.getInt(index5);
+
+            buffer.append(uid + " " + name + " " + protein + " " + carbohydrates + " " + fat + "\n");
+        }
+        cursor.close();
+        return buffer.toString();
+    }
+
+    // the 3rd parameter is a where.
+    public String getData(String name) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // Select foodUid, Name, Protein, Carbohydrates, Fat from Foods;
+        String[] columns = {DatabaseHelper.FOOD_UID, DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
+                DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
+        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
+                DatabaseHelper.NAME + " = '" + name + "'", null, null, null, null);
+        StringBuffer buffer = new StringBuffer();
+
+        while (cursor.moveToNext()) {
+            int index1 = cursor.getColumnIndex(DatabaseHelper.FOOD_UID);
+            int uid = cursor.getInt(index1);
+            int index2 = cursor.getColumnIndex(DatabaseHelper.NAME);
+            String foodName = cursor.getString(index2);
+            int index3 = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
+            int protein = cursor.getInt(index3);
+            int index4 = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
+            int carbohydrates = cursor.getInt(index4);
+            int index5 = cursor.getColumnIndex(DatabaseHelper.FAT);
+            int fat = cursor.getInt(index5);
+
+            buffer.append(uid + " " + foodName + " " + protein + " " + carbohydrates + " " + fat + "\n");
+        }
+        cursor.close();
+        return buffer.toString();
+    }
+
+    public void updateName(String oldName, String newName) {
+        // update Foods set Name='newName' where Name='oldName'.
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DatabaseHelper.NAME, newName);
+        String[] whereArgs={oldName};
+        db.update(DatabaseHelper.TABLE_FOODS, contentValues, DatabaseHelper.NAME + " =? ", whereArgs);
     }
 
     /**

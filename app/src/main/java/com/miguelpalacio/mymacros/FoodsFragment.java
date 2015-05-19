@@ -27,13 +27,12 @@ public class FoodsFragment extends Fragment {
     EditText fiber;
 
     Button button;
+    Button button2;
+
+    EditText enterDetails;
+    Button button3;
 
     DatabaseAdapter databaseAdapter;
-
-/*    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,14 +58,31 @@ public class FoodsFragment extends Fragment {
         fiber = (EditText) getActivity().findViewById(R.id.fiber);
 
         button = (Button) getActivity().findViewById(R.id.add_food);
+        button2 = (Button) getActivity().findViewById(R.id.view_details);
+
+        enterDetails = (EditText) getActivity().findViewById(R.id.enter_food_name);
+        button3 = (Button) getActivity().findViewById(R.id.get_details);
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                addFood(v);
+                insertFood();
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                viewDetails();
+            }
+        });
+
+        button3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                getDetails();
             }
         });
     }
 
-    public void addFood(View view) {
+    public void insertFood() {
 
         String name = foodName.getText().toString();
         int prot = Integer.parseInt(protein.getText().toString());
@@ -83,5 +99,22 @@ public class FoodsFragment extends Fragment {
         } else {
             Toast.makeText(getActivity(), "Row Successfully Inserted", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    public void viewDetails() {
+        String data = databaseAdapter.getAllData();
+        Toast.makeText(getActivity(), data, Toast.LENGTH_SHORT).show();
+    }
+
+    public void getDetails() {
+        String data = databaseAdapter.getData(enterDetails.getText().toString());
+        Toast.makeText(getActivity(), data, Toast.LENGTH_SHORT).show();
+    }
+
+    public void update() {
+    }
+
+    public void delete() {
+
     }
 }
