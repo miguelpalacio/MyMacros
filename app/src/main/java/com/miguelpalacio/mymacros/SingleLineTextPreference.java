@@ -47,7 +47,7 @@ public class SingleLineTextPreference extends EditTextPreference {
 
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
-                //textView.setTextAppearance(getContext(), android.R.style.TextAppearance_DeviceDefault_Medium);
+                //names.setTextAppearance(getContext(), android.R.style.TextAppearance_DeviceDefault_Medium);
 
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize);
                 textView.setLayoutParams(layoutParams);

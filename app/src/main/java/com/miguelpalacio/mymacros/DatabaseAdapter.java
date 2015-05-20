@@ -6,8 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-import android.widget.Toast;
+
+import java.util.ArrayList;
 
 /**
  * This class handles everything related with the application database.
@@ -43,13 +43,13 @@ public class DatabaseAdapter {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         // Select foodUid, Name, Protein, Carbohydrates, Fat from Foods;
-        String[] columns = {DatabaseHelper.FOOD_UID, DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
+        String[] columns = {DatabaseHelper.FOOD_ID, DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
                 DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns, null, null, null, null, null);
         StringBuffer buffer = new StringBuffer();
 
         while (cursor.moveToNext()) {
-            int index1 = cursor.getColumnIndex(DatabaseHelper.FOOD_UID);
+            int index1 = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
             int uid = cursor.getInt(index1);
             int index2 = cursor.getColumnIndex(DatabaseHelper.NAME);
             String name = cursor.getString(index2);
@@ -66,19 +66,66 @@ public class DatabaseAdapter {
         return buffer.toString();
     }
 
-    // the 3rd parameter is a where.
+    /**
+     * Retrieve the name and a summary for each food in the Foods table.
+     * @return an Array of strings of dimension [2][# of foods]. Array[0] corresponds
+     * to the food names, Array[1] to their summaries.
+     */
+    public String[][] getFoodInfo() {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
+        String[] columns = {DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
+                DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
+        String orderBy = DatabaseHelper.NAME;
+        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns, null, null, null, null, orderBy);
+
+        ArrayList<String> titles = new ArrayList<>();
+        ArrayList<String> summaries = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+
+            int index;
+
+            // Get food name and place it in titles.
+            index = cursor.getColumnIndex(DatabaseHelper.NAME);
+            String foodName = cursor.getString(index);
+            titles.add(foodName);
+
+            // Get food's protein, carbos and fat content. Parse data and place it in summaries.
+            index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
+            int foodProtein = cursor.getInt(index);
+            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
+            int foodCarbos = cursor.getInt(index);
+            index = cursor.getColumnIndex(DatabaseHelper.FAT);
+            int foodFat = cursor.getInt(index);
+            String foodSummary = "Protein: " + foodProtein + " gr, Carbohydrates: " +
+                    foodCarbos + " gr, Fat: " + foodFat + " gr";
+            summaries.add(foodSummary);
+        }
+        cursor.close();
+
+        // Store the resulting ArrayLists in a single data structure, and return it.
+        String[][] info = new String[2][titles.size()];
+        info[0] = titles.toArray(new String[titles.size()]);
+        info[1] = summaries.toArray(new String[titles.size()]);
+
+        return info;
+/*        return titles.toArray(new String[titles.size()]);*/
+    }
+
     public String getData(String name) {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         // Select foodUid, Name, Protein, Carbohydrates, Fat from Foods;
-        String[] columns = {DatabaseHelper.FOOD_UID, DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
+        String[] columns = {DatabaseHelper.FOOD_ID, DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
                 DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
                 DatabaseHelper.NAME + " = '" + name + "'", null, null, null, null);
         StringBuffer buffer = new StringBuffer();
 
         while (cursor.moveToNext()) {
-            int index1 = cursor.getColumnIndex(DatabaseHelper.FOOD_UID);
+            int index1 = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
             int uid = cursor.getInt(index1);
             int index2 = cursor.getColumnIndex(DatabaseHelper.NAME);
             String foodName = cursor.getString(index2);
@@ -91,6 +138,8 @@ public class DatabaseAdapter {
 
             buffer.append(uid + " " + foodName + " " + protein + " " + carbohydrates + " " + fat + "\n");
         }
+
+        // TODO: return the cursor, and handle it within the fragment class.
         cursor.close();
         return buffer.toString();
     }
@@ -113,7 +162,7 @@ public class DatabaseAdapter {
         private static final String DATABASE_NAME = "mymacros";
 
         private static final String TABLE_FOODS = "Foods";
-        private static final String FOOD_UID = "_FoodID";
+        private static final String FOOD_ID = "_FoodID";
         private static final String NAME = "Name";
         private static final String PROTEIN = "Protein";
         private static final String CARBOHYDRATES = "Carbohydrates";
@@ -122,8 +171,9 @@ public class DatabaseAdapter {
         private static final String PORTION_UNITS = "PortionUnits";
         private static final String PORTION_QUANTITY = "PortionQuantity";
 
-        private static final String CREATE_FOODS_TABLE = "CREATE TABLE " + TABLE_FOODS +
-                " (" + FOOD_UID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+        private static final String CREATE_FOODS_TABLE =
+                "CREATE TABLE " + TABLE_FOODS +
+                " (" + FOOD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 NAME + " VARCHAR(50) UNIQUE, " +
                 PROTEIN + " NUMERIC(5,1), " +
                 CARBOHYDRATES + " NUMERIC(5,1), " +

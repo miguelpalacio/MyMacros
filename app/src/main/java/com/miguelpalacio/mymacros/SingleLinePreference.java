@@ -40,7 +40,7 @@ public class SingleLinePreference extends Preference {
             }
             // Check that the TextView is the Summary.
             else if (textView.getId() == android.R.id.summary) {
-/*                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) textView.getLayoutParams();
+/*                RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) names.getLayoutParams();
                 layoutParams.addRule(RelativeLayout.BELOW);
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);*/
 
@@ -50,7 +50,7 @@ public class SingleLinePreference extends Preference {
 
                 layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
-                //textView.setTextAppearance(getContext(), android.R.style.TextAppearance_DeviceDefault_Medium);
+                //names.setTextAppearance(getContext(), android.R.style.TextAppearance_DeviceDefault_Medium);
 
                 textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, titleSize);
                 textView.setLayoutParams(layoutParams);
