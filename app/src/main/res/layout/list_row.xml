@@ -23,6 +23,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="8dp"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textColor="@color/secondary_text" />
 
 </LinearLayout>

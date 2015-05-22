@@ -68,9 +68,10 @@ public class DatabaseAdapter {
     }
 
     /**
-     * Retrieve the name and a summary for each food in the Foods table.
-     * @return an Array of strings of dimension [2][# of foods]. Array[0] corresponds
-     * to the food names, Array[1] to their summaries.
+     * Retrieve the name and a summary for each item in the Foods table.
+     * @return three arrays: the first array contain the list of titles and
+     * subheaders for the food list, the second the summaries, and the third a
+     * "boolean" array expressing which position correspond to a subheader.
      */
     public String[][] getFoods() {
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -86,29 +87,14 @@ public class DatabaseAdapter {
         ArrayList<String> summaries = new ArrayList<>();
         ArrayList<String> isSubheader = new ArrayList<>();
 
-        Character subheader = '_';
+        Character lastSubheader = '\0';
 
         while (cursor.moveToNext()) {
-
             int index;
 
-            // Get Food's name.
+            // Get Food information.
             index = cursor.getColumnIndex(DatabaseHelper.NAME);
             String name = cursor.getString(index);
-
-            // Define if a subheader should be placed.
-            if (subheader != name.charAt(0)) {
-                subheader = name.charAt(0);
-                // Flag position in isSubheader, add subheader in names, add empty string in summaries.
-                isSubheader.add("1");
-                names.add(subheader.toString().toUpperCase());
-                summaries.add("");
-            }
-
-            names.add(name);
-            isSubheader.add("0");
-
-            // Get Food's protein, carbohydrates and fat content.
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
             int protein = cursor.getInt(index);
             index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
@@ -116,23 +102,38 @@ public class DatabaseAdapter {
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
             int fat = cursor.getInt(index);
 
+            // Define if a lastSubheader should be placed.
+            if (lastSubheader != name.charAt(0)) {
+                // Check for numeric characters and special symbols.
+                if (Character.isLetter(name.charAt(0))) {
+                    lastSubheader = name.charAt(0);
+                    isSubheader.add("1");
+                    names.add(lastSubheader.toString().toUpperCase());
+                    summaries.add("");
+                }
+                // If special character, set subheader as '#' if it hasn't been set.
+                else if (lastSubheader != '#') {
+                    lastSubheader = '#';
+                    names.add(lastSubheader.toString());
+                    isSubheader.add("1");
+                    summaries.add("");
+                }
+            }
+            names.add(name);
+            isSubheader.add("0");
+
             // Parse data and place it in summaries.
-            String foodSummary = "Protein: " + protein + " gr, Carbohydrates: " + carbohydrates +
-                    " gr, Fat: " + fat + " gr";
+            String foodSummary = "Protein: " + protein + " gr, Carbohydrates: " +
+                    carbohydrates + " gr, Fat: " + fat + " gr";
             summaries.add(foodSummary);
         }
         cursor.close();
 
         // Store the resulting ArrayLists in a single data structure, and return it.
-
-        Log.d("Names", "Size " + names.size());
-        Log.d("isSubheader?", "Size " + isSubheader.size());
-
         String[][] info = new String[3][names.size()];
         info[0] = names.toArray(new String[names.size()]);
         info[1] = summaries.toArray(new String[names.size()]);
         info[2] = isSubheader.toArray(new String[names.size()]);
-
 
         return info;
     }

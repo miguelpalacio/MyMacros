@@ -6,17 +6,20 @@
     android:background="@drawable/custom_bg"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/list_item_subheader"
-        android:layout_width="match_parent"
-        android:layout_height="47dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:textSize="16sp" />
-
     <!-- Divider. -->
     <View
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="@color/selected_item" />
+
+    <TextView
+        android:id="@+id/list_item_subheader"
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:gravity="center_vertical"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/secondary_text"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textSize="14sp" />
 </LinearLayout>

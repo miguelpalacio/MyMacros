@@ -109,25 +109,8 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         if (holder.holderId == 1) {
-
-/*            int pos;
-            if (position < 6) {
-                // Main entries.
-                pos = position - 1;
-            } else {
-                // Settings and FAQ.
-                pos = position - 2;
-            }*/
-
             holder.titleTextView.setText(titles[position]);
             holder.summaryTextView.setText(summaries[position]);
-
-/*            // For selected row, highlight background and icon.
-            if (isSelected(position) && position < 6) {
-                holder.itemView.setBackgroundResource(R.drawable.custom_bg_selected);
-            } else {
-                holder.itemView.setBackgroundResource(R.drawable.custom_bg);
-            }*/
         } else {
             holder.subheaderTextView.setText(titles[position]);
         }

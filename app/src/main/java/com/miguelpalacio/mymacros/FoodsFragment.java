@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+
 
 /**
  * Foods Page.
@@ -29,7 +31,7 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
 
     DatabaseAdapter databaseAdapter;
 
-    Button button;
+    FloatingActionButton addFood;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,7 +47,24 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
 
         databaseAdapter = new DatabaseAdapter(getActivity());
 
-        button = (Button) getActivity().findViewById(R.id.open_new_food);
+        // Set the add new food button.
+        addFood = (FloatingActionButton) getActivity().findViewById(R.id.button_add_food);
+        addFood.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Fragment foodNewFragment = new FoodNewFragment();
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.fragment_container, foodNewFragment);
+                transaction.addToBackStack(null);
+
+                transaction.commit();
+                ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("New Food");
+                ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                ((ActionBarActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+
+            }
+        });
 
         // Get the names and summaries of foods inserted by the user.
         foodInfo = databaseAdapter.getFoods();
@@ -62,22 +81,6 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         foodListView.setLayoutManager(foodListLayoutManager);
 
 
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Fragment foodNewFragment = new FoodNewFragment();
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                transaction.replace(R.id.fragment_container, foodNewFragment);
-                transaction.addToBackStack(null);
-
-                transaction.commit();
-                ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("New Food");
-/*                ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                ((ActionBarActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);*/
-
-            }
-        });
     }
 
     @Override
