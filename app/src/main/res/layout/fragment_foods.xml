@@ -26,7 +26,7 @@
             android:text="Go to New Food Page" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/foods_recycler"
+            android:id="@+id/food_list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:minHeight="?android:attr/listPreferredItemHeight"

@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -27,7 +28,7 @@ public class DatabaseAdapter {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        // TODO: possible number convertion format goes here.
+        // TODO: possible number conversion format goes here.
         contentValues.put(DatabaseHelper.NAME, name);
         contentValues.put(DatabaseHelper.PROTEIN, protein);
         contentValues.put(DatabaseHelper.CARBOHYDRATES, carbohydrates);
@@ -71,47 +72,69 @@ public class DatabaseAdapter {
      * @return an Array of strings of dimension [2][# of foods]. Array[0] corresponds
      * to the food names, Array[1] to their summaries.
      */
-    public String[][] getFoodInfo() {
+    public String[][] getFoods() {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
         String[] columns = {DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
                 DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
         String orderBy = DatabaseHelper.NAME;
-        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns, null, null, null, null, orderBy);
+        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
+                null, null, null, null, orderBy);
 
-        ArrayList<String> titles = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<>();
         ArrayList<String> summaries = new ArrayList<>();
+        ArrayList<String> isSubheader = new ArrayList<>();
+
+        Character subheader = '_';
 
         while (cursor.moveToNext()) {
 
             int index;
 
-            // Get food name and place it in titles.
+            // Get Food's name.
             index = cursor.getColumnIndex(DatabaseHelper.NAME);
-            String foodName = cursor.getString(index);
-            titles.add(foodName);
+            String name = cursor.getString(index);
 
-            // Get food's protein, carbos and fat content. Parse data and place it in summaries.
+            // Define if a subheader should be placed.
+            if (subheader != name.charAt(0)) {
+                subheader = name.charAt(0);
+                // Flag position in isSubheader, add subheader in names, add empty string in summaries.
+                isSubheader.add("1");
+                names.add(subheader.toString().toUpperCase());
+                summaries.add("");
+            }
+
+            names.add(name);
+            isSubheader.add("0");
+
+            // Get Food's protein, carbohydrates and fat content.
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
-            int foodProtein = cursor.getInt(index);
+            int protein = cursor.getInt(index);
             index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            int foodCarbos = cursor.getInt(index);
+            int carbohydrates = cursor.getInt(index);
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
-            int foodFat = cursor.getInt(index);
-            String foodSummary = "Protein: " + foodProtein + " gr, Carbohydrates: " +
-                    foodCarbos + " gr, Fat: " + foodFat + " gr";
+            int fat = cursor.getInt(index);
+
+            // Parse data and place it in summaries.
+            String foodSummary = "Protein: " + protein + " gr, Carbohydrates: " + carbohydrates +
+                    " gr, Fat: " + fat + " gr";
             summaries.add(foodSummary);
         }
         cursor.close();
 
         // Store the resulting ArrayLists in a single data structure, and return it.
-        String[][] info = new String[2][titles.size()];
-        info[0] = titles.toArray(new String[titles.size()]);
-        info[1] = summaries.toArray(new String[titles.size()]);
+
+        Log.d("Names", "Size " + names.size());
+        Log.d("isSubheader?", "Size " + isSubheader.size());
+
+        String[][] info = new String[3][names.size()];
+        info[0] = names.toArray(new String[names.size()]);
+        info[1] = summaries.toArray(new String[names.size()]);
+        info[2] = isSubheader.toArray(new String[names.size()]);
+
 
         return info;
-/*        return titles.toArray(new String[titles.size()]);*/
     }
 
     public String getData(String name) {

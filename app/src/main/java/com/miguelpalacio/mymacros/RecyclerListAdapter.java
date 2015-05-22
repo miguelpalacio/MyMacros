@@ -11,22 +11,24 @@ import android.widget.TextView;
  */
 public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.ViewHolder> {
 
-    private static final int TYPE_HEADER = 0;
+    private static final int TYPE_FIRST_SUBHEADER = 0;
     private static final int TYPE_ROW = 1;
-    private static final int TYPE_DIVIDER = 2;
+    private static final int TYPE_SUBHEADER = 2;
 
     private final String[] titles;
     private final String[] summaries;
+    private final String[] isSubheader;
 
     private ViewHolder.ClickListener clickListener;
 
     // Class constructor.
-    public RecyclerListAdapter(String[] titles, String[] summaries,
+    public RecyclerListAdapter(String[] titles, String[] summaries, String[] isSubheader,
                                ViewHolder.ClickListener clickListener) {
         super();
 
         this.titles = titles;
         this.summaries = summaries;
+        this.isSubheader = isSubheader;
 
         this.clickListener = clickListener;
     }
@@ -38,6 +40,8 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
 
         TextView titleTextView;
         TextView summaryTextView;
+
+        TextView subheaderTextView;
 
         View itemView;
 
@@ -58,11 +62,13 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
                 // Set click listener for the row.
                 this.listener = listener;
                 itemView.setOnClickListener(this);
-            } else if (viewType == TYPE_DIVIDER) {
+            } else if (viewType == TYPE_SUBHEADER) {
                 holderId = 2;
+                subheaderTextView = (TextView) itemView.findViewById(R.id.list_item_subheader);
             }
             else {
                 holderId = 0;
+                subheaderTextView = (TextView) itemView.findViewById(R.id.list_item_first_subheader);
             }
         }
 
@@ -88,12 +94,10 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
 
         if (viewType == TYPE_ROW) {
             layout = R.layout.list_row;
-        } else if (viewType == TYPE_DIVIDER) {
-            //layout = R.layout.drawer_divider;
-            layout = R.layout.list_row; // Wrong, just to initialize.
+        } else if (viewType == TYPE_SUBHEADER) {
+            layout = R.layout.list_subheader;
         } else {
-            //layout = R.layout.drawer_header;
-            layout = R.layout.list_row; // Wrong, just to initialize.
+            layout = R.layout.list_subheader_first;
         }
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
@@ -124,8 +128,8 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
             } else {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg);
             }*/
-        } else if (holder.holderId == 0) {
-
+        } else {
+            holder.subheaderTextView.setText(titles[position]);
         }
     }
 
@@ -138,13 +142,12 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
     // Return the type of the view that is being passed.
     @Override
     public int getItemViewType(int position) {
-        return TYPE_ROW;
-/*        if (position == 0) {
-            return TYPE_HEADER;
-        } else if (position == 6) {
-            return TYPE_DIVIDER;
+        if (position == 0) {
+            return TYPE_FIRST_SUBHEADER;
+        } else if (isSubheader[position].equals("1")) {
+            return TYPE_SUBHEADER;
         } else {
             return TYPE_ROW;
-        }*/
+        }
     }
 }

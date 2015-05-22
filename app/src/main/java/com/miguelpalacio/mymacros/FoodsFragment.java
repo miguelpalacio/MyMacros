@@ -47,14 +47,14 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
 
         button = (Button) getActivity().findViewById(R.id.open_new_food);
 
-        // Query the database to obtain the food information.
-        foodInfo = databaseAdapter.getFoodInfo();
+        // Get the names and summaries of foods inserted by the user.
+        foodInfo = databaseAdapter.getFoods();
 
         // Food List RecyclerView.
-        foodListView = (RecyclerView) getActivity().findViewById(R.id.foods_recycler);
+        foodListView = (RecyclerView) getActivity().findViewById(R.id.food_list);
 
         // Set the adapter.
-        foodListAdapter = new RecyclerListAdapter(foodInfo[0], foodInfo[1], this);
+        foodListAdapter = new RecyclerListAdapter(foodInfo[0], foodInfo[1], foodInfo[2], this);
         foodListView.setAdapter(foodListAdapter);
 
         // Set the layout manager for the RecyclerView.
