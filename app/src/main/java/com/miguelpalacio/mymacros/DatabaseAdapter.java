@@ -69,7 +69,7 @@ public class DatabaseAdapter {
 
     /**
      * Retrieve the name and a summary for each item in the Foods table.
-     * @return three arrays: the first array contain the list of titles and
+     * @return three arrays: the first array contains the list of titles and
      * subheaders for the food list, the second the summaries, and the third a
      * "boolean" array expressing which position correspond to a subheader.
      */

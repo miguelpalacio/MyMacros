@@ -13,6 +13,7 @@
     <string name="toolbar_profile">Profile</string>
     <string name="toolbar_meals">My Meals</string>
     <string name="toolbar_foods">Foods</string>
+    <string name="toolbar_food_new">New Food</string>
     <string name="toolbar_settings">Settings</string>
 
     <!-- Navigation Drawer entries. -->

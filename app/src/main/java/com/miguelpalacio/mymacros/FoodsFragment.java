@@ -1,15 +1,13 @@
 package com.miguelpalacio.mymacros;
 
-import android.app.FragmentTransaction;
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -17,9 +15,7 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
 
 /**
  * Foods Page.
- * <p>
- *      Add, Edit, Remove Foods.
- * </p>
+ * Lists all the foods added by the user.
  */
 public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewHolder.ClickListener {
 
@@ -30,6 +26,8 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
     String[][] foodInfo;
 
     DatabaseAdapter databaseAdapter;
+
+    OnFoodsInnerFragment onFoodsInnerFragment;
 
     FloatingActionButton addFood;
 
@@ -51,18 +49,9 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         addFood = (FloatingActionButton) getActivity().findViewById(R.id.button_add_food);
         addFood.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                // Open the New Food fragment.
                 Fragment foodNewFragment = new FoodNewFragment();
-
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-                transaction.replace(R.id.fragment_container, foodNewFragment);
-                transaction.addToBackStack(null);
-
-                transaction.commit();
-                ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle("New Food");
-                ((ActionBarActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                ((ActionBarActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
-
+                onFoodsInnerFragment.openFoodsInnerFragment(foodNewFragment, R.string.toolbar_food_new);
             }
         });
 
@@ -79,12 +68,25 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         // Set the layout manager for the RecyclerView.
         foodListLayoutManager = new LinearLayoutManager(getActivity());
         foodListView.setLayoutManager(foodListLayoutManager);
+    }
 
-
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Ensure that the host activity implements the OnFoodsInnerFragment interface.
+        try {
+            onFoodsInnerFragment = (OnFoodsInnerFragment) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFoodsInnerFragment");
+        }
     }
 
     @Override
     public void onListItemClick(int position) {
         Toast.makeText(getActivity(), "Item at position " + position + " was clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    public interface OnFoodsInnerFragment {
+        void openFoodsInnerFragment(Fragment fragment, int newToolbarTitle);
     }
 }

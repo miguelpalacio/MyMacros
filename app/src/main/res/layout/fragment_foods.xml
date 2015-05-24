@@ -17,7 +17,7 @@
         android:fitsSystemWindows="true" />
 
     <!-- Floating button. -->
-    <!-- This LinearLayout was set since layout_marginBottom didn't work. -->
+    <!-- This LinearLayout was set since layout_marginBottom didn't work without it. -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

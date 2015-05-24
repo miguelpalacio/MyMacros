@@ -1,10 +1,10 @@
 package com.miguelpalacio.mymacros;
 
+import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
@@ -14,12 +14,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
 
-public class MainActivity extends ActionBarActivity implements DrawerAdapter.ViewHolder.ClickListener {
-
+public class MainActivity extends ActionBarActivity implements
+        DrawerAdapter.ViewHolder.ClickListener,
+        FoodsFragment.OnFoodsInnerFragment {
 
     Toolbar toolbar;
 
@@ -32,14 +35,15 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
     DrawerLayout drawerLayout;
     DrawerAdapter drawerAdapter;
 
+    ScrimInsetsFrameLayout scrimInsetsFrameLayout;
+
     ActionBarDrawerToggle mDrawerToggle;
 
     Runnable onDrawerClosedRunnable;
     Handler mHandler = new Handler();
 
     int currentFragment;
-
-    //DatabaseAdapter databaseAdapter;
+    boolean drawerIconAnimation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +60,6 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
             // Set to 0 to init in openFragment() when activity starts.
             currentFragment = 0;
         }
-
-        // Create or upgrade database.
-        //databaseAdapter = new DatabaseAdapter(this);
-
-        // If database doesn't exist, onCreate in helper is called.
-        //SQLiteDatabase sqLiteDatabase = databaseAdapter.getWritableDatabase();
 
         // Toolbar.
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -86,6 +84,9 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
         // Set the Navigation Drawer's layout.
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+        // Set the layout that envelops the Navigation Drawer to be used later.
+        scrimInsetsFrameLayout = (ScrimInsetsFrameLayout) findViewById(R.id.scrimInsetsFrameLayout);
 
         // Since Status Bar is transparent in styles.xml, set its color.
         drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary_dark));
@@ -112,8 +113,12 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
 
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
-                // Disable the Hamburguer-BackToArrow animation on Toolbar.
-                super.onDrawerSlide(drawerView, 0);
+                if (drawerIconAnimation) {
+                    super.onDrawerSlide(drawerView, slideOffset);
+                } else {
+                    // Disable the Hamburger-BackToArrow animation on Toolbar.
+                    super.onDrawerSlide(drawerView, 0);
+                }
             }
         };
 
@@ -121,24 +126,40 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         drawerLayout.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
+        // Enable back button in Toolbar (Navigation drawer must be deactivated for this).
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getFragmentManager().getBackStackEntryCount() > 0) {
+                    backToPreviousFragment();
+                } else if (drawerLayout.isDrawerOpen(scrimInsetsFrameLayout)) {
+                    drawerLayout.closeDrawers();
+                } else {
+                    drawerLayout.openDrawer(scrimInsetsFrameLayout);
+                    mDrawerToggle.syncState();
+                }
+            }
+        });
+
         // Open fragment.
         openFragment(currentFragment);
 
         // Highlight corresponding entry on Navigation Drawer.
         drawerAdapter.toggleSelection(currentFragment);
+
+        // Disable Navigation Drawer's icon animation.
+        drawerIconAnimation = false;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO: Find something useful for this menu, remove otherwise.
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        return false;
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // TODO: see previous TODO.
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -157,6 +178,19 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Override Hardware Back Button functionality.
+     */
+    @Override
+    public void onBackPressed() {
+        // When in a "sub-fragment", turn back to previous fragment.
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            backToPreviousFragment();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -185,6 +219,12 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
         super.onSaveInstanceState(outState);
         // Save current fragment before phone's re-orientation.
         outState.putInt("currentFragment", currentFragment);
+    }
+
+    // Open Foods' inner fragments.
+    @Override
+    public void openFoodsInnerFragment(Fragment fragment, int newToolbarTitle) {
+        openInnerFragment(fragment, newToolbarTitle);
     }
 
     /**
@@ -261,5 +301,82 @@ public class MainActivity extends ActionBarActivity implements DrawerAdapter.Vie
                 .replace(R.id.fragment_container, fragment)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
+    }
+
+    /**
+     * Opens (inner) fragments called from other fragments.
+     */
+    public void openInnerFragment(Fragment fragment, int newToolbarTitle) {
+
+        getFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .commit();
+
+        // Enable back-arrow in toolbar.
+        getSupportActionBar().setTitle(newToolbarTitle);
+/*      // Apparently, this is not needed since onDrawerSlide below take care of this.
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
+
+        // Lock Navigation Drawer.
+        drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+
+        // Animate the drawer icon (Hamburger to BackArrow animation).
+        ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float slideOffset = (Float) valueAnimator.getAnimatedValue();
+                // The actual animation is performed by onDrawerSlide.
+                mDrawerToggle.onDrawerSlide(drawerLayout, slideOffset);
+            }
+        });
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.setDuration(400);
+
+        // Enable the drawer icon animation.
+        drawerIconAnimation = true;
+        animator.start();
+    }
+
+    /**
+     * When in a "sub-fragment" (i.e., a fragment called inside another fragment), returns
+     * to the caller fragment. Re-enables the navigation drawer if necessary.
+     */
+    public void backToPreviousFragment() {
+
+        getFragmentManager().popBackStack();
+        int NewBackStackEntryCount = getFragmentManager().getBackStackEntryCount() - 1;
+
+        // When BackStack empty, re-enable the navigation drawer.
+        if (NewBackStackEntryCount == 0) {
+            getSupportActionBar().setHomeButtonEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            mDrawerToggle.syncState();
+            openFragment(currentFragment);
+            drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+        }
+
+        // Animate the drawer icon (BackArrow to Hamburger animation).
+        ValueAnimator animator = ValueAnimator.ofFloat(1, 0);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                float slideOffset = (Float) valueAnimator.getAnimatedValue();
+                // The actual animation is performed by onDrawerSlide.
+                mDrawerToggle.onDrawerSlide(drawerLayout, slideOffset);
+
+                // Disable the drawer icon animation.
+                if (slideOffset == 0.0) {
+                    drawerIconAnimation = false;
+                }
+            }
+        });
+        animator.setInterpolator(new DecelerateInterpolator());
+        animator.setDuration(400);
+        animator.start();
     }
 }
