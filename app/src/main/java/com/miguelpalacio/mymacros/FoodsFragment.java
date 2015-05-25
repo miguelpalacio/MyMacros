@@ -23,9 +23,8 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
     RecyclerView.LayoutManager foodListLayoutManager;
     RecyclerListAdapter foodListAdapter;
 
-    String[][] foodInfo;
-
     DatabaseAdapter databaseAdapter;
+    String[][] foodInfo;
 
     OnFoodsInnerFragment onFoodsInnerFragment;
 
@@ -69,6 +68,7 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         foodListLayoutManager = new LinearLayoutManager(getActivity());
         foodListView.setLayoutManager(foodListLayoutManager);
     }
+
 
     @Override
     public void onAttach(Activity activity) {

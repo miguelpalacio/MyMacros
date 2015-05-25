@@ -1,34 +1,48 @@
 package com.miguelpalacio.mymacros;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 
-public class FoodNewFragment extends Fragment {
 
-    EditText foodName;
-    EditText portion;
-    EditText portionUnits;
-    EditText protein;
-    EditText carbohydrates;
-    EditText fat;
-    EditText fiber;
+public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
-    Button button;
-    Button button2;
+    EditText foodNameEditText;
+    EditText portionEditText;
+    EditText proteinEditText;
+    EditText carbosEditText;
+    EditText fatEditText;
+    EditText fiberEditText;
+    Spinner portionUnitsSpinner;
 
-    EditText enterDetails;
-    Button button3;
+    String foodName;
+    Double portionQuantity;
+    Double proteinQuantity;
+    Double carbosQuantity;
+    Double fatQuantity;
+    Double fiberQuantity;
+    int portionUnits;
 
     DatabaseAdapter databaseAdapter;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // Enable menu entries to receive calls.
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,67 +58,143 @@ public class FoodNewFragment extends Fragment {
 
         databaseAdapter = new DatabaseAdapter(getActivity());
 
-        // Get references to the view.
-        foodName = (EditText) getActivity().findViewById(R.id.food_name);
-        portion = (EditText) getActivity().findViewById(R.id.portion);
-        portionUnits = (EditText) getActivity().findViewById(R.id.portion_units);
-        protein = (EditText) getActivity().findViewById(R.id.protein);
-        carbohydrates = (EditText) getActivity().findViewById(R.id.carbohydrates);
-        fat = (EditText) getActivity().findViewById(R.id.fat);
-        fiber = (EditText) getActivity().findViewById(R.id.fiber);
+        // Get references to the views.
 
-        button = (Button) getActivity().findViewById(R.id.add_food);
-        button2 = (Button) getActivity().findViewById(R.id.view_details);
+        foodNameEditText = (EditText) getActivity().findViewById(R.id.food_name);
+        portionEditText = (EditText) getActivity().findViewById(R.id.food_portion);
+        proteinEditText = (EditText) getActivity().findViewById(R.id.food_protein);
+        carbosEditText = (EditText) getActivity().findViewById(R.id.food_carbos);
+        fatEditText = (EditText) getActivity().findViewById(R.id.food_fat);
+        fiberEditText = (EditText) getActivity().findViewById(R.id.food_fiber);
 
-        enterDetails = (EditText) getActivity().findViewById(R.id.enter_food_name);
-        button3 = (Button) getActivity().findViewById(R.id.get_details);
+        // Portion Units Spinner.
+        portionUnitsSpinner = (Spinner) getActivity().findViewById(R.id.portion_units_spinner);
+        portionUnitsSpinner.setOnItemSelectedListener(this);
 
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                insertFood();
-            }
-        });
-
-        button2.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                viewDetails();
-            }
-        });
-
-        button3.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                getDetails();
-            }
-        });
+        // Populate the Spinner with the user choices.
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.spinner_units_array, android.R.layout.simple_spinner_item);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        portionUnitsSpinner.setAdapter(arrayAdapter);
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_food_new, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        // Insert the new food into the database.
+        if (id == R.id.action_save_food) {
+            insertFood();
+        } else if (id == R.id.action_scan_barcode) {
+            Toast.makeText(getActivity(), "Functionality coming soon", Toast.LENGTH_SHORT).show();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // Spinner methods.
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        //portionUnits = parent.getItemAtPosition(position).toString();
+        /**
+         * portionUnits:
+         * · 0 = gr
+         * · 1 = oz
+         * · 2 = ml
+         * · 3 = lb
+         * · 4 = unit
+         */
+        portionUnits = position;
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    /**
+     * Inserts New Food into the database using the data entered by the user.
+     * In case there's missing data, informs the user and shows where the problem is.
+     */
     public void insertFood() {
 
-        String name = foodName.getText().toString();
-        int prot = Integer.parseInt(protein.getText().toString());
-        int carb = Integer.parseInt(carbohydrates.getText().toString());
-        int fa = Integer.parseInt(fat.getText().toString());
-        int fib = Integer.parseInt(fiber.getText().toString());
-        int por = Integer.parseInt(portion.getText().toString());
-        int porU = Integer.parseInt(portionUnits.getText().toString());
+        boolean missingData = false;
 
-        long id = databaseAdapter.insertFood(name, prot, carb, fa, fib, por, porU);
+        // Verify that all the information required is present.
+        if (foodNameEditText.getText().toString().length() == 0) {
+            foodNameEditText.setError("Please enter a name");
+            missingData = true;
+        }
+        if (portionEditText.getText().toString().length() == 0) {
+            portionEditText.setError("Please enter the portion quantity");
+            missingData = true;
+        }
+        if (proteinEditText.getText().toString().length() == 0) {
+            proteinEditText.setError("Please enter the protein quantity");
+            missingData = true;
+        }
+        if (carbosEditText.getText().toString().length() == 0) {
+            carbosEditText.setError("Please enter the carbohydrates quantity");
+            missingData = true;
+        }
+        if (fatEditText.getText().toString().length() == 0) {
+            fatEditText.setError("Please enter the fat quantity");
+            missingData = true;
+        }
+        if (fiberEditText.getText().toString().length() == 0) {
+            fiberEditText.setError("Please enter the fiber quantity\n(0 gr if not known)");
+            missingData = true;
+        }
+        if (missingData) {
+            return;
+        }
+
+/*        String inputText;*/
+
+/*        // Decimal format to prepare the data prior to insertion into database.
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");*/
+
+        // Get the information entered by the user.
+
+        foodName = foodNameEditText.getText().toString();
+
+        portionQuantity = Double.parseDouble(portionEditText.getText().toString());
+        proteinQuantity = Double.parseDouble(proteinEditText.getText().toString());
+        carbosQuantity = Double.parseDouble(carbosEditText.getText().toString());
+        fatQuantity = Double.parseDouble(fatEditText.getText().toString());
+        fiberQuantity = Double.parseDouble(fiberEditText.getText().toString());
+
+/*        inputText = portionEditText.getText().toString();
+        portionQuantity = Double.parseDouble(decimalFormat.format(inputText));
+
+        inputText = proteinEditText.getText().toString();
+        proteinQuantity = Double.parseDouble(decimalFormat.format(inputText));
+
+        inputText = carbosEditText.getText().toString();
+        carbosQuantity = Double.parseDouble(decimalFormat.format(inputText));
+
+        inputText = fatEditText.getText().toString();
+        fatQuantity = Double.parseDouble(decimalFormat.format(inputText));
+
+        inputText = fiberEditText.getText().toString();
+        fiberQuantity = Double.parseDouble(decimalFormat.format(inputText));*/
+
+        long id = databaseAdapter.insertFood(foodName, proteinQuantity, carbosQuantity,
+                fatQuantity, fiberQuantity, portionQuantity, portionUnits);
 
         if (id < 0) {
-            Toast.makeText(getActivity(), "Unsuccessful", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "There was an internal problem", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getActivity(), "Row Successfully Inserted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Food saved", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    public void viewDetails() {
-        String data = databaseAdapter.getAllData();
-        Toast.makeText(getActivity(), data, Toast.LENGTH_SHORT).show();
-    }
-
-    public void getDetails() {
-        String data = databaseAdapter.getData(enterDetails.getText().toString());
-        Toast.makeText(getActivity(), data, Toast.LENGTH_SHORT).show();
     }
 
     public void update() {
@@ -113,99 +203,5 @@ public class FoodNewFragment extends Fragment {
     public void delete() {
 
     }
-
-/*
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    */
-/**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FoodNewFragment.
-     *//*
-
-    // TODO: Rename and change types and number of parameters
-    public static FoodNewFragment newInstance(String param1, String param2) {
-        FoodNewFragment fragment = new FoodNewFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public FoodNewFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_food_new, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    */
-/**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     *//*
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
-    }
-*/
 
 }

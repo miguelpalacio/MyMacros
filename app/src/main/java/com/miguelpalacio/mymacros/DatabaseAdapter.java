@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -22,49 +23,45 @@ public class DatabaseAdapter {
     }
 
     // Insert a tuple into the FOODS table.
-    public long insertFood(String name, int protein, int carbohydrates, int fat,
-                           int fiber, int portionQuantity, int portionUnits) {
+    public long insertFood(String name, double proteinQuantity, double carbosQuantity,
+                           double fatQuantity, double fiberQuantity, double portionQuantity,
+                           int portionUnits) {
 
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        // TODO: possible number conversion format goes here.
+        // Decimal format to prepare the data prior to insertion into database.
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+        proteinQuantity = Double.parseDouble(decimalFormat.format(proteinQuantity));
+        carbosQuantity = Double.parseDouble(decimalFormat.format(carbosQuantity));
+        fatQuantity = Double.parseDouble(decimalFormat.format(fatQuantity));
+        fiberQuantity = Double.parseDouble(decimalFormat.format(fiberQuantity));
+        portionQuantity = Double.parseDouble(decimalFormat.format(portionQuantity));
+
         contentValues.put(DatabaseHelper.NAME, name);
-        contentValues.put(DatabaseHelper.PROTEIN, protein);
-        contentValues.put(DatabaseHelper.CARBOHYDRATES, carbohydrates);
-        contentValues.put(DatabaseHelper.FAT, fat);
-        contentValues.put(DatabaseHelper.FIBER, fiber);
+        contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
+        contentValues.put(DatabaseHelper.CARBOHYDRATES, carbosQuantity);
+        contentValues.put(DatabaseHelper.FAT, fatQuantity);
+        contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
         contentValues.put(DatabaseHelper.PORTION_QUANTITY, portionQuantity);
         contentValues.put(DatabaseHelper.PORTION_UNITS, portionUnits);
 
         return db.insert(DatabaseHelper.TABLE_FOODS, null, contentValues);
     }
 
-    public String getAllData() {
-        SQLiteDatabase db = helper.getReadableDatabase();
+    // Select a tuple from the Foods table given an ID.
+    public String[] getFoodInfo(int foodId) {
 
-        // Select foodUid, Name, Protein, Carbohydrates, Fat from Foods;
-        String[] columns = {DatabaseHelper.FOOD_ID, DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
-                DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
-        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns, null, null, null, null, null);
-        StringBuffer buffer = new StringBuffer();
+        String [] a = {"2", "3"};
+        return a;
+    }
 
-        while (cursor.moveToNext()) {
-            int index1 = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
-            int uid = cursor.getInt(index1);
-            int index2 = cursor.getColumnIndex(DatabaseHelper.NAME);
-            String name = cursor.getString(index2);
-            int index3 = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
-            int protein = cursor.getInt(index3);
-            int index4 = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            int carbohydrates = cursor.getInt(index4);
-            int index5 = cursor.getColumnIndex(DatabaseHelper.FAT);
-            int fat = cursor.getInt(index5);
-
-            buffer.append(uid + " " + name + " " + protein + " " + carbohydrates + " " + fat + "\n");
-        }
-        cursor.close();
-        return buffer.toString();
+    // Update a tuple from the Foods table given an ID and the updated data.
+    public int updateFood(long foodId, String name, double proteinQuantity, double carbosQuantity,
+                           double fatQuantity, double fiberQuantity, double portionQuantity,
+                           int portionUnits) {
+        return 0;
     }
 
     /**
@@ -88,6 +85,7 @@ public class DatabaseAdapter {
         ArrayList<String> isSubheader = new ArrayList<>();
 
         Character lastSubheader = '\0';
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
 
         while (cursor.moveToNext()) {
             int index;
@@ -96,11 +94,11 @@ public class DatabaseAdapter {
             index = cursor.getColumnIndex(DatabaseHelper.NAME);
             String name = cursor.getString(index);
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
-            int protein = cursor.getInt(index);
+            double protein = cursor.getDouble(index);
             index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            int carbohydrates = cursor.getInt(index);
+            double carbohydrates = cursor.getDouble(index);
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
-            int fat = cursor.getInt(index);
+            double fat = cursor.getDouble(index);
 
             // Define if a lastSubheader should be placed.
             if (lastSubheader != name.charAt(0)) {
@@ -123,8 +121,9 @@ public class DatabaseAdapter {
             isSubheader.add("0");
 
             // Parse data and place it in summaries.
-            String foodSummary = "Protein: " + protein + " gr, Carbohydrates: " +
-                    carbohydrates + " gr, Fat: " + fat + " gr";
+            String foodSummary = "Protein: " + decimalFormat.format(protein) +
+                    " gr, Carbohydrates: " + decimalFormat.format(carbohydrates) +
+                    " gr, Fat: " + decimalFormat.format(fat) + " gr";
             summaries.add(foodSummary);
         }
         cursor.close();
@@ -138,44 +137,6 @@ public class DatabaseAdapter {
         return info;
     }
 
-    public String getData(String name) {
-        SQLiteDatabase db = helper.getReadableDatabase();
-
-        // Select foodUid, Name, Protein, Carbohydrates, Fat from Foods;
-        String[] columns = {DatabaseHelper.FOOD_ID, DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
-                DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
-        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
-                DatabaseHelper.NAME + " = '" + name + "'", null, null, null, null);
-        StringBuffer buffer = new StringBuffer();
-
-        while (cursor.moveToNext()) {
-            int index1 = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
-            int uid = cursor.getInt(index1);
-            int index2 = cursor.getColumnIndex(DatabaseHelper.NAME);
-            String foodName = cursor.getString(index2);
-            int index3 = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
-            int protein = cursor.getInt(index3);
-            int index4 = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            int carbohydrates = cursor.getInt(index4);
-            int index5 = cursor.getColumnIndex(DatabaseHelper.FAT);
-            int fat = cursor.getInt(index5);
-
-            buffer.append(uid + " " + foodName + " " + protein + " " + carbohydrates + " " + fat + "\n");
-        }
-
-        // TODO: return the cursor, and handle it within the fragment class.
-        cursor.close();
-        return buffer.toString();
-    }
-
-    public void updateName(String oldName, String newName) {
-        // update Foods set Name='newName' where Name='oldName'.
-        SQLiteDatabase db = helper.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(DatabaseHelper.NAME, newName);
-        String[] whereArgs={oldName};
-        db.update(DatabaseHelper.TABLE_FOODS, contentValues, DatabaseHelper.NAME + " =? ", whereArgs);
-    }
 
     /**
      * This inner class takes care of opening the database if it exists,

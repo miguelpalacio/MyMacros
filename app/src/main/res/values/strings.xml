@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">MyMacros</string>
 
+    <!-- Menus Strings -->
     <string name="action_settings">Settings</string>
     <string name="action_faq">FAQ</string>
+    <string name="action_scan_barcode">Scan Barcode</string>
+    <string name="action_save_food">Save Food</string>
 
     <string name="open_drawer"> </string>
     <string name="close_drawer">MyMacros</string>
@@ -258,6 +261,28 @@
     <string name="profile_water">Water</string>
     <string name="profile_water_default">0</string>
     <string name="profile_water_summary">2366 ml/day</string>
+
+    <!-- *************************************************************************************** -->
+    <!-- Food Pages Strings. -->
+    <string name="food_name">Name</string>
+
+    <string name="food_portion">Portion</string>
+    <string name="food_portion_quantity">Quantity</string>
+    <string-array name="spinner_units_array">
+        <item>gr</item>
+        <item>oz</item>
+        <item>ml</item>
+        <item>lb</item>
+        <item>unit</item>
+    </string-array>
+
+    <string name="food_macronutrients">Macronutrients</string>
+    <string name="food_macronutrients_units">gr</string>
+    <string name="food_protein">Protein</string>
+    <string name="food_carbos">Carbohydrates</string>
+    <string name="food_fat">Fat</string>
+    <string name="food_fiber">Fiber</string>
+
 
 
     <!-- *************************************************************************************** -->

@@ -490,7 +490,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             fat = fat / 4.184;
         }
 
-        // Calculate grams per macro. 1 gram of protein/carbos = 4 kcal, 1 gram of fat = 9 kcal.
+        // Calculate grams per macro. 1 gram of proteinEditText/carbos = 4 kcal, 1 gram of fatEditText = 9 kcal.
         protein = protein / 4;
         carbos = carbos / 4;
         fat = fat / 9;
@@ -534,19 +534,19 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     }
 
     /**
-     * Set the recommended daily fiber intake.
+     * Set the recommended daily fiberEditText intake.
      * Dependencies: calorieNeed.
      */
     private void setFiberIntake() {
 
-        // Calculate fiber intake. Formula taken from:
+        // Calculate fiberEditText intake. Formula taken from:
         // http://healthyeating.sfgate.com/calculate-much-fiber-one-needs-day-4814.html
         double f = Double.parseDouble(sharedPref.getString(KEY_CALORIE_NEED, "0"));
         if (unitsEnergy.equals("kJ")) {
             f = f / 4.184;
         }
 
-        // 14 gr of fiber for each 1000 kcal consumed.
+        // 14 gr of fiberEditText for each 1000 kcal consumed.
         f = f * 14 / 1000;
 
         // Store value in SharedPreferences

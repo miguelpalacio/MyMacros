@@ -43,6 +43,7 @@ public class MainActivity extends ActionBarActivity implements
     Handler mHandler = new Handler();
 
     int currentFragment;
+    boolean inInnerFragment;
     boolean drawerIconAnimation;
 
     @Override
@@ -53,9 +54,15 @@ public class MainActivity extends ActionBarActivity implements
         // Set default values for preferences.
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 
+        // Initialize local variables.
+        drawerIconAnimation = false;
+        inInnerFragment = false;
+
         // Load savedInstanceState data.
         if (savedInstanceState != null) {
             currentFragment = savedInstanceState.getInt("currentFragment");
+            inInnerFragment = savedInstanceState.getBoolean("inInnerFragment");
+            drawerIconAnimation = savedInstanceState.getBoolean("drawerIconAnimation");
         } else {
             // Set to 0 to init in openFragment() when activity starts.
             currentFragment = 0;
@@ -147,8 +154,11 @@ public class MainActivity extends ActionBarActivity implements
         // Highlight corresponding entry on Navigation Drawer.
         drawerAdapter.toggleSelection(currentFragment);
 
-        // Disable Navigation Drawer's icon animation.
-        drawerIconAnimation = false;
+        // If application is in inner fragment, enable the Home Button.
+        if (inInnerFragment) {
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -214,11 +224,16 @@ public class MainActivity extends ActionBarActivity implements
         drawerLayout.closeDrawers();
     }
 
+    /**
+     * Save local variables in case of restart of activity (due to re-orientation,
+     * because it went into stopped state, etc).
+     */
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        // Save current fragment before phone's re-orientation.
         outState.putInt("currentFragment", currentFragment);
+        outState.putBoolean("inInnerFragment", inInnerFragment);
+        outState.putBoolean("drawerIconAnimation", drawerIconAnimation);
     }
 
     // Open Foods' inner fragments.
@@ -315,6 +330,8 @@ public class MainActivity extends ActionBarActivity implements
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
 
+        inInnerFragment = true;
+
         // Enable back-arrow in toolbar.
         getSupportActionBar().setTitle(newToolbarTitle);
 /*      // Apparently, this is not needed since onDrawerSlide below take care of this.
@@ -332,6 +349,12 @@ public class MainActivity extends ActionBarActivity implements
                 float slideOffset = (Float) valueAnimator.getAnimatedValue();
                 // The actual animation is performed by onDrawerSlide.
                 mDrawerToggle.onDrawerSlide(drawerLayout, slideOffset);
+
+/*                // Enable home button (necessary if application gets stopped).
+                if (slideOffset == 1.0) {
+                    getSupportActionBar().setHomeButtonEnabled(true);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                }*/
             }
         });
         animator.setInterpolator(new DecelerateInterpolator());
@@ -353,11 +376,13 @@ public class MainActivity extends ActionBarActivity implements
 
         // When BackStack empty, re-enable the navigation drawer.
         if (NewBackStackEntryCount == 0) {
+/*          // Apparently, because of the animation this is not needed either.
             getSupportActionBar().setHomeButtonEnabled(false);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);*/
             mDrawerToggle.syncState();
             openFragment(currentFragment);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            inInnerFragment = false;
         }
 
         // Animate the drawer icon (BackArrow to Hamburger animation).
