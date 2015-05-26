@@ -14,7 +14,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,8 +21,8 @@ import android.view.animation.DecelerateInterpolator;
 
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
-        FoodsFragment.OnFoodsInnerFragment,
-        FoodNewFragment.OnFoodSaved {
+        FoodsFragment.OnFoodEditorFragment,
+        FoodEditorFragment.OnFoodSaved {
 
     Toolbar toolbar;
 
@@ -192,6 +191,18 @@ public class MainActivity extends ActionBarActivity implements
     }
 
     /**
+     * Save local variables in case of restart of activity (due to re-orientation,
+     * because it went into stopped state, etc).
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("currentFragment", currentFragment);
+        outState.putBoolean("inInnerFragment", inInnerFragment);
+        outState.putBoolean("drawerIconAnimation", drawerIconAnimation);
+    }
+
+    /**
      * Override Hardware Back Button functionality.
      */
     @Override
@@ -225,21 +236,9 @@ public class MainActivity extends ActionBarActivity implements
         drawerLayout.closeDrawers();
     }
 
-    /**
-     * Save local variables in case of restart of activity (due to re-orientation,
-     * because it went into stopped state, etc).
-     */
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putInt("currentFragment", currentFragment);
-        outState.putBoolean("inInnerFragment", inInnerFragment);
-        outState.putBoolean("drawerIconAnimation", drawerIconAnimation);
-    }
-
     // Open Foods' inner fragments.
     @Override
-    public void openFoodsInnerFragment(Fragment fragment, int newToolbarTitle) {
+    public void openFoodEditorFragment(Fragment fragment, int newToolbarTitle) {
         openInnerFragment(fragment, newToolbarTitle);
     }
 

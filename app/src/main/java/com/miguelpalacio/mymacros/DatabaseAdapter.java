@@ -50,11 +50,45 @@ public class DatabaseAdapter {
         return db.insert(DatabaseHelper.TABLE_FOODS, null, contentValues);
     }
 
-    // Select a tuple from the Foods table given an ID.
-    public String[] getFoodInfo(int foodId) {
+    /**
+     * Get information for a given Food ID.
+     * @return array of strings with:
+     * Name, PortionQuantity, PortionUnits, Protein, Carbohydrates, Fat, Fiber.
+     */
+    public String[] getFoodInfo(long foodId) {
+        SQLiteDatabase db = helper.getReadableDatabase();
 
-        String [] a = {"2", "3"};
-        return a;
+        String column = "*";
+        String[] columns = {column};
+        String selection = DatabaseHelper.FOOD_ID + " = ?";
+        String[] selectionArgs = {Double.toString(foodId)};
+        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
+                selection, selectionArgs, null, null, null);
+
+        String[] foodInfo = new String[7];
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+        while (cursor.moveToNext()) {
+            int index;
+
+            index = cursor.getColumnIndex(DatabaseHelper.NAME);
+            foodInfo[0] = cursor.getString(index);
+            index = cursor.getColumnIndex(DatabaseHelper.PORTION_QUANTITY);
+            foodInfo[1] = decimalFormat.format(cursor.getDouble(index));
+            index = cursor.getColumnIndex(DatabaseHelper.PORTION_UNITS);
+            foodInfo[2] = Integer.toString(cursor.getInt(index));
+            index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
+            foodInfo[3] = decimalFormat.format(cursor.getDouble(index));
+            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
+            foodInfo[4] = decimalFormat.format(cursor.getDouble(index));
+            index = cursor.getColumnIndex(DatabaseHelper.FAT);
+            foodInfo[5] = decimalFormat.format(cursor.getDouble(index));
+            index = cursor.getColumnIndex(DatabaseHelper.FIBER);
+            foodInfo[6] = decimalFormat.format(cursor.getDouble(index));
+        }
+        cursor.close();
+
+        return foodInfo;
     }
 
     // Update a tuple from the Foods table given an ID and the updated data.
@@ -66,20 +100,23 @@ public class DatabaseAdapter {
 
     /**
      * Retrieve the name and a summary for each item in the Foods table.
-     * @return three arrays: the first array contains the list of titles and
-     * subheaders for the food list, the second the summaries, and the third a
-     * "boolean" array expressing which position correspond to a subheader.
+     * @return four arrays:
+     * info[0]: contains the list of food ids.
+     * info[1]: contains the list of food names and subheaders for the food list.
+     * info[2]: contains the summaries
+     * info[3]: it's "boolean" array expressing which position corresponds to a subheader.
      */
     public String[][] getFoods() {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
-        String[] columns = {DatabaseHelper.NAME, DatabaseHelper.PROTEIN,
-                DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
+        String[] columns = {DatabaseHelper.FOOD_ID, DatabaseHelper.NAME,
+                DatabaseHelper.PROTEIN, DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
         String orderBy = DatabaseHelper.NAME;
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
                 null, null, null, null, orderBy);
 
+        ArrayList<String> ids = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
         ArrayList<String> summaries = new ArrayList<>();
         ArrayList<String> isSubheader = new ArrayList<>();
@@ -91,6 +128,8 @@ public class DatabaseAdapter {
             int index;
 
             // Get Food information.
+            index = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
+            long id = cursor.getLong(index);
             index = cursor.getColumnIndex(DatabaseHelper.NAME);
             String name = cursor.getString(index);
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
@@ -105,18 +144,21 @@ public class DatabaseAdapter {
                 // Check for numeric characters and special symbols.
                 if (Character.isLetter(name.charAt(0))) {
                     lastSubheader = name.charAt(0);
-                    isSubheader.add("1");
+                    ids.add("-1");
                     names.add(lastSubheader.toString().toUpperCase());
                     summaries.add("");
+                    isSubheader.add("1");
                 }
                 // If special character, set subheader as '#' if it hasn't been set.
                 else if (lastSubheader != '#') {
                     lastSubheader = '#';
+                    ids.add("-1");
                     names.add(lastSubheader.toString());
-                    isSubheader.add("1");
                     summaries.add("");
+                    isSubheader.add("1");
                 }
             }
+            ids.add("" + id);
             names.add(name);
             isSubheader.add("0");
 
@@ -129,10 +171,11 @@ public class DatabaseAdapter {
         cursor.close();
 
         // Store the resulting ArrayLists in a single data structure, and return it.
-        String[][] info = new String[3][names.size()];
-        info[0] = names.toArray(new String[names.size()]);
-        info[1] = summaries.toArray(new String[names.size()]);
-        info[2] = isSubheader.toArray(new String[names.size()]);
+        String[][] info = new String[4][ids.size()];
+        info[0] = ids.toArray(new String[ids.size()]);
+        info[1] = names.toArray(new String[ids.size()]);
+        info[2] = summaries.toArray(new String[ids.size()]);
+        info[3] = isSubheader.toArray(new String[ids.size()]);
 
         return info;
     }
@@ -143,11 +186,10 @@ public class DatabaseAdapter {
     public boolean isNameInFoods(String foodName) {
         SQLiteDatabase db = helper.getReadableDatabase();
 
-        // SELECT Name FROM Foods WHERE Name = foodName;
         // SELECT COUNT(*) WHERE Name = foodName;
         String column = "COUNT(*)";
         String[] columns = {column};
-        String selection = "Name = ?";
+        String selection = DatabaseHelper.NAME + " = ?";
         String[] selectionArgs = {foodName};
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
                 selection, selectionArgs, null, null, null);
@@ -183,14 +225,14 @@ public class DatabaseAdapter {
 
         private static final String CREATE_FOODS_TABLE =
                 "CREATE TABLE " + TABLE_FOODS +
-                " (" + FOOD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                NAME + " VARCHAR(50) UNIQUE, " +
-                PROTEIN + " NUMERIC(5,1), " +
-                CARBOHYDRATES + " NUMERIC(5,1), " +
-                FAT + " NUMERIC(5,1), " +
-                FIBER + " NUMERIC(5,1), " +
-                PORTION_UNITS + " INTEGER, " +
-                PORTION_QUANTITY + " NUMERIC(5,1));";
+                        " (" + FOOD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        NAME + " VARCHAR(50) UNIQUE, " +
+                        PORTION_QUANTITY + " NUMERIC(5,1), " +
+                        PORTION_UNITS + " INTEGER, " +
+                        PROTEIN + " NUMERIC(5,1), " +
+                        CARBOHYDRATES + " NUMERIC(5,1), " +
+                        FAT + " NUMERIC(5,1), " +
+                        FIBER + " NUMERIC(5,1));";
 
         private static final int DATABASE_VERSION = 1;
 

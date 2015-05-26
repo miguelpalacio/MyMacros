@@ -19,6 +19,9 @@ import com.getbase.floatingactionbutton.FloatingActionButton;
  */
 public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewHolder.ClickListener {
 
+    public static final String isNewFoodArg = "isNewFood";
+    public static final String foodIdArg = "foodId";
+
     RecyclerView foodListView;
     RecyclerView.LayoutManager foodListLayoutManager;
     RecyclerListAdapter foodListAdapter;
@@ -26,7 +29,7 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
     DatabaseAdapter databaseAdapter;
     String[][] foodInfo;
 
-    OnFoodsInnerFragment onFoodsInnerFragment;
+    OnFoodEditorFragment onFoodEditorFragment;
 
     FloatingActionButton addFood;
 
@@ -38,21 +41,22 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Ensure that the host activity implements the OnFoodEditorFragment interface.
+        try {
+            onFoodEditorFragment = (OnFoodEditorFragment) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFoodEditorFragment interface");
+        }
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
 
         databaseAdapter = new DatabaseAdapter(getActivity());
-
-        // Set the add new food button.
-        addFood = (FloatingActionButton) getActivity().findViewById(R.id.button_add_food);
-        addFood.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Open the New Food fragment.
-                Fragment foodNewFragment = new FoodNewFragment();
-                onFoodsInnerFragment.openFoodsInnerFragment(foodNewFragment, R.string.toolbar_food_new);
-            }
-        });
 
         // Get the names and summaries of foods inserted by the user.
         foodInfo = databaseAdapter.getFoods();
@@ -61,31 +65,43 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         foodListView = (RecyclerView) getActivity().findViewById(R.id.food_list);
 
         // Set the adapter.
-        foodListAdapter = new RecyclerListAdapter(foodInfo[0], foodInfo[1], foodInfo[2], this);
+        foodListAdapter = new RecyclerListAdapter(foodInfo[1], foodInfo[2], foodInfo[3], this);
         foodListView.setAdapter(foodListAdapter);
 
         // Set the layout manager for the RecyclerView.
         foodListLayoutManager = new LinearLayoutManager(getActivity());
         foodListView.setLayoutManager(foodListLayoutManager);
+
+        // Define the add new food button, and set a listener.
+        addFood = (FloatingActionButton) getActivity().findViewById(R.id.button_add_food);
+        addFood.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Fragment foodEditorFragment = new FoodEditorFragment();
+
+                Bundle args = new Bundle();
+                args.putBoolean(isNewFoodArg, true);
+                foodEditorFragment.setArguments(args);
+
+                onFoodEditorFragment.openFoodEditorFragment(foodEditorFragment, R.string.toolbar_food_new);
+            }
+        });
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        // Ensure that the host activity implements the OnFoodsInnerFragment interface.
-        try {
-            onFoodsInnerFragment = (OnFoodsInnerFragment) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnFoodsInnerFragment interface");
-        }
-    }
-
+    // When an item on the food list is selected, open FoodEditorFragment with the food data.
     @Override
     public void onListItemClick(int position) {
-        Toast.makeText(getActivity(), "Item at position " + position + " was clicked", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(), "Item with ID " + foodInfo[0][position] + " was clicked", Toast.LENGTH_SHORT).show();
+        Fragment foodEditorFragment = new FoodEditorFragment();
+
+        Bundle args = new Bundle();
+        args.putBoolean(isNewFoodArg, false);
+        args.putLong(foodIdArg, Long.parseLong(foodInfo[0][position]));
+        foodEditorFragment.setArguments(args);
+
+        onFoodEditorFragment.openFoodEditorFragment(foodEditorFragment, R.string.toolbar_food_edit);
     }
 
-    public interface OnFoodsInnerFragment {
-        void openFoodsInnerFragment(Fragment fragment, int newToolbarTitle);
+    public interface OnFoodEditorFragment {
+        void openFoodEditorFragment(Fragment fragment, int newToolbarTitle);
     }
 }

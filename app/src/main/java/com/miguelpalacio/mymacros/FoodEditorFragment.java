@@ -15,10 +15,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.text.DecimalFormat;
-
-
-public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     EditText foodNameEditText;
     EditText portionEditText;
@@ -28,6 +25,7 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
     EditText fiberEditText;
     Spinner portionUnitsSpinner;
 
+    long foodId;
     String foodName;
     Double portionQuantity;
     Double proteinQuantity;
@@ -43,15 +41,25 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // Enable menu entries to receive calls.
         setHasOptionsMenu(true);
+
+        // Check if New Food page was requested.
+        if (getArguments().getBoolean(FoodsFragment.isNewFoodArg)) {
+            foodId = -1;
+            return;
+        }
+
+        // If it is Edit Food page, retrieve the ID of the food to be shown.
+        foodId = getArguments().getLong(FoodsFragment.foodIdArg);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
-        return inflater.inflate(R.layout.fragment_food_new, container, false);
+        return inflater.inflate(R.layout.fragment_food_editor, container, false);
     }
 
     @Override
@@ -79,6 +87,22 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
                 R.array.spinner_units_array, android.R.layout.simple_spinner_item);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         portionUnitsSpinner.setAdapter(arrayAdapter);
+
+        // On New Food page, return.
+        if (foodId < 0) {
+            return;
+        }
+
+        // Restore the food's details in the views.
+        String[] foodInfo = databaseAdapter.getFoodInfo(foodId);
+
+        foodNameEditText.setText(foodInfo[0]);
+        portionEditText.setText(foodInfo[1]);
+        portionUnitsSpinner.setSelection(Integer.parseInt(foodInfo[2]));
+        proteinEditText.setText(foodInfo[3]);
+        carbosEditText.setText(foodInfo[4]);
+        fatEditText.setText(foodInfo[5]);
+        fiberEditText.setText(foodInfo[6]);
     }
 
     @Override
@@ -106,7 +130,7 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // Ensure that the host activity implements the OnFoodsInnerFragment interface.
+        // Ensure that the host activity implements the OnFoodEditorFragment interface.
         try {
             onFoodSaved = (OnFoodSaved) activity;
         } catch (ClassCastException e) {
