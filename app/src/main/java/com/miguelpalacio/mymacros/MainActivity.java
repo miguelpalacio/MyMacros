@@ -22,7 +22,8 @@ import android.view.animation.DecelerateInterpolator;
 
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
-        FoodsFragment.OnFoodsInnerFragment {
+        FoodsFragment.OnFoodsInnerFragment,
+        FoodNewFragment.OnFoodSaved {
 
     Toolbar toolbar;
 
@@ -240,6 +241,12 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void openFoodsInnerFragment(Fragment fragment, int newToolbarTitle) {
         openInnerFragment(fragment, newToolbarTitle);
+    }
+
+    // After saving (create/edit) food, close inner fragment a go back to the Foods page.
+    @Override
+    public void onFoodSavedSuccessfully() {
+        backToPreviousFragment();
     }
 
     /**

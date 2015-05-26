@@ -1,5 +1,6 @@
 package com.miguelpalacio.mymacros;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -36,6 +37,8 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
     int portionUnits;
 
     DatabaseAdapter databaseAdapter;
+
+    OnFoodSaved onFoodSaved;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,6 +103,17 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Ensure that the host activity implements the OnFoodsInnerFragment interface.
+        try {
+            onFoodSaved = (OnFoodSaved) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFoodSaved interface");
+        }
+    }
+
     // Spinner methods.
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -120,6 +134,11 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
 
     }
 
+    // Interface to be implemented in MainActivity.
+    public interface OnFoodSaved {
+        void onFoodSavedSuccessfully();
+    }
+
     /**
      * Inserts New Food into the database using the data entered by the user.
      * In case there's missing data, informs the user and shows where the problem is.
@@ -128,7 +147,7 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
 
         boolean missingData = false;
 
-        // Verify that all the information required is present.
+        // Verify that all the information required is present. If not, inform the user.
         if (foodNameEditText.getText().toString().length() == 0) {
             foodNameEditText.setError("Please enter a name");
             missingData = true;
@@ -154,46 +173,35 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
             missingData = true;
         }
         if (missingData) {
+            Toast.makeText(getActivity(), R.string.toast_food_new, Toast.LENGTH_SHORT).show();
             return;
         }
 
-/*        String inputText;*/
-
-/*        // Decimal format to prepare the data prior to insertion into database.
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");*/
-
         // Get the information entered by the user.
-
         foodName = foodNameEditText.getText().toString();
-
         portionQuantity = Double.parseDouble(portionEditText.getText().toString());
         proteinQuantity = Double.parseDouble(proteinEditText.getText().toString());
         carbosQuantity = Double.parseDouble(carbosEditText.getText().toString());
         fatQuantity = Double.parseDouble(fatEditText.getText().toString());
         fiberQuantity = Double.parseDouble(fiberEditText.getText().toString());
 
-/*        inputText = portionEditText.getText().toString();
-        portionQuantity = Double.parseDouble(decimalFormat.format(inputText));
-
-        inputText = proteinEditText.getText().toString();
-        proteinQuantity = Double.parseDouble(decimalFormat.format(inputText));
-
-        inputText = carbosEditText.getText().toString();
-        carbosQuantity = Double.parseDouble(decimalFormat.format(inputText));
-
-        inputText = fatEditText.getText().toString();
-        fatQuantity = Double.parseDouble(decimalFormat.format(inputText));
-
-        inputText = fiberEditText.getText().toString();
-        fiberQuantity = Double.parseDouble(decimalFormat.format(inputText));*/
-
         long id = databaseAdapter.insertFood(foodName, proteinQuantity, carbosQuantity,
                 fatQuantity, fiberQuantity, portionQuantity, portionUnits);
 
+        // Inform the user about the outcome of the transaction.
         if (id < 0) {
-            Toast.makeText(getActivity(), "There was an internal problem", Toast.LENGTH_SHORT).show();
+            if (databaseAdapter.isNameInFoods(foodName)) {
+                Toast.makeText(getActivity(), "There is a food registered with that name",
+                        Toast.LENGTH_SHORT).show();
+                foodNameEditText.setError("Please enter a different name");
+            } else {
+                Toast.makeText(getActivity(), "There was an internal problem",
+                        Toast.LENGTH_SHORT).show();
+            }
+            Toast.makeText(getActivity(), "Food not saved", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), "Food saved", Toast.LENGTH_SHORT).show();
+            onFoodSaved.onFoodSavedSuccessfully();
         }
     }
 
@@ -203,5 +211,6 @@ public class FoodNewFragment extends Fragment implements AdapterView.OnItemSelec
     public void delete() {
 
     }
+
 
 }

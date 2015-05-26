@@ -283,6 +283,8 @@
     <string name="food_fat">Fat</string>
     <string name="food_fiber">Fiber</string>
 
+    <string name="toast_food_new">Please enter the missing data</string>
+
 
 
     <!-- *************************************************************************************** -->

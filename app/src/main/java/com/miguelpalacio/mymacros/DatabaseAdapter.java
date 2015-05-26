@@ -137,6 +137,31 @@ public class DatabaseAdapter {
         return info;
     }
 
+    /**
+     * Check that there is no food tuple with the same name in the Foods table.
+     */
+    public boolean isNameInFoods(String foodName) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // SELECT Name FROM Foods WHERE Name = foodName;
+        // SELECT COUNT(*) WHERE Name = foodName;
+        String column = "COUNT(*)";
+        String[] columns = {column};
+        String selection = "Name = ?";
+        String[] selectionArgs = {foodName};
+        Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
+                selection, selectionArgs, null, null, null);
+
+        int numberOfFoods = 0;
+
+        while (cursor.moveToNext()) {
+            int index = cursor.getColumnIndex(column);
+            numberOfFoods = cursor.getInt(index);
+        }
+        cursor.close();
+
+        return (numberOfFoods > 0);
+    }
 
     /**
      * This inner class takes care of opening the database if it exists,

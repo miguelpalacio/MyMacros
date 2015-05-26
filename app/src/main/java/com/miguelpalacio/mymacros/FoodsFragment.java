@@ -69,7 +69,6 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         foodListView.setLayoutManager(foodListLayoutManager);
     }
 
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -77,7 +76,7 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         try {
             onFoodsInnerFragment = (OnFoodsInnerFragment) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnFoodsInnerFragment");
+            throw new ClassCastException(activity.toString() + " must implement OnFoodsInnerFragment interface");
         }
     }
 
