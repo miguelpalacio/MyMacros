@@ -4,6 +4,7 @@
     <!-- Menus Strings -->
     <string name="action_settings">Settings</string>
     <string name="action_faq">FAQ</string>
+    <string name="action_delete_food">Delete Food</string>
     <string name="action_scan_barcode">Scan Barcode</string>
     <string name="action_save_food">Save Food</string>
 
@@ -284,7 +285,11 @@
     <string name="food_fat">Fat</string>
     <string name="food_fiber">Fiber</string>
 
-    <string name="toast_food_new">Please enter the missing data</string>
+    <string name="toast_food_edit">Please enter the missing data</string>
+
+    <string name="dialog_food_delete_message">Delete food?</string>
+    <string name="dialog_food_delete_ok">DELETE</string>
+    <string name="dialog_food_delete_cancel">Cancel</string>
 
 
 

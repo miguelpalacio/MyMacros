@@ -98,6 +98,15 @@ public class DatabaseAdapter {
         return 0;
     }
 
+    public int deleteFood(long foodId) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        String whereClause = DatabaseHelper.FOOD_ID + " = ?";
+        String[] whereArgs = {Long.toString(foodId)};
+
+        return db.delete(DatabaseHelper.TABLE_FOODS, whereClause, whereArgs);
+    }
+
     /**
      * Retrieve the name and a summary for each item in the Foods table.
      * @return four arrays:

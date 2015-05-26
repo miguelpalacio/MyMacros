@@ -1,6 +1,8 @@
 package com.miguelpalacio.mymacros;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -109,19 +111,32 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         // Inflate the menu; this adds items to the action bar if it is present.
-        inflater.inflate(R.menu.menu_food_new, menu);
+        inflater.inflate(R.menu.menu_food_editor, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // If New Food page, enable Scan Barcode option, otherwise enable Delete option.
+        if (foodId < 0) {
+            MenuItem scanBarcodeOption = menu.findItem(R.id.action_scan_barcode);
+            scanBarcodeOption.setVisible(true);
+        } else {
+            MenuItem deleteFoodOption = menu.findItem(R.id.action_delete_food);
+            deleteFoodOption.setVisible(true);
+        }
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
-        // Insert the new food into the database.
+        // Insert/Update Food.
         if (id == R.id.action_save_food) {
-            insertFood();
+            saveFood();
         } else if (id == R.id.action_scan_barcode) {
             Toast.makeText(getActivity(), "Functionality coming soon", Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.action_delete_food) {
+            onFoodDelete();
         }
 
         return super.onOptionsItemSelected(item);
@@ -152,23 +167,16 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
          */
         portionUnits = position;
     }
-
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
-    // Interface to be implemented in MainActivity.
+    // Public Interface to be implemented in MainActivity.
     public interface OnFoodSaved {
         void onFoodSavedSuccessfully();
     }
 
-    /**
-     * Inserts New Food into the database using the data entered by the user.
-     * In case there's missing data, informs the user and shows where the problem is.
-     */
-    public void insertFood() {
-
+    public void saveFood() {
         boolean missingData = false;
 
         // Verify that all the information required is present. If not, inform the user.
@@ -197,7 +205,8 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
             missingData = true;
         }
         if (missingData) {
-            Toast.makeText(getActivity(), R.string.toast_food_new, Toast.LENGTH_SHORT).show();
+            // If there's missing data, abort.
+            Toast.makeText(getActivity(), R.string.toast_food_edit, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -209,6 +218,18 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         fatQuantity = Double.parseDouble(fatEditText.getText().toString());
         fiberQuantity = Double.parseDouble(fiberEditText.getText().toString());
 
+        // Insert/Update food.
+        if (foodId < 1) {
+            insertFood();
+        } else {
+            updateFood();
+        }
+    }
+
+    /**
+     * Inserts New Food into the database using the data entered by the user.
+     */
+    public void insertFood() {
         long id = databaseAdapter.insertFood(foodName, proteinQuantity, carbosQuantity,
                 fatQuantity, fiberQuantity, portionQuantity, portionUnits);
 
@@ -222,19 +243,56 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
                 Toast.makeText(getActivity(), "There was an internal problem",
                         Toast.LENGTH_SHORT).show();
             }
-            Toast.makeText(getActivity(), "Food not saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Food not created", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(getActivity(), "Food saved", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Food created", Toast.LENGTH_SHORT).show();
             onFoodSaved.onFoodSavedSuccessfully();
         }
     }
 
-    public void update() {
+    /**
+     * Updates Food in the database using the data entered by the user.
+     */
+    public void updateFood() {
+
     }
 
-    public void delete() {
+    /**
+     * Deletes the tuple in the Foods table, corresponding to the current foodId.
+     */
+    public void deleteFood() {
 
+        int rowsDeleted = databaseAdapter.deleteFood(foodId);
+
+        if (rowsDeleted == 1) {
+            Toast.makeText(getActivity(), "Food deleted", Toast.LENGTH_SHORT).show();
+            onFoodSaved.onFoodSavedSuccessfully();
+        }
     }
 
+    /**
+     * Launch a dialog so that the user confirms the food deletion.
+     */
+    public void onFoodDelete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
+        // Set the dialog properties.
+        builder.setMessage(R.string.dialog_food_delete_message);
+        builder.setPositiveButton(R.string.dialog_food_delete_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteFood();
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_food_delete_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // User cancelled the dialog.
+            }
+        });
+
+        // Launch the dialog.
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
 }
