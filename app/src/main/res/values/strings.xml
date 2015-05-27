@@ -271,7 +271,7 @@
     <string name="food_portion">Portion</string>
     <string name="food_portion_quantity">Quantity</string>
     <string-array name="spinner_units_array">
-        <item>gr</item>
+        <item>g</item>
         <item>oz</item>
         <item>ml</item>
         <item>lb</item>
@@ -279,7 +279,7 @@
     </string-array>
 
     <string name="food_macronutrients">Macronutrients</string>
-    <string name="food_macronutrients_units">gr</string>
+    <string name="food_macronutrients_units">g</string>
     <string name="food_protein">Protein</string>
     <string name="food_carbos">Carbohydrates</string>
     <string name="food_fat">Fat</string>

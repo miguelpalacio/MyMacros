@@ -36,6 +36,8 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     Double fiberQuantity;
     int portionUnits;
 
+    String oldFoodName;
+
     DatabaseAdapter databaseAdapter;
 
     OnFoodSaved onFoodSaved;
@@ -105,6 +107,8 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         carbosEditText.setText(foodInfo[4]);
         fatEditText.setText(foodInfo[5]);
         fiberEditText.setText(foodInfo[6]);
+
+        oldFoodName = foodInfo[0];
     }
 
     @Override
@@ -159,7 +163,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         //portionUnits = parent.getItemAtPosition(position).toString();
         /**
          * portionUnits:
-         * · 0 = gr
+         * · 0 = g
          * · 1 = oz
          * · 2 = ml
          * · 3 = lb
@@ -176,7 +180,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         void onFoodSavedSuccessfully();
     }
 
-    public void saveFood() {
+    private void saveFood() {
         boolean missingData = false;
 
         // Verify that all the information required is present. If not, inform the user.
@@ -218,6 +222,26 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         fatQuantity = Double.parseDouble(fatEditText.getText().toString());
         fiberQuantity = Double.parseDouble(fiberEditText.getText().toString());
 
+        // Get rid of space chars at the beginning and end of the string.
+        while (Character.isSpaceChar(foodName.charAt(0)) && foodName.length() > 1) {
+            foodName = foodName.substring(1);
+        }
+        while (Character.isSpaceChar(foodName.charAt(foodName.length() - 1)) && foodName.length() > 1) {
+            foodName = foodName.substring(0, foodName.length() - 1);
+        }
+        if (foodName.length() == 1 && Character.isSpaceChar(foodName.charAt(0))) {
+            foodNameEditText.setText("");
+            foodNameEditText.setError("Please enter a valid name");
+            return;
+        }
+
+        // Capitalize the first letter of the foodName string.
+        if (foodName.length() > 1) {
+            foodName = foodName.substring(0, 1).toUpperCase() + foodName.substring(1);
+        } else {
+            foodName = foodName.toUpperCase();
+        }
+
         // Insert/Update food.
         if (foodId < 1) {
             insertFood();
@@ -229,9 +253,9 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     /**
      * Inserts New Food into the database using the data entered by the user.
      */
-    public void insertFood() {
-        long id = databaseAdapter.insertFood(foodName, proteinQuantity, carbosQuantity,
-                fatQuantity, fiberQuantity, portionQuantity, portionUnits);
+    private void insertFood() {
+        long id = databaseAdapter.insertFood(foodName, portionQuantity, portionUnits,
+                proteinQuantity, carbosQuantity, fatQuantity, fiberQuantity);
 
         // Inform the user about the outcome of the transaction.
         if (id < 0) {
@@ -253,14 +277,35 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     /**
      * Updates Food in the database using the data entered by the user.
      */
-    public void updateFood() {
+    private void updateFood() {
 
+        // Check that the (possibly) new food name, is not registered by other food in the DB.
+        if (!foodName.equals(oldFoodName)) {
+            if (databaseAdapter.isNameInFoods(foodName)) {
+                Toast.makeText(getActivity(), "There is a food registered with that name",
+                        Toast.LENGTH_SHORT).show();
+                foodNameEditText.setError("Please enter a different name");
+                return;
+            }
+        }
+
+        // Update the Foods table.
+        int updateResult = databaseAdapter.updateFood(foodId, foodName, portionQuantity,
+                portionUnits, proteinQuantity, carbosQuantity, fatQuantity, fiberQuantity);
+
+        // Inform the user about the outcome of the transaction.
+        if (updateResult == 1) {
+            Toast.makeText(getActivity(), "Food updated", Toast.LENGTH_SHORT).show();
+            onFoodSaved.onFoodSavedSuccessfully();
+        } else {
+            Toast.makeText(getActivity(), "There was an internal problem", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
-     * Deletes the tuple in the Foods table, corresponding to the current foodId.
+     * Deletes the tuple in the Foods table corresponding to the current foodId.
      */
-    public void deleteFood() {
+    private void deleteFood() {
 
         int rowsDeleted = databaseAdapter.deleteFood(foodId);
 
@@ -273,7 +318,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     /**
      * Launch a dialog so that the user confirms the food deletion.
      */
-    public void onFoodDelete() {
+    private void onFoodDelete() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         // Set the dialog properties.

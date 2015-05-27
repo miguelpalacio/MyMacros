@@ -3,6 +3,7 @@ package com.miguelpalacio.mymacros;
 import android.animation.ValueAnimator;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.Handler;
@@ -17,7 +18,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
@@ -390,6 +393,10 @@ public class MainActivity extends ActionBarActivity implements
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             inInnerFragment = false;
         }
+
+        // Close Soft Keyboard if it's open.
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
 
         // Animate the drawer icon (BackArrow to Hamburger animation).
         ValueAnimator animator = ValueAnimator.ofFloat(1, 0);

@@ -23,9 +23,9 @@ public class DatabaseAdapter {
     }
 
     // Insert a tuple into the FOODS table.
-    public long insertFood(String name, double proteinQuantity, double carbosQuantity,
-                           double fatQuantity, double fiberQuantity, double portionQuantity,
-                           int portionUnits) {
+    public long insertFood(String name, double portionQuantity, int portionUnits,
+                           double proteinQuantity, double carbosQuantity,
+                           double fatQuantity, double fiberQuantity) {
 
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -40,12 +40,12 @@ public class DatabaseAdapter {
         portionQuantity = Double.parseDouble(decimalFormat.format(portionQuantity));
 
         contentValues.put(DatabaseHelper.NAME, name);
+        contentValues.put(DatabaseHelper.PORTION_QUANTITY, portionQuantity);
+        contentValues.put(DatabaseHelper.PORTION_UNITS, portionUnits);
         contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
         contentValues.put(DatabaseHelper.CARBOHYDRATES, carbosQuantity);
         contentValues.put(DatabaseHelper.FAT, fatQuantity);
         contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
-        contentValues.put(DatabaseHelper.PORTION_QUANTITY, portionQuantity);
-        contentValues.put(DatabaseHelper.PORTION_UNITS, portionUnits);
 
         return db.insert(DatabaseHelper.TABLE_FOODS, null, contentValues);
     }
@@ -92,10 +92,33 @@ public class DatabaseAdapter {
     }
 
     // Update a tuple from the Foods table given an ID and the updated data.
-    public int updateFood(long foodId, String name, double proteinQuantity, double carbosQuantity,
-                           double fatQuantity, double fiberQuantity, double portionQuantity,
-                           int portionUnits) {
-        return 0;
+    public int updateFood(long foodId, String name,double portionQuantity, int portionUnits,
+                          double proteinQuantity, double carbosQuantity,
+                          double fatQuantity, double fiberQuantity) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        // Decimal format to prepare the data prior to insertion into database.
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+        proteinQuantity = Double.parseDouble(decimalFormat.format(proteinQuantity));
+        carbosQuantity = Double.parseDouble(decimalFormat.format(carbosQuantity));
+        fatQuantity = Double.parseDouble(decimalFormat.format(fatQuantity));
+        fiberQuantity = Double.parseDouble(decimalFormat.format(fiberQuantity));
+        portionQuantity = Double.parseDouble(decimalFormat.format(portionQuantity));
+
+        contentValues.put(DatabaseHelper.NAME, name);
+        contentValues.put(DatabaseHelper.PORTION_QUANTITY, portionQuantity);
+        contentValues.put(DatabaseHelper.PORTION_UNITS, portionUnits);
+        contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
+        contentValues.put(DatabaseHelper.CARBOHYDRATES, carbosQuantity);
+        contentValues.put(DatabaseHelper.FAT, fatQuantity);
+        contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
+
+        String whereClause = DatabaseHelper.FOOD_ID + " = ?";
+        String[] whereArgs = {Long.toString(foodId)};
+
+        return db.update(DatabaseHelper.TABLE_FOODS, contentValues, whereClause, whereArgs);
     }
 
     public int deleteFood(long foodId) {
@@ -124,6 +147,7 @@ public class DatabaseAdapter {
         String orderBy = DatabaseHelper.NAME;
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
                 null, null, null, null, orderBy);
+/*        null, null, null, null, orderBy + " COLLATE UNICODE");*/
 
         ArrayList<String> ids = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
@@ -154,7 +178,7 @@ public class DatabaseAdapter {
                 if (Character.isLetter(name.charAt(0))) {
                     lastSubheader = name.charAt(0);
                     ids.add("-1");
-                    names.add(lastSubheader.toString().toUpperCase());
+                    names.add(lastSubheader.toString());
                     summaries.add("");
                     isSubheader.add("1");
                 }
@@ -173,8 +197,8 @@ public class DatabaseAdapter {
 
             // Parse data and place it in summaries.
             String foodSummary = "Protein: " + decimalFormat.format(protein) +
-                    " gr, Carbohydrates: " + decimalFormat.format(carbohydrates) +
-                    " gr, Fat: " + decimalFormat.format(fat) + " gr";
+                    " g, Carbohydrates: " + decimalFormat.format(carbohydrates) +
+                    " g, Fat: " + decimalFormat.format(fat) + " g";
             summaries.add(foodSummary);
         }
         cursor.close();
