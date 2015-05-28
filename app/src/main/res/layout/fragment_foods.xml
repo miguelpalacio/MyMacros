@@ -4,8 +4,20 @@
     xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/selected_item"
     tools:context="com.miguelpalacio.mymacros.FoodsFragment"
     android:orientation="vertical">
+
+    <!-- Default view when no foods. -->
+    <TextView
+        android:id="@+id/foods_empty_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/primary_text"
+        android:text="@string/foods_empty_page"
+        android:visibility="invisible"/>
 
     <!-- Food list. -->
     <android.support.v7.widget.RecyclerView
@@ -13,8 +25,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/text_background"
-        android:minHeight="?android:attr/listPreferredItemHeight"
-        android:fitsSystemWindows="true" />
+        android:minHeight="?android:attr/listPreferredItemHeight" />
 
     <!-- Floating button. -->
     <!-- This LinearLayout was set since layout_marginBottom didn't work without it. -->

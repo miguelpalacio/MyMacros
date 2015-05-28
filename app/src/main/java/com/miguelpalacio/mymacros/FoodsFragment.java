@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -31,6 +32,7 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
 
     OnFoodEditorFragment onFoodEditorFragment;
 
+    TextView emptyPageMessage;
     FloatingActionButton addFood;
 
     @Override
@@ -71,6 +73,13 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         // Set the layout manager for the RecyclerView.
         foodListLayoutManager = new LinearLayoutManager(getActivity());
         foodListView.setLayoutManager(foodListLayoutManager);
+
+        // If there are no foods, show the default message for empty page.
+        if (foodInfo[0].length == 0) {
+            emptyPageMessage = (TextView) getActivity().findViewById(R.id.foods_empty_page);
+            emptyPageMessage.setVisibility(View.VISIBLE);
+            foodListView.setVisibility(View.INVISIBLE);
+        }
 
         // Define the add new food button, and set a listener.
         addFood = (FloatingActionButton) getActivity().findViewById(R.id.button_add_food);

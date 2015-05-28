@@ -266,10 +266,13 @@
 
     <!-- *************************************************************************************** -->
     <!-- Food Pages Strings. -->
+    <string name="foods_empty_page">Add a new food</string>
+
     <string name="food_name">Name</string>
+    <string name="food_name_hint">Food name</string>
 
     <string name="food_portion">Portion</string>
-    <string name="food_portion_quantity">Quantity</string>
+    <string name="food_portion_hint">Portion quantity</string>
     <string-array name="spinner_units_array">
         <item>g</item>
         <item>oz</item>
@@ -280,10 +283,14 @@
 
     <string name="food_macronutrients">Macronutrients</string>
     <string name="food_macronutrients_units">g</string>
-    <string name="food_protein">Protein</string>
-    <string name="food_carbos">Carbohydrates</string>
-    <string name="food_fat">Fat</string>
-    <string name="food_fiber">Fiber</string>
+    <string name="food_protein">Protein (g)</string>
+    <string name="food_protein_hint">Protein</string>
+    <string name="food_carbs">Carbohydrates (g)</string>
+    <string name="food_carbs_hint">Carbohydrates</string>
+    <string name="food_fat">Fat (g)</string>
+    <string name="food_fat_hint">Fat</string>
+    <string name="food_fiber">Fiber (g)</string>
+    <string name="food_fiber_hint">Fiber</string>
 
     <string name="toast_food_edit">Please enter the missing data</string>
 

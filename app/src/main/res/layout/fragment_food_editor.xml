@@ -30,8 +30,11 @@
                 android:paddingBottom="16dp"
                 android:textSize="16sp"
                 android:layout_marginLeft="13dp"
-                android:layout_marginRight="13dp"
+                android:layout_marginStart="13dp"
+                android:layout_marginRight="39dp"
+                android:layout_marginEnd="39dp"
                 android:inputType="text"
+                android:hint="@string/food_name_hint"
                 android:fontFamily="sans-serif" />
         </LinearLayout>
 
@@ -56,38 +59,27 @@
                 android:layout_height="52dp"
                 android:orientation="horizontal">
 
-                <TextView android:layout_width="92dp"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_portion_quantity"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="start"
-                    android:textColor="@color/secondary_text"/>
-
                 <EditText android:id="@+id/food_portion"
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:paddingTop="8dp"
                     android:paddingBottom="16dp"
                     android:textSize="16sp"
-                    android:layout_marginRight="13dp"
-                    android:layout_marginEnd="13dp"
+                    android:layout_marginLeft="13dp"
+                    android:layout_marginStart="13dp"
+                    android:layout_marginRight="39dp"
+                    android:layout_marginEnd="39dp"
                     android:inputType="numberDecimal"
                     android:fontFamily="sans-serif"
-                    android:gravity="end"
+                    android:hint="@string/food_portion_hint"
                     android:layout_weight="1" />
 
                 <Spinner
                     android:id="@+id/portion_units_spinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginEnd="16dp" />
+                    android:layout_marginRight="36dp"
+                    android:layout_marginEnd="36dp" />
             </LinearLayout>
         </LinearLayout>
 
@@ -113,7 +105,7 @@
                 android:layout_height="52dp"
                 android:orientation="horizontal">
 
-                <TextView android:layout_width="92dp"
+                <TextView android:layout_width="114dp"
                     android:layout_height="match_parent"
                     android:text="@string/food_protein"
                     android:paddingTop="14dp"
@@ -131,23 +123,14 @@
                     android:layout_height="match_parent"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
+                    android:layout_marginRight="39dp"
+                    android:layout_marginEnd="39dp"
                     android:textSize="16sp"
                     android:inputType="numberDecimal"
-                    android:gravity="end"
                     android:fontFamily="sans-serif"
-                    android:layout_weight="1" />
-
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_macronutrients_units"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="22dp"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginRight="54dp"
-                    android:layout_marginEnd="54dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/secondary_text"/>
+                    android:hint="@string/food_protein_hint"
+                    android:gravity="end"
+                    android:layout_weight="1"/>
             </LinearLayout>
 
             <!-- Carbohydrates. -->
@@ -156,9 +139,9 @@
                 android:layout_height="52dp"
                 android:orientation="horizontal">
 
-                <TextView android:layout_width="92dp"
+                <TextView android:layout_width="114dp"
                     android:layout_height="match_parent"
-                    android:text="@string/food_carbos"
+                    android:text="@string/food_carbs"
                     android:paddingTop="14dp"
                     android:layout_marginLeft="16dp"
                     android:layout_marginStart="16dp"
@@ -174,23 +157,14 @@
                     android:layout_height="match_parent"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
+                    android:layout_marginRight="39dp"
+                    android:layout_marginEnd="39dp"
                     android:textSize="16sp"
                     android:inputType="numberDecimal"
-                    android:gravity="end"
                     android:fontFamily="sans-serif"
+                    android:hint="@string/food_carbs_hint"
+                    android:gravity="end"
                     android:layout_weight="1" />
-
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_macronutrients_units"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="22dp"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginRight="54dp"
-                    android:layout_marginEnd="54dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/secondary_text"/>
             </LinearLayout>
 
             <!-- Fat. -->
@@ -199,7 +173,7 @@
                 android:layout_height="52dp"
                 android:orientation="horizontal">
 
-                <TextView android:layout_width="92dp"
+                <TextView android:layout_width="114dp"
                     android:layout_height="match_parent"
                     android:text="@string/food_fat"
                     android:paddingTop="14dp"
@@ -217,23 +191,14 @@
                     android:layout_height="match_parent"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
+                    android:layout_marginRight="39dp"
+                    android:layout_marginEnd="39dp"
                     android:textSize="16sp"
                     android:inputType="numberDecimal"
-                    android:gravity="end"
                     android:fontFamily="sans-serif"
+                    android:hint="@string/food_fat_hint"
+                    android:gravity="end"
                     android:layout_weight="1" />
-
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_macronutrients_units"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="22dp"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginRight="54dp"
-                    android:layout_marginEnd="54dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/secondary_text"/>
             </LinearLayout>
 
             <!-- Fiber. -->
@@ -242,7 +207,7 @@
                 android:layout_height="52dp"
                 android:orientation="horizontal">
 
-                <TextView android:layout_width="92dp"
+                <TextView android:layout_width="114dp"
                     android:layout_height="match_parent"
                     android:text="@string/food_fiber"
                     android:paddingTop="14dp"
@@ -260,24 +225,17 @@
                     android:layout_height="match_parent"
                     android:paddingTop="16dp"
                     android:paddingBottom="16dp"
+                    android:layout_marginRight="39dp"
+                    android:layout_marginEnd="39dp"
                     android:textSize="16sp"
                     android:inputType="numberDecimal"
-                    android:gravity="end"
                     android:fontFamily="sans-serif"
+                    android:hint="@string/food_fiber_hint"
+                    android:gravity="end"
                     android:layout_weight="1" />
-
-                <TextView android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_macronutrients_units"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="22dp"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginRight="54dp"
-                    android:layout_marginEnd="54dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:textColor="@color/secondary_text"/>
             </LinearLayout>
         </LinearLayout>
+
+        <!-- Pie chart here. -->
     </LinearLayout>
 </ScrollView>
