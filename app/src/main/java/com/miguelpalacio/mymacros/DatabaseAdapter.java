@@ -146,8 +146,8 @@ public class DatabaseAdapter {
                 DatabaseHelper.PROTEIN, DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
         String orderBy = DatabaseHelper.NAME;
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
-                null, null, null, null, orderBy);
-/*        null, null, null, null, orderBy + " COLLATE UNICODE");*/
+/*                null, null, null, null, orderBy);*/
+        null, null, null, null, orderBy + " COLLATE LOCALIZED ASC");
 
         ArrayList<String> ids = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
@@ -173,7 +173,7 @@ public class DatabaseAdapter {
             double fat = cursor.getDouble(index);
 
             // Define if a lastSubheader should be placed.
-            if (lastSubheader != name.charAt(0)) {
+            if (lastSubheader != Utilities.flattenToAscii(name.charAt(0))) {
                 // Check for numeric characters and special symbols.
                 if (Character.isLetter(name.charAt(0))) {
                     lastSubheader = name.charAt(0);

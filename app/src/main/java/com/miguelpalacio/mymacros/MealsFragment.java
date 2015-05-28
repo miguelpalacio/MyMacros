@@ -5,6 +5,9 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.text.Normalizer;
 
 
 /*
@@ -22,6 +25,24 @@ public class MealsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
         return inflater.inflate(R.layout.fragment_meals, container, false);
+
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+/*        String accents = "Accents: Á Ó À Ü";
+        Toast.makeText(getActivity(), accents, Toast.LENGTH_SHORT).show();
+
+        String woAccents = Utilities.flattenToAscii(accents);
+        Toast.makeText(getActivity(), woAccents, Toast.LENGTH_SHORT).show();*/
+
+
+/*        String woAccents = Normalizer.normalize(accents, Normalizer.Form.NFC);
+        woAccents = "Without " + woAccents;
+
+        Toast.makeText(getActivity(), woAccents, Toast.LENGTH_SHORT).show();*/
     }
 /*
     // TODO: Rename parameter arguments, choose names that match
