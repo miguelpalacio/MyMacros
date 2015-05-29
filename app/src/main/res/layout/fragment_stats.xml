@@ -2,9 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent" tools:context="com.miguelpalacio.mymacros.StatsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
+<!--    &lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;
     <TextView android:layout_width="match_parent" android:layout_height="match_parent"
         android:text="STATS FRAGMENT"
-        android:textColor="#00AA00"/>
+        android:textColor="#00AA00"/>-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Pie chart here. -->
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/stats_pie_chart"
+            android:layout_width="200dp"
+            android:layout_height="200dp" />
+    </LinearLayout>
 
 </FrameLayout>

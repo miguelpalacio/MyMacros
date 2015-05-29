@@ -8,6 +8,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+
+import java.util.ArrayList;
+
 
 /*
  * A simple {@link Fragment} subclass.
@@ -19,12 +29,64 @@ import android.view.ViewGroup;
  */
 public class StatsFragment extends Fragment {
 
+    PieChart pieChart;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
         return inflater.inflate(R.layout.fragment_stats, container, false);
     }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        pieChart = (PieChart) getActivity().findViewById(R.id.stats_pie_chart);
+
+        // Chart interaction.
+        pieChart.setHighlightEnabled(true);
+        pieChart.highlightValues(null);
+
+        setPieChartData(3, 100);
+
+        pieChart.animateY(600, Easing.EasingOption.EaseInQuad);
+
+        Legend l = pieChart.getLegend();
+        l.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        l.setXEntrySpace(7f);
+        l.setYEntrySpace(5f);
+
+    }
+
+
+    private void setPieChartData(int count, float range) {
+
+        // Y Axis (Pie Chart entries).
+        ArrayList<Entry> valsMacros = new ArrayList<>();
+
+        valsMacros.add(new Entry(20f, 0));
+        valsMacros.add(new Entry(50f, 1));
+        valsMacros.add(new Entry(30f, 2));
+
+        // Pie Chart Data Set.
+        PieDataSet setMacros = new PieDataSet(valsMacros, "Macros");
+        setMacros.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        // X Axis (Legends).
+        ArrayList<String> legendMacros = new ArrayList<>();
+        legendMacros.add("Protein");
+        legendMacros.add("Carbs");
+        legendMacros.add("FatProtein");
+
+        // Data for the chart.
+        PieData pieData = new PieData(legendMacros, setMacros);
+        pieChart.setData(pieData);
+
+        // Refresh chart.
+        pieChart.invalidate();
+    }
+
 /*
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

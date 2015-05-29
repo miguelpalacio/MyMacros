@@ -1,31 +1,65 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="com.miguelpalacio.mymacros.FoodEditorFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.miguelpalacio.mymacros.FoodEditorFragment">
 
+    <!-- Food Name. -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="80dp"
+        android:orientation="vertical" >
 
-        <!-- Food Name. -->
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/food_name"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/accent"/>
+
+        <EditText android:id="@+id/food_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"
+            android:textSize="16sp"
+            android:layout_marginLeft="13dp"
+            android:layout_marginStart="13dp"
+            android:layout_marginRight="39dp"
+            android:layout_marginEnd="39dp"
+            android:inputType="text"
+            android:hint="@string/food_name_hint"
+            android:fontFamily="sans-serif" />
+    </LinearLayout>
+
+    <!-- Food Portion. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="86dp"
+        android:orientation="vertical" >
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/food_portion"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/accent"/>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:orientation="vertical" >
+            android:layout_height="52dp"
+            android:orientation="horizontal">
 
-            <TextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/food_name"
-                android:paddingTop="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:textSize="14sp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/accent"/>
-
-            <EditText android:id="@+id/food_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <EditText android:id="@+id/food_portion"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
                 android:paddingTop="8dp"
                 android:paddingBottom="16dp"
                 android:textSize="16sp"
@@ -33,209 +67,170 @@
                 android:layout_marginStart="13dp"
                 android:layout_marginRight="39dp"
                 android:layout_marginEnd="39dp"
-                android:inputType="text"
-                android:hint="@string/food_name_hint"
-                android:fontFamily="sans-serif" />
-        </LinearLayout>
+                android:inputType="numberDecimal"
+                android:fontFamily="sans-serif"
+                android:hint="@string/food_portion_hint"
+                android:layout_weight="1" />
 
-        <!-- Food Portion. -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="86dp"
-            android:orientation="vertical" >
-
-            <TextView android:layout_width="match_parent"
+            <Spinner
+                android:id="@+id/portion_units_spinner"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/food_portion"
-                android:paddingTop="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:textSize="14sp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/accent"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal">
-
-                <EditText android:id="@+id/food_portion"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:paddingTop="8dp"
-                    android:paddingBottom="16dp"
-                    android:textSize="16sp"
-                    android:layout_marginLeft="13dp"
-                    android:layout_marginStart="13dp"
-                    android:layout_marginRight="39dp"
-                    android:layout_marginEnd="39dp"
-                    android:inputType="numberDecimal"
-                    android:fontFamily="sans-serif"
-                    android:hint="@string/food_portion_hint"
-                    android:layout_weight="1" />
-
-                <Spinner
-                    android:id="@+id/portion_units_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="36dp"
-                    android:layout_marginEnd="36dp" />
-            </LinearLayout>
+                android:layout_marginRight="36dp"
+                android:layout_marginEnd="36dp" />
         </LinearLayout>
-
-        <!-- Food Macronutrients. -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
-
-            <TextView android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/food_macronutrients"
-                android:paddingTop="16dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:textSize="14sp"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/accent"/>
-
-            <!-- Protein. -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal">
-
-                <TextView android:layout_width="114dp"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_protein"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="start"
-                    android:textColor="@color/secondary_text"/>
-
-                <EditText android:id="@+id/food_protein"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:layout_marginRight="39dp"
-                    android:layout_marginEnd="39dp"
-                    android:textSize="16sp"
-                    android:inputType="numberDecimal"
-                    android:fontFamily="sans-serif"
-                    android:hint="@string/food_protein_hint"
-                    android:gravity="end"
-                    android:layout_weight="1"/>
-            </LinearLayout>
-
-            <!-- Carbohydrates. -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal">
-
-                <TextView android:layout_width="114dp"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_carbs"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="start"
-                    android:textColor="@color/secondary_text"/>
-
-                <EditText android:id="@+id/food_carbos"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:layout_marginRight="39dp"
-                    android:layout_marginEnd="39dp"
-                    android:textSize="16sp"
-                    android:inputType="numberDecimal"
-                    android:fontFamily="sans-serif"
-                    android:hint="@string/food_carbs_hint"
-                    android:gravity="end"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <!-- Fat. -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal">
-
-                <TextView android:layout_width="114dp"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_fat"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="start"
-                    android:textColor="@color/secondary_text"/>
-
-                <EditText android:id="@+id/food_fat"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:layout_marginRight="39dp"
-                    android:layout_marginEnd="39dp"
-                    android:textSize="16sp"
-                    android:inputType="numberDecimal"
-                    android:fontFamily="sans-serif"
-                    android:hint="@string/food_fat_hint"
-                    android:gravity="end"
-                    android:layout_weight="1" />
-            </LinearLayout>
-
-            <!-- Fiber. -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal">
-
-                <TextView android:layout_width="114dp"
-                    android:layout_height="match_parent"
-                    android:text="@string/food_fiber"
-                    android:paddingTop="14dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginRight="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="start"
-                    android:textColor="@color/secondary_text"/>
-
-                <EditText android:id="@+id/food_fiber"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:paddingTop="16dp"
-                    android:paddingBottom="16dp"
-                    android:layout_marginRight="39dp"
-                    android:layout_marginEnd="39dp"
-                    android:textSize="16sp"
-                    android:inputType="numberDecimal"
-                    android:fontFamily="sans-serif"
-                    android:hint="@string/food_fiber_hint"
-                    android:gravity="end"
-                    android:layout_weight="1" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Pie chart here. -->
     </LinearLayout>
-</ScrollView>
+
+    <!-- Food Macronutrients. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/food_macronutrients"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/accent"/>
+
+        <!-- Protein. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="114dp"
+                android:layout_height="match_parent"
+                android:text="@string/food_protein"
+                android:paddingTop="14dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="start"
+                android:textColor="@color/secondary_text"/>
+
+            <EditText android:id="@+id/food_protein"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_marginRight="39dp"
+                android:layout_marginEnd="39dp"
+                android:textSize="16sp"
+                android:inputType="numberDecimal"
+                android:fontFamily="sans-serif"
+                android:hint="@string/food_protein_hint"
+                android:gravity="end"
+                android:layout_weight="1"/>
+        </LinearLayout>
+
+        <!-- Carbohydrates. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="114dp"
+                android:layout_height="match_parent"
+                android:text="@string/food_carbs"
+                android:paddingTop="14dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="start"
+                android:textColor="@color/secondary_text"/>
+
+            <EditText android:id="@+id/food_carbos"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_marginRight="39dp"
+                android:layout_marginEnd="39dp"
+                android:textSize="16sp"
+                android:inputType="numberDecimal"
+                android:fontFamily="sans-serif"
+                android:hint="@string/food_carbs_hint"
+                android:gravity="end"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <!-- Fat. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="114dp"
+                android:layout_height="match_parent"
+                android:text="@string/food_fat"
+                android:paddingTop="14dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="start"
+                android:textColor="@color/secondary_text"/>
+
+            <EditText android:id="@+id/food_fat"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_marginRight="39dp"
+                android:layout_marginEnd="39dp"
+                android:textSize="16sp"
+                android:inputType="numberDecimal"
+                android:fontFamily="sans-serif"
+                android:hint="@string/food_fat_hint"
+                android:gravity="end"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <!-- Fiber. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="114dp"
+                android:layout_height="match_parent"
+                android:text="@string/food_fiber"
+                android:paddingTop="14dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginEnd="24dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="start"
+                android:textColor="@color/secondary_text"/>
+
+            <EditText android:id="@+id/food_fiber"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:paddingTop="16dp"
+                android:paddingBottom="16dp"
+                android:layout_marginRight="39dp"
+                android:layout_marginEnd="39dp"
+                android:textSize="16sp"
+                android:inputType="numberDecimal"
+                android:fontFamily="sans-serif"
+                android:hint="@string/food_fiber_hint"
+                android:gravity="end"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
