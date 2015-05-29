@@ -9,23 +9,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
-
 
 /**
  * Foods Page.
  * Lists all the foods added by the user.
  */
-public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewHolder.ClickListener {
+public class FoodsFragment extends Fragment implements SubheadersListAdapter.ViewHolder.ClickListener {
 
     public static final String isNewFoodArg = "isNewFood";
     public static final String foodIdArg = "foodId";
 
     RecyclerView foodListView;
     RecyclerView.LayoutManager foodListLayoutManager;
-    RecyclerListAdapter foodListAdapter;
+    SubheadersListAdapter foodListAdapter;
 
     DatabaseAdapter databaseAdapter;
     String[][] foodInfo;
@@ -67,7 +65,7 @@ public class FoodsFragment extends Fragment implements RecyclerListAdapter.ViewH
         foodListView = (RecyclerView) getActivity().findViewById(R.id.food_list);
 
         // Set the adapter.
-        foodListAdapter = new RecyclerListAdapter(foodInfo[1], foodInfo[2], foodInfo[3], this);
+        foodListAdapter = new SubheadersListAdapter(foodInfo[1], foodInfo[2], foodInfo[3], this);
         foodListView.setAdapter(foodListAdapter);
 
         // Set the layout manager for the RecyclerView.

@@ -24,7 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
-        FoodsFragment.OnFoodEditorFragment,
+        FoodsFragment.OnFoodEditorFragment, MealsFragment.OnMealEditorFragment,
         FoodEditorFragment.OnFoodSaved {
 
     Toolbar toolbar;
@@ -239,7 +239,13 @@ public class MainActivity extends ActionBarActivity implements
         drawerLayout.closeDrawers();
     }
 
-    // Open Foods' inner fragments.
+    // Open Meals inner fragments.
+    @Override
+    public void openMealEditorFragment(Fragment fragment, int newToolbarTitle) {
+        openInnerFragment(fragment, newToolbarTitle);
+    }
+
+    // Open Foods inner fragments.
     @Override
     public void openFoodEditorFragment(Fragment fragment, int newToolbarTitle) {
         openInnerFragment(fragment, newToolbarTitle);

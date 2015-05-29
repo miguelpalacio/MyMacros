@@ -16,6 +16,8 @@
     <string name="toolbar_stats">Stats</string>
     <string name="toolbar_profile">Profile</string>
     <string name="toolbar_meals">My Meals</string>
+    <string name="toolbar_meal_new">New Meal</string>
+    <string name="toolbar_meal_edit">Edit Meal</string>
     <string name="toolbar_foods">Foods</string>
     <string name="toolbar_food_new">New Food</string>
     <string name="toolbar_food_edit">Edit Food</string>
@@ -172,7 +174,7 @@
     <string name="profile_activity_level">Activity Level</string>
     <string name="profile_activity_level_summary">Tap to set</string>
     <string-array name="profile_activity_level_entries">
-        <item>Hyperactive (+2 hours daily)</item>
+        <item>Hyperactive\n(+2 hours daily)</item>
         <item>Intense (6&#8211;7 days/week)</item>
         <item>Normal (3&#8211;5 days/week)</item>
         <item>Low (1&#8211;2 days/week)</item>
@@ -265,7 +267,7 @@
     <string name="profile_water_summary">2366 ml/day</string>
 
     <!-- *************************************************************************************** -->
-    <!-- Food Pages Strings. -->
+    <!-- Foods Pages Strings. -->
     <string name="foods_empty_page">Add a new food</string>
 
     <string name="food_name">Name</string>
@@ -298,6 +300,27 @@
     <string name="dialog_food_delete_ok">DELETE</string>
     <string name="dialog_food_delete_cancel">Cancel</string>
 
+    <!-- *************************************************************************************** -->
+    <!-- Meals Pages Strings. -->
+    <string name="meals_empty_page">Add a new meal</string>
+
+    <string name="meal_name">Name</string>
+    <string name="meal_name_hint">Meal name</string>
+
+    <string name="meal_foods">Foods</string>
+    <string name="meal_add_food">Add food</string>
+
+    <string name="meal_macronutrients">Macronutrients</string>
+    <string name="meal_protein_hint">Protein</string>
+    <string name="meal_carbs_hint">Carbohydrates</string>
+    <string name="meal_fat_hint">Fat</string>
+    <string name="meal_fiber_hint">Fiber</string>
+
+    <string name="toast_meal_edit">Please enter the missing data</string>
+
+    <string name="dialog_meal_delete_message">Delete meal?</string>
+    <string name="dialog_meal_delete_ok">DELETE</string>
+    <string name="dialog_meal_delete_cancel">Cancel</string>
 
 
     <!-- *************************************************************************************** -->

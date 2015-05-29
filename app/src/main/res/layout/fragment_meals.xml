@@ -1,11 +1,50 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.miguelpalacio.mymacros.MealsFragment">
+    android:background="@color/selected_item"
+    tools:context="com.miguelpalacio.mymacros.MealsFragment"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="My Meals Fragment"
-        android:textColor="#BB00BB"/>
+    <!-- Default view when no meals. -->
+    <TextView
+        android:id="@+id/meals_empty_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/primary_text"
+        android:text="@string/meals_empty_page"
+        android:visibility="invisible"/>
 
-</FrameLayout>
+    <!-- Food list. -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/meal_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/text_background"
+        android:minHeight="?android:attr/listPreferredItemHeight" />
+
+    <!-- Floating button. -->
+    <!-- This LinearLayout was set since layout_marginBottom didn't work without it. -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" >
+
+        <com.getbase.floatingactionbutton.AddFloatingActionButton
+            android:id="@+id/button_add_meal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            fab:fab_plusIconColor="@color/text_background"
+            fab:fab_colorNormal="@color/primary"
+            fab:fab_colorPressed="@color/primary_dark"
+            android:layout_marginRight="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="4dp" />
+    </LinearLayout>
+</RelativeLayout>

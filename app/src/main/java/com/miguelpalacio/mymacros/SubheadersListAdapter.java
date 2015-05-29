@@ -7,9 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * Adapter for the lists of items done using RecyclerView.
+ * Adapter for lists of items with <b>subheaders</b> done using RecyclerView.
  */
-public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.ViewHolder> {
+public class SubheadersListAdapter extends SelectableAdapter<SubheadersListAdapter.ViewHolder> {
 
     private static final int TYPE_FIRST_SUBHEADER = 0;
     private static final int TYPE_ROW = 1;
@@ -22,8 +22,8 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
     private ViewHolder.ClickListener clickListener;
 
     // Class constructor.
-    public RecyclerListAdapter(String[] titles, String[] summaries, String[] isSubheader,
-                               ViewHolder.ClickListener clickListener) {
+    public SubheadersListAdapter(String[] titles, String[] summaries, String[] isSubheader,
+                                 ViewHolder.ClickListener clickListener) {
         super();
 
         this.titles = titles;
@@ -85,7 +85,8 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
         }
     }
 
-    // Inflate drawer_header.xml, drawer_row.xml or drawer_divider in accordance with viewType.
+    // Inflate subheaders_list_row.xml, subheaders_list_subheader.xml or
+    // subheaders_list_subheader_first.xml in accordance with viewType.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -93,11 +94,11 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
         final int layout;
 
         if (viewType == TYPE_ROW) {
-            layout = R.layout.list_row;
+            layout = R.layout.subheaders_list_row;
         } else if (viewType == TYPE_SUBHEADER) {
-            layout = R.layout.list_subheader;
+            layout = R.layout.subheaders_list_subheader;
         } else {
-            layout = R.layout.list_subheader_first;
+            layout = R.layout.subheaders_list_subheader_first;
         }
 
         View v = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
@@ -116,7 +117,7 @@ public class RecyclerListAdapter extends SelectableAdapter<RecyclerListAdapter.V
         }
     }
 
-    // Return the number of items present in the list (rows).
+    // Return the number of items present in the list (rows + subheaders).
     @Override
     public int getItemCount() {
         return titles.length;

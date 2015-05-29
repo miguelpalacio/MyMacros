@@ -1,141 +1,112 @@
 package com.miguelpalacio.mymacros;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
-import java.text.Normalizer;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 
-
-/*
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link MealCreatorFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link MealCreatorFragment#newInstance} factory method to
- * create an instance of this fragment.
+/**
+ * My Meals Page.
+ * Lists all the meals added by the user.
  */
-public class MealsFragment extends Fragment {
+public class MealsFragment extends Fragment implements SubheadersListAdapter.ViewHolder.ClickListener {
+
+    public static final String isNewMealArg = "isNewMeal";
+    public static final String mealIdArg = "mealId";
+
+    RecyclerView mealListView;
+    RecyclerView.LayoutManager mealListLayoutManager;
+    SubheadersListAdapter mealListAdapter;
+
+    DatabaseAdapter databaseAdapter;
+    String[][] mealInfo;
+
+    OnMealEditorFragment onMealEditorFragment;
+
+    TextView emptyPageMessage;
+    FloatingActionButton addMeal;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
         return inflater.inflate(R.layout.fragment_meals, container, false);
-
-
-    }
-
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-/*        String accents = "Accents: Á Ó À Ü";
-        Toast.makeText(getActivity(), accents, Toast.LENGTH_SHORT).show();
-
-        String woAccents = Utilities.flattenToAscii(accents);
-        Toast.makeText(getActivity(), woAccents, Toast.LENGTH_SHORT).show();*/
-
-
-/*        String woAccents = Normalizer.normalize(accents, Normalizer.Form.NFC);
-        woAccents = "Without " + woAccents;
-
-        Toast.makeText(getActivity(), woAccents, Toast.LENGTH_SHORT).show();*/
-    }
-/*
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    private OnFragmentInteractionListener mListener;
-
-    */
-/**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MealCreatorFragment.
-     *//*
-
-    // TODO: Rename and change types and number of parameters
-    public static MealCreatorFragment newInstance(String param1, String param2) {
-        MealCreatorFragment fragment = new MealCreatorFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public MealCreatorFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_meals, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        // Ensure that the host activity implements the OnFoodEditorFragment interface.
         try {
-            mListener = (OnFragmentInteractionListener) activity;
+            onMealEditorFragment = (OnMealEditorFragment) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+            throw new ClassCastException(activity.toString() + " must implement OnMealEditorFragment interface");
         }
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        databaseAdapter = new DatabaseAdapter(getActivity());
+
+        // Get the names and summaries of meals inserted by the user.
+        //mealInfo = databaseAdapter.getMeals();
+
+        // Food List RecyclerView.
+        mealListView = (RecyclerView) getActivity().findViewById(R.id.meal_list);
+
+        // Set the adapter.
+/*        mealListAdapter = new SubheadersListAdapter(mealInfo[1], mealInfo[2], mealInfo[3], this);
+        mealListView.setAdapter(mealListAdapter);*/
+
+        // Set the layout manager for the RecyclerView.
+        mealListLayoutManager = new LinearLayoutManager(getActivity());
+        mealListView.setLayoutManager(mealListLayoutManager);
+
+        // If there are no meals, show the default message for empty page.
+/*        if (mealInfo[0].length == 0) {*/
+            emptyPageMessage = (TextView) getActivity().findViewById(R.id.meals_empty_page);
+            emptyPageMessage.setVisibility(View.VISIBLE);
+            mealListView.setVisibility(View.INVISIBLE);
+/*        }*/
+
+        // Define the add new meal button, and set a listener.
+        addMeal = (FloatingActionButton) getActivity().findViewById(R.id.button_add_meal);
+        addMeal.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Fragment mealEditorFragment = new MealEditorFragment();
+
+                Bundle args = new Bundle();
+                args.putBoolean(isNewMealArg, true);
+                mealEditorFragment.setArguments(args);
+
+                onMealEditorFragment.openMealEditorFragment(mealEditorFragment, R.string.toolbar_meal_new);
+            }
+        });
     }
 
-    */
-/**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     *//*
+    // When an item on the meal list is selected, open mealEditorFragment with the meal data.
+    @Override
+    public void onListItemClick(int position) {
+        Fragment foodEditorFragment = new FoodEditorFragment();
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        Bundle args = new Bundle();
+        args.putBoolean(isNewMealArg, false);
+        args.putLong(mealIdArg, Long.parseLong(mealInfo[0][position]));
+        foodEditorFragment.setArguments(args);
+
+        onMealEditorFragment.openMealEditorFragment(foodEditorFragment, R.string.toolbar_meal_edit);
     }
-*/
 
+    public interface OnMealEditorFragment {
+        void openMealEditorFragment(Fragment fragment, int newToolbarTitle);
+    }
 }

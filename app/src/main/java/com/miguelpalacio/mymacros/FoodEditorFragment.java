@@ -17,6 +17,10 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+/**
+ * Foods Editor Page.
+ * Allows the creation and edition of foods.
+ */
 public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     EditText foodNameEditText;
@@ -68,7 +72,6 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-
         super.onActivityCreated(savedInstanceState);
 
         databaseAdapter = new DatabaseAdapter(getActivity());
