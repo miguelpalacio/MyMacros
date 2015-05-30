@@ -46,11 +46,13 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         mealFoods = new String[2][2];
 
-        mealFoods[0] = new String[]{"Oatmeal", "Milk"};
-        mealFoods[1] = new String[]{"25 gr", "150 ml"};
+        mealFoods[0] = new String[]{"Oatmeal", "Milk", "Orange Juice", "Olive Oil", "Eggs"};
+        mealFoods[1] = new String[]{"25 g", "150 ml", "150 ml", "20 g", "2 units"};
 
         // Set the adapter for the Foods list (Recycler View).
-        foodsListAdapter = new ItemListAdapter(mealFoods[0], mealFoods[1], this);
+        foodsListAdapter = new ItemListAdapter(mealFoods[0], mealFoods[1],
+                R.layout.fragment_meal_editor_header, true, this);
+                //0, this);
         foodsListView.setAdapter(foodsListAdapter);
 
         // Set the layout manager for the RecyclerView.

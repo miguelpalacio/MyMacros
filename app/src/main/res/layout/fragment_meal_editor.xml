@@ -5,78 +5,12 @@
     android:orientation="vertical"
     tools:context="com.miguelpalacio.mymacros.MealEditorFragment">
 
-    <!-- Meal Name. -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="vertical" >
-
-        <TextView android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/meal_name"
-            android:paddingTop="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:textSize="14sp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@color/accent"/>
-
-        <EditText android:id="@+id/meal_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="16dp"
-            android:textSize="16sp"
-            android:layout_marginLeft="13dp"
-            android:layout_marginStart="13dp"
-            android:layout_marginRight="39dp"
-            android:layout_marginEnd="39dp"
-            android:inputType="text"
-            android:hint="@string/meal_name_hint"
-            android:fontFamily="sans-serif" />
-    </LinearLayout>
-
-    <!-- Foods. -->
-    <LinearLayout
-        android:layout_width="match_parent"
+    <!-- Added foods list. -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/meal_food_list"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/meal_foods"
-            android:paddingTop="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:textSize="14sp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@color/accent"/>
-
-        <!-- Added foods list. -->
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/meal_food_list"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/text_background"
-            android:minHeight="?android:attr/listPreferredItemHeight" />
-
-    </LinearLayout>
-
-    <!-- Meal Macronutrients. -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/meal_macronutrients"
-            android:paddingTop="16dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:textSize="14sp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@color/accent"/>
-    </LinearLayout>
+        android:background="@color/text_background"
+        android:minHeight="?android:attr/listPreferredItemHeight" />
 
 </LinearLayout>

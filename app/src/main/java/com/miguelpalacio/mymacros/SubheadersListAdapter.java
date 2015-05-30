@@ -108,7 +108,6 @@ public class SubheadersListAdapter extends SelectableAdapter<SubheadersListAdapt
     // This method is called when the item in a row needs to be displayed.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
         if (holder.holderId == 1) {
             holder.titleTextView.setText(titles[position]);
             holder.summaryTextView.setText(summaries[position]);
