@@ -36,32 +36,230 @@
             android:fontFamily="sans-serif" />
     </LinearLayout>
 
-    <!-- Meal Macronutrients. -->
+    <!-- Nutrition Facts. -->
     <LinearLayout
+        android:id="@+id/meal_nutrition_facts"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <TextView android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/meal_macronutrients"
+            android:text="@string/meal_nutrition_facts"
             android:paddingTop="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
+            android:paddingBottom="16dp"
             android:textSize="14sp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/accent"/>
+
+        <!-- Macro Distribution. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <!-- Pie Chart. -->
+            <LinearLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_marginLeft="16dp"
+                android:background="@color/selected_item">
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical"
+                android:layout_weight="1">
+
+                <!-- Protein. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:paddingTop="16dp"
+                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingEnd="16dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/chart_protein" />
+
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:text="@string/meal_protein"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/primary_text"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="33 g"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="end"
+                        android:textColor="@color/secondary_text"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <!-- Carbohydrates. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:paddingTop="16dp"
+                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingEnd="16dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/chart_carbs" />
+
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:text="@string/meal_carbs"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/primary_text"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="633 g"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="end"
+                        android:textColor="@color/secondary_text"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <!-- Fat. -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:paddingTop="16dp"
+                    android:paddingLeft="8dp"
+                    android:paddingStart="8dp"
+                    android:paddingRight="16dp"
+                    android:paddingEnd="16dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_gravity="center_vertical"
+                        android:background="@color/chart_fat" />
+
+                    <TextView android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:paddingRight="8dp"
+                        android:text="@string/meal_fat"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/primary_text"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="33 g"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif"
+                        android:gravity="end"
+                        android:textColor="@color/secondary_text"
+                        android:layout_weight="1" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Fiber. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/meal_fiber"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/primary_text"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="18 g"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"
+                android:textColor="@color/secondary_text"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <!-- Energy. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:orientation="horizontal">
+
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/meal_energy"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:textColor="@color/primary_text"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="457 kcal"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"
+                android:textColor="@color/secondary_text"
+                android:layout_weight="1" />
+        </LinearLayout>
     </LinearLayout>
 
-    <!-- Foods -->
+    <!-- Foods (label only). -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="16dp"
         android:orientation="vertical">
 
         <TextView android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/meal_foods"
+            android:text="@string/meal_ingredients"
             android:paddingTop="16dp"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"

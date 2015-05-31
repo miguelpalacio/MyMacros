@@ -17,15 +17,16 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
 
     private final String[] titles;
     private final String[] summaries;
-    private final int headerLayout;
 
-    private final boolean oneLineRow;
+    private final int headerLayout;
+    private final int rowLayout;
+    private final int lastRowLayout;
 
     private ViewHolder.ClickListener clickListener;
 
     // Class constructor.
-    public ItemListAdapter(String[] titles, String[] summaries, int headerLayout,
-                           boolean oneLineRow, ViewHolder.ClickListener clickListener) {
+    public ItemListAdapter(String[] titles, String[] summaries, int headerLayout, int rowLayout,
+                           int lastRowLayout, ViewHolder.ClickListener clickListener) {
         super();
 
         this.titles = titles;
@@ -34,7 +35,9 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
         // headerLayout corresponds to the header layout's ID. If zero, then there's no header.
         this.headerLayout = headerLayout;
 
-        this.oneLineRow = oneLineRow;
+        // Layouts for the rows.
+        this.rowLayout = rowLayout;
+        this.lastRowLayout = lastRowLayout;
 
         this.clickListener = clickListener;
     }
@@ -86,12 +89,12 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
     // Inflate item_list_row.xml or item_list_row_last in accordance with viewType.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
+        //layout = oneLineRow ? R.layout.item_list_one_line_row : R.layout.item_list_row;
         final int layout;
         if (viewType == TYPE_ROW) {
-            layout = oneLineRow ? R.layout.item_list_one_line_row : R.layout.item_list_row;
+            layout = rowLayout;
         } else if (viewType == TYPE_ROW_LAST) {
-            layout = oneLineRow ? R.layout.item_list_one_line_row_last : R.layout.item_list_row_last;
+            layout = lastRowLayout;
         } else {
             layout = headerLayout;
         }

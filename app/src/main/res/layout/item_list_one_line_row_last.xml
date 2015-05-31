@@ -27,6 +27,6 @@
         android:paddingRight="16dp"
         android:layout_weight="1"
         android:gravity="end"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:textColor="@color/secondary_text" />
 </LinearLayout>

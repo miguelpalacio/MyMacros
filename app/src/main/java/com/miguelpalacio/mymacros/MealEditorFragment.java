@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 
 /**
@@ -51,8 +52,8 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         // Set the adapter for the Foods list (Recycler View).
         foodsListAdapter = new ItemListAdapter(mealFoods[0], mealFoods[1],
-                R.layout.fragment_meal_editor_header, true, this);
-                //0, this);
+                R.layout.fragment_meal_editor_header, R.layout.item_list_one_line_row,
+                R.layout.item_list_one_line_row_last, this);
         foodsListView.setAdapter(foodsListAdapter);
 
         // Set the layout manager for the RecyclerView.
@@ -63,5 +64,9 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     @Override
     public void onListItemClick(int position) {
 
+        // "Add new" row clicked.
+        if (position == mealFoods[0].length) {
+            //Toast.makeText(getActivity(), "Works!", Toast.LENGTH_SHORT).show();
+        }
     }
 }

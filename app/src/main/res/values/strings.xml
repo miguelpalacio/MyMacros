@@ -307,14 +307,16 @@
     <string name="meal_name">Name</string>
     <string name="meal_name_hint">Meal name</string>
 
-    <string name="meal_foods">Foods</string>
+    <string name="meal_ingredients">Ingredients</string>
     <string name="meal_add_food">Add food</string>
 
-    <string name="meal_macronutrients">Macronutrients</string>
-    <string name="meal_protein_hint">Protein</string>
-    <string name="meal_carbs_hint">Carbohydrates</string>
-    <string name="meal_fat_hint">Fat</string>
-    <string name="meal_fiber_hint">Fiber</string>
+    <string name="meal_nutrition_facts">Nutrition Facts</string>
+    <string name="meal_protein">Protein</string>
+    <string name="meal_carbs">Carbohydrates</string>
+    <string name="meal_fat">Fat</string>
+
+    <string name="meal_energy">Energy</string>
+    <string name="meal_fiber">Fiber</string>
 
     <string name="toast_meal_edit">Please enter the missing data</string>
 
