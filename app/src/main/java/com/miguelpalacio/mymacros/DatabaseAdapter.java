@@ -136,7 +136,7 @@ public class DatabaseAdapter {
      * info[0]: contains the list of food ids.
      * info[1]: contains the list of food names and subheaders for the food list.
      * info[2]: contains the summaries
-     * info[3]: it's "boolean" array expressing which position corresponds to a subheader.
+     * info[3]: it's a "boolean" array expressing which position corresponds to a subheader.
      */
     public String[][] getFoods() {
         SQLiteDatabase db = helper.getReadableDatabase();

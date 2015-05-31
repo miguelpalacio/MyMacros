@@ -18,6 +18,7 @@
     <string name="toolbar_meals">My Meals</string>
     <string name="toolbar_meal_new">New Meal</string>
     <string name="toolbar_meal_edit">Edit Meal</string>
+    <string name="toolbar_meal_add_food">Select Food</string>
     <string name="toolbar_foods">Foods</string>
     <string name="toolbar_food_new">New Food</string>
     <string name="toolbar_food_edit">Edit Food</string>
@@ -320,9 +321,16 @@
 
     <string name="toast_meal_edit">Please enter the missing data</string>
 
+    <string name="meal_add_food_empty_page">
+        No foods in the database  :(\n\n
+        Please go to Foods and add some!
+    </string>
+
     <string name="dialog_meal_delete_message">Delete meal?</string>
     <string name="dialog_meal_delete_ok">DELETE</string>
     <string name="dialog_meal_delete_cancel">Cancel</string>
+
+    <string name="dialog_meal_add_food_title">Define quantity</string>
 
 
     <!-- *************************************************************************************** -->
@@ -336,6 +344,10 @@
 
     <!-- Activity titles. -->
     <string name="title_activity_settings">Settings</string>
+
+    <!-- General Dialogs. -->
+    <string name="dialog_button_positive">OK</string>
+    <string name="dialog_button_negative">Cancel</string>
 
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

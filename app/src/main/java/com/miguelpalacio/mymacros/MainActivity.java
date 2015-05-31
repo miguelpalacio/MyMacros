@@ -24,8 +24,8 @@ import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
-        FoodsFragment.OnFoodEditorFragment, MealsFragment.OnMealEditorFragment,
-        FoodEditorFragment.OnFoodSaved {
+        FoodsFragment.OnFoodEditorFragment, FoodEditorFragment.OnFoodSaved,
+        MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealAddFoodFragment {
 
     Toolbar toolbar;
 
@@ -239,13 +239,24 @@ public class MainActivity extends ActionBarActivity implements
         drawerLayout.closeDrawers();
     }
 
-    // Open Meals inner fragments.
+
+    // MyMeals Callbacks.
+
+    // Open the Meal Editor fragment.
     @Override
     public void openMealEditorFragment(Fragment fragment, int newToolbarTitle) {
         openInnerFragment(fragment, newToolbarTitle);
     }
 
-    // Open Foods inner fragments.
+    // Open the Meal Add Food fragment.
+    @Override
+    public void openMealAddFoodFragment(Fragment fragment, int newToolbarTitle) {
+        openInnerFragment(fragment, newToolbarTitle);
+    }
+
+    // Foods Callbacks.
+
+    // Open the Food Editor fragment.
     @Override
     public void openFoodEditorFragment(Fragment fragment, int newToolbarTitle) {
         openInnerFragment(fragment, newToolbarTitle);
@@ -256,6 +267,7 @@ public class MainActivity extends ActionBarActivity implements
     public void onFoodSavedSuccessfully() {
         backToPreviousFragment();
     }
+
 
     /**
      * Opens the respective fragment according to the item selected.
@@ -269,12 +281,7 @@ public class MainActivity extends ActionBarActivity implements
 
         // Select initial fragment upon Activity creation.
         if (position == 0) {
-/*            // If it's first time opening the app, open ProfileFragment.
-            if (PreferenceManager.getDefaultSharedPreferences(this). != null) {*/
             position = 1;
-/*            } else {
-                position = 3;
-            }*/
         }
 
         Fragment fragment;
@@ -333,6 +340,7 @@ public class MainActivity extends ActionBarActivity implements
                 .commit();
     }
 
+
     /**
      * Opens (inner) fragments called from other fragments.
      */
@@ -356,28 +364,25 @@ public class MainActivity extends ActionBarActivity implements
         // Lock Navigation Drawer.
         drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
 
-        // Animate the drawer icon (Hamburger to BackArrow animation).
-        ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float slideOffset = (Float) valueAnimator.getAnimatedValue();
-                // The actual animation is performed by onDrawerSlide.
-                mDrawerToggle.onDrawerSlide(drawerLayout, slideOffset);
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
 
-/*                // Enable home button (necessary if application gets stopped).
-                if (slideOffset == 1.0) {
-                    getSupportActionBar().setHomeButtonEnabled(true);
-                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-                }*/
-            }
-        });
-        animator.setInterpolator(new DecelerateInterpolator());
-        animator.setDuration(400);
+            // Animate the drawer icon (Hamburger to BackArrow animation).
+            ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    float slideOffset = (Float) valueAnimator.getAnimatedValue();
+                    // The actual animation is performed by onDrawerSlide.
+                    mDrawerToggle.onDrawerSlide(drawerLayout, slideOffset);
+                }
+            });
+            animator.setInterpolator(new DecelerateInterpolator());
+            animator.setDuration(400);
 
-        // Enable the drawer icon animation.
-        drawerIconAnimation = true;
-        animator.start();
+            // Enable the drawer icon animation.
+            drawerIconAnimation = true;
+            animator.start();
+        }
     }
 
     /**
@@ -389,38 +394,37 @@ public class MainActivity extends ActionBarActivity implements
         getFragmentManager().popBackStack();
         int NewBackStackEntryCount = getFragmentManager().getBackStackEntryCount() - 1;
 
-        // When BackStack empty, re-enable the navigation drawer.
         if (NewBackStackEntryCount == 0) {
-/*          // Apparently, because of the animation this is not needed either.
-            getSupportActionBar().setHomeButtonEnabled(false);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);*/
+
+            // Re-enable the navigation drawer.
             mDrawerToggle.syncState();
             openFragment(currentFragment);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             inInnerFragment = false;
+
+            // Animate the drawer icon (BackArrow to Hamburger animation).
+            ValueAnimator animator = ValueAnimator.ofFloat(1, 0);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    float slideOffset = (Float) valueAnimator.getAnimatedValue();
+                    // The actual animation is performed by onDrawerSlide.
+                    mDrawerToggle.onDrawerSlide(drawerLayout, slideOffset);
+
+                    // Disable the drawer icon animation.
+                    if (slideOffset == 0.0) {
+                        drawerIconAnimation = false;
+                    }
+                }
+            });
+            animator.setInterpolator(new DecelerateInterpolator());
+            animator.setDuration(400);
+            animator.start();
         }
 
         // Close Soft Keyboard if it's open.
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
 
-        // Animate the drawer icon (BackArrow to Hamburger animation).
-        ValueAnimator animator = ValueAnimator.ofFloat(1, 0);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                float slideOffset = (Float) valueAnimator.getAnimatedValue();
-                // The actual animation is performed by onDrawerSlide.
-                mDrawerToggle.onDrawerSlide(drawerLayout, slideOffset);
-
-                // Disable the drawer icon animation.
-                if (slideOffset == 0.0) {
-                    drawerIconAnimation = false;
-                }
-            }
-        });
-        animator.setInterpolator(new DecelerateInterpolator());
-        animator.setDuration(400);
-        animator.start();
     }
 }

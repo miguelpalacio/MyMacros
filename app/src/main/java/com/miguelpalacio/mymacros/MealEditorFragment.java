@@ -1,5 +1,6 @@
 package com.miguelpalacio.mymacros;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,8 +13,8 @@ import android.widget.Toast;
 
 
 /**
- * Foods Editor Page.
- * Allows the creation and edition of foods.
+ * Meals Editor Page.
+ * Allows the creation and edition of meals.
  */
 public class MealEditorFragment extends Fragment implements ItemListAdapter.ViewHolder.ClickListener {
 
@@ -27,11 +28,24 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
     DatabaseAdapter databaseAdapter;
 
+    OnMealAddFoodFragment onMealAddFoodFragment;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
         return inflater.inflate(R.layout.fragment_meal_editor, container, false);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Ensure that the host activity implements the OnFoodEditorFragment interface.
+        try {
+            onMealAddFoodFragment = (OnMealAddFoodFragment) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnMealAddFoodFragment interface");
+        }
     }
 
     @Override
@@ -66,7 +80,12 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         // "Add new" row clicked.
         if (position == mealFoods[0].length) {
-            //Toast.makeText(getActivity(), "Works!", Toast.LENGTH_SHORT).show();
+            Fragment fragment = new MealAddFoodFragment();
+            onMealAddFoodFragment.openMealAddFoodFragment(fragment, R.string.toolbar_meal_add_food);
         }
+    }
+
+    public interface OnMealAddFoodFragment {
+        void openMealAddFoodFragment(Fragment fragment, int newToolbarTitle);
     }
 }
