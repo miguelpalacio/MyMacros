@@ -32,6 +32,7 @@
             android:layout_marginRight="39dp"
             android:layout_marginEnd="39dp"
             android:inputType="text"
+            android:maxLength="50"
             android:hint="@string/meal_name_hint"
             android:fontFamily="sans-serif" />
     </LinearLayout>

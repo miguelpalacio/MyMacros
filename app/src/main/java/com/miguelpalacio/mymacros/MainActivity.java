@@ -27,6 +27,10 @@ public class MainActivity extends ActionBarActivity implements
         FoodsFragment.OnFoodEditorFragment, FoodEditorFragment.OnFoodSaved,
         MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealAddFoodFragment {
 
+    private static final String CURRENT_FRAGMENT = "currentFragment";
+    private static final String IN_INNER_FRAGMENT = "inInnerFragment";
+    private static final String DRAWER_ICON_ANIMATION = "drawerIconAnimation";
+
     Toolbar toolbar;
 
     String[] drawerLabels;
@@ -63,9 +67,9 @@ public class MainActivity extends ActionBarActivity implements
 
         // Load savedInstanceState data.
         if (savedInstanceState != null) {
-            currentFragment = savedInstanceState.getInt("currentFragment");
-            inInnerFragment = savedInstanceState.getBoolean("inInnerFragment");
-            drawerIconAnimation = savedInstanceState.getBoolean("drawerIconAnimation");
+            currentFragment = savedInstanceState.getInt(CURRENT_FRAGMENT);
+            inInnerFragment = savedInstanceState.getBoolean(IN_INNER_FRAGMENT);
+            drawerIconAnimation = savedInstanceState.getBoolean(DRAWER_ICON_ANIMATION);
         } else {
             // Set to 0 to init in openFragment() when activity starts.
             currentFragment = 0;
@@ -200,9 +204,9 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("currentFragment", currentFragment);
-        outState.putBoolean("inInnerFragment", inInnerFragment);
-        outState.putBoolean("drawerIconAnimation", drawerIconAnimation);
+        outState.putInt(CURRENT_FRAGMENT, currentFragment);
+        outState.putBoolean(IN_INNER_FRAGMENT, inInnerFragment);
+        outState.putBoolean(DRAWER_ICON_ANIMATION, drawerIconAnimation);
     }
 
     /**

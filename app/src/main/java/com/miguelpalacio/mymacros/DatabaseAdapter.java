@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.ArrayList;
 
 /**
@@ -23,7 +24,7 @@ public class DatabaseAdapter {
     }
 
     // Insert a tuple into the FOODS table.
-    public long insertFood(String name, double portionQuantity, int portionUnits,
+    public long insertFood(String name, double portionQuantity, String portionUnits,
                            double proteinQuantity, double carbosQuantity,
                            double fatQuantity, double fiberQuantity) {
 
@@ -76,7 +77,7 @@ public class DatabaseAdapter {
             index = cursor.getColumnIndex(DatabaseHelper.PORTION_QUANTITY);
             foodInfo[1] = decimalFormat.format(cursor.getDouble(index));
             index = cursor.getColumnIndex(DatabaseHelper.PORTION_UNITS);
-            foodInfo[2] = Integer.toString(cursor.getInt(index));
+            foodInfo[2] = cursor.getString(index);
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
             foodInfo[3] = decimalFormat.format(cursor.getDouble(index));
             index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
@@ -92,7 +93,7 @@ public class DatabaseAdapter {
     }
 
     // Update a tuple from the Foods table given an ID and the updated data.
-    public int updateFood(long foodId, String name,double portionQuantity, int portionUnits,
+    public int updateFood(long foodId, String name,double portionQuantity, String portionUnits,
                           double proteinQuantity, double carbosQuantity,
                           double fatQuantity, double fiberQuantity) {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -121,6 +122,7 @@ public class DatabaseAdapter {
         return db.update(DatabaseHelper.TABLE_FOODS, contentValues, whereClause, whereArgs);
     }
 
+    // Delete a tuple from the Foods table.
     public int deleteFood(long foodId) {
         SQLiteDatabase db = helper.getWritableDatabase();
 
@@ -137,22 +139,24 @@ public class DatabaseAdapter {
      * info[1]: contains the list of food names and subheaders for the food list.
      * info[2]: contains the summaries
      * info[3]: it's a "boolean" array expressing which position corresponds to a subheader.
+     * info[4]: contains the units used to indicate the portion quantity.
      */
     public String[][] getFoods() {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
         String[] columns = {DatabaseHelper.FOOD_ID, DatabaseHelper.NAME,
-                DatabaseHelper.PROTEIN, DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
+                DatabaseHelper.PROTEIN, DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT,
+                DatabaseHelper.PORTION_UNITS};
         String orderBy = DatabaseHelper.NAME;
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
-/*                null, null, null, null, orderBy);*/
         null, null, null, null, orderBy + " COLLATE LOCALIZED ASC");
 
-        ArrayList<String> ids = new ArrayList<>();
-        ArrayList<String> names = new ArrayList<>();
-        ArrayList<String> summaries = new ArrayList<>();
-        ArrayList<String> isSubheader = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        List<String> summaries = new ArrayList<>();
+        List<String> isSubheader = new ArrayList<>();
+        List<String> portionUnits = new ArrayList<>();
 
         Character lastSubheader = '\0';
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
@@ -171,6 +175,8 @@ public class DatabaseAdapter {
             double carbohydrates = cursor.getDouble(index);
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
             double fat = cursor.getDouble(index);
+            index = cursor.getColumnIndex(DatabaseHelper.PORTION_UNITS);
+            String units = cursor.getString(index);
 
             // Define if a lastSubheader should be placed.
             if (lastSubheader != Utilities.flattenToAscii(name.charAt(0))) {
@@ -181,6 +187,7 @@ public class DatabaseAdapter {
                     names.add(lastSubheader.toString());
                     summaries.add("");
                     isSubheader.add("1");
+                    portionUnits.add("");
                 }
                 // If special character, set subheader as '#' if it hasn't been set.
                 else if (lastSubheader != '#') {
@@ -189,11 +196,13 @@ public class DatabaseAdapter {
                     names.add(lastSubheader.toString());
                     summaries.add("");
                     isSubheader.add("1");
+                    portionUnits.add("");
                 }
             }
             ids.add("" + id);
             names.add(name);
             isSubheader.add("0");
+            portionUnits.add(units);
 
             // Parse data and place it in summaries.
             String foodSummary = "Protein: " + decimalFormat.format(protein) +
@@ -204,11 +213,12 @@ public class DatabaseAdapter {
         cursor.close();
 
         // Store the resulting ArrayLists in a single data structure, and return it.
-        String[][] info = new String[4][ids.size()];
+        String[][] info = new String[5][ids.size()];
         info[0] = ids.toArray(new String[ids.size()]);
         info[1] = names.toArray(new String[ids.size()]);
         info[2] = summaries.toArray(new String[ids.size()]);
         info[3] = isSubheader.toArray(new String[ids.size()]);
+        info[4] = portionUnits.toArray(new String[ids.size()]);
 
         return info;
     }
@@ -238,6 +248,66 @@ public class DatabaseAdapter {
         return (numberOfFoods > 0);
     }
 
+
+    /**
+     * Retrieve all the information about the foods belonging to a meal.
+     * @param mealId the ID of the meal.
+     * @return the following String Lists:
+     * · (0) foodsIds: the IDs of the foods.
+     * · (1) names: the names of the foods.
+     * · (2) portionQuantities.
+     * · (3) portionUnits.
+     * · (4) protein: as it is in the Foods table.
+     * · (5) carbs: as it is in the Foods table.
+     * · (6) fat: as it is in the Foods table.
+     * · (7) fiber: as it is in the Foods table.
+     * · (8) foodQuantity: the amount of food for the respective meal.
+     */
+    public List<List<String>> getMealFoodsInfo(long mealId) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // Perform a query with an INNER JOIN between Foods and MealFoods.
+
+        Cursor cursor = db.rawQuery(DatabaseHelper.FOODS_JOIN_MEAL_FOODS,
+                new String[]{Long.toString(mealId)});
+
+        List<List<String>> mealFoodsInfo = new ArrayList<>(9);
+
+        while (cursor.moveToNext()) {
+            int index;
+
+            index = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
+            mealFoodsInfo.get(0).add(Long.toString(cursor.getLong(index)));
+
+            index = cursor.getColumnIndex(DatabaseHelper.NAME);
+            mealFoodsInfo.get(1).add(cursor.getString(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.PORTION_QUANTITY);
+            mealFoodsInfo.get(2).add(Double.toString(cursor.getDouble(index)));
+
+            index = cursor.getColumnIndex(DatabaseHelper.PORTION_UNITS);
+            mealFoodsInfo.get(3).add(cursor.getString(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
+            mealFoodsInfo.get(4).add(Double.toString(cursor.getDouble(index)));
+
+            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
+            mealFoodsInfo.get(5).add(Double.toString(cursor.getDouble(index)));
+
+            index = cursor.getColumnIndex(DatabaseHelper.FAT);
+            mealFoodsInfo.get(6).add(Double.toString(cursor.getDouble(index)));
+
+            index = cursor.getColumnIndex(DatabaseHelper.FIBER);
+            mealFoodsInfo.get(7).add(Double.toString(cursor.getDouble(index)));
+
+            index = cursor.getColumnIndex(DatabaseHelper.FOOD_QUANTITY);
+            mealFoodsInfo.get(8).add(Double.toString(cursor.getDouble(index)));
+        }
+
+        cursor.close();
+        return mealFoodsInfo;
+    }
+
     /**
      * This inner class takes care of opening the database if it exists,
      * creating it if it does not, and upgrading it as necessary.
@@ -256,16 +326,46 @@ public class DatabaseAdapter {
         private static final String PORTION_UNITS = "PortionUnits";
         private static final String PORTION_QUANTITY = "PortionQuantity";
 
+        private static final String TABLE_MEALS = "Meals";
+        private static final String MEAL_ID = "_MealID";
+        private static final String FOOD_QUANTITY = "foodQuantity";
+
+        private static final String TABLE_MEAL_FOODS = "MealFoods";
+
         private static final String CREATE_FOODS_TABLE =
                 "CREATE TABLE " + TABLE_FOODS +
                         " (" + FOOD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         NAME + " VARCHAR(50) UNIQUE, " +
                         PORTION_QUANTITY + " NUMERIC(5,1), " +
-                        PORTION_UNITS + " INTEGER, " +
+                        PORTION_UNITS + " VARCHAR(4), " +
                         PROTEIN + " NUMERIC(5,1), " +
                         CARBOHYDRATES + " NUMERIC(5,1), " +
                         FAT + " NUMERIC(5,1), " +
                         FIBER + " NUMERIC(5,1));";
+
+        private static final String CREATE_MEALS_TABLE =
+                "CREATE TABLE " + TABLE_MEALS +
+                        " (" + MEAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        NAME + " VARCHAR(50) UNIQUE, " +
+                        PROTEIN + " NUMERIC(5,1), " +
+                        CARBOHYDRATES + " NUMERIC(5,1), " +
+                        FAT + " NUMERIC(5,1), " +
+                        FIBER + " NUMERIC(5,1));";
+
+        private static final String CREATE_MEAL_FOODS_TABLE =
+                "CREATE TABLE " + TABLE_MEAL_FOODS +
+                        " (" + MEAL_ID + " INTEGER, " +
+                        FOOD_ID + " INTEGER, " +
+                        FOOD_QUANTITY + " NUMERIC(5,1), " +
+                        "PRIMARY KEY (" + MEAL_ID + ", " + FOOD_ID + ");";
+
+        private static final String FOODS_JOIN_MEAL_FOODS =
+                "SELECT " + FOOD_ID + ", " + NAME + ", " + PORTION_QUANTITY + ", " +
+                        PORTION_UNITS + ", " + PROTEIN + ", " + CARBOHYDRATES + ", " +
+                        FAT + ", " + FIBER + ", " + FOOD_QUANTITY +
+                        " FROM " + TABLE_FOODS + " INNER JOIN " + TABLE_MEAL_FOODS + " ON " +
+                        TABLE_FOODS + "." + FOOD_ID + " = " + TABLE_MEAL_FOODS + "." + FOOD_ID +
+                        " WHERE " + MEAL_ID + " = ?";
 
         private static final int DATABASE_VERSION = 1;
 
@@ -283,13 +383,27 @@ public class DatabaseAdapter {
          */
         public void onCreate(SQLiteDatabase db) {
 
-            // Create the FOOD table.
+            // Create the Foods table.
             try {
                 db.execSQL(CREATE_FOODS_TABLE);
                 //Toast.makeText(context, "Database created successfully", Toast.LENGTH_SHORT).show();
             } catch (SQLException e) {
                 e.printStackTrace();
                 //Toast.makeText(context, e.toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            // Create the Meals table.
+            try {
+                db.execSQL(CREATE_MEALS_TABLE);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            // Create the MealFoods table.
+            try {
+                db.execSQL(CREATE_MEAL_FOODS_TABLE);
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 

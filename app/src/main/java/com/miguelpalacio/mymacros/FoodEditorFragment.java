@@ -38,7 +38,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     Double carbosQuantity;
     Double fatQuantity;
     Double fiberQuantity;
-    int portionUnits;
+    String portionUnits;
 
     String oldFoodName;
 
@@ -105,7 +105,28 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
         foodNameEditText.setText(foodInfo[0]);
         portionEditText.setText(foodInfo[1]);
-        portionUnitsSpinner.setSelection(Integer.parseInt(foodInfo[2]));
+
+        // Set spinner selection.
+        int spinnerSelection;
+        switch (foodInfo[2]) {
+            case "g":
+                spinnerSelection = 0;
+                break;
+            case "oz":
+                spinnerSelection = 1;
+                break;
+            case "ml":
+                spinnerSelection = 2;
+                break;
+            case "lb":
+                spinnerSelection = 3;
+                break;
+            default:
+                spinnerSelection = 4;
+                break;
+        }
+        portionUnitsSpinner.setSelection(spinnerSelection);
+
         proteinEditText.setText(foodInfo[3]);
         carbosEditText.setText(foodInfo[4]);
         fatEditText.setText(foodInfo[5]);
@@ -163,16 +184,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     // Spinner methods.
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        //portionUnits = parent.getItemAtPosition(position).toString();
-        /**
-         * portionUnits:
-         * · 0 = g
-         * · 1 = oz
-         * · 2 = ml
-         * · 3 = lb
-         * · 4 = unit
-         */
-        portionUnits = position;
+        portionUnits = parent.getItemAtPosition(position).toString();
     }
     @Override
     public void onNothingSelected(AdapterView<?> parent) {

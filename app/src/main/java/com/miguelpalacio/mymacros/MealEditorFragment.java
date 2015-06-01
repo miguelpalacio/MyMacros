@@ -3,13 +3,16 @@ package com.miguelpalacio.mymacros;
 import android.app.Activity;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.preference.ListPreference;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -18,13 +21,20 @@ import android.widget.Toast;
  */
 public class MealEditorFragment extends Fragment implements ItemListAdapter.ViewHolder.ClickListener {
 
+    private static final String MEAL_FOODS_NAMES = "mealFoodsNames";
+    private static final String MEAL_FOODS_QUANTITY = "mealFoodsQuantity";
+    private static final String MEAL_FOODS_UNITS = "mealFoodsUnits";
+
     EditText mealNameEditText;
 
     RecyclerView foodsListView;
     RecyclerView.LayoutManager foodsListLayoutManager;
     ItemListAdapter foodsListAdapter;
 
-    String[][] mealFoods;
+    ArrayList<String> mealFoodsIds;
+    ArrayList<String> mealFoodsNames;
+    ArrayList<String> mealFoodsQuantity;
+    ArrayList<String> mealFoodsUnits;
 
     DatabaseAdapter databaseAdapter;
 
@@ -54,18 +64,31 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         databaseAdapter = new DatabaseAdapter(getActivity());
 
+        // Load savedInstanceState data.
+        if (savedInstanceState != null) {
+            mealFoodsNames = savedInstanceState.getStringArrayList(MEAL_FOODS_NAMES);
+            mealFoodsQuantity = savedInstanceState.getStringArrayList(MEAL_FOODS_QUANTITY);
+            mealFoodsUnits = savedInstanceState.getStringArrayList(MEAL_FOODS_UNITS);
+        } else {
+            // Query to DB goes here (MORE OR LESS... NEEDS FIXES).
+            //List<List<String>> mealFoodsInfo = databaseAdapter.getMealFoodsInfo(1);
+            mealFoodsNames = new ArrayList<>();
+            mealFoodsQuantity = new ArrayList<>();
+            mealFoodsUnits = new ArrayList<>();
+
+            // Add new food "button".
+            mealFoodsNames.add(getString(R.string.meal_add_new));
+            mealFoodsQuantity.add("");
+            mealFoodsUnits.add("");
+        }
+
         // Get references to the views.
 
         mealNameEditText = (EditText) getActivity().findViewById(R.id.meal_name);
         foodsListView = (RecyclerView) getActivity().findViewById(R.id.meal_food_list);
 
-        mealFoods = new String[2][2];
-
-        mealFoods[0] = new String[]{"Oatmeal", "Milk", "Orange Juice", "Olive Oil", "Eggs"};
-        mealFoods[1] = new String[]{"25 g", "150 ml", "150 ml", "20 g", "2 units"};
-
         // Set the adapter for the Foods list (Recycler View).
-        foodsListAdapter = new ItemListAdapter(mealFoods[0], mealFoods[1],
+        foodsListAdapter = new ItemListAdapter(mealFoodsNames, mealFoodsUnits,
                 R.layout.fragment_meal_editor_header, R.layout.item_list_one_line_row,
                 R.layout.item_list_one_line_row_last, this);
         foodsListView.setAdapter(foodsListAdapter);
@@ -75,11 +98,23 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         foodsListView.setLayoutManager(foodsListLayoutManager);
     }
 
+    /**
+     * Save local variables in case of restart of fragment (due to re-orientation,
+     * because it went into stopped state, etc).
+     */
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putStringArrayList(MEAL_FOODS_NAMES, mealFoodsNames);
+        outState.putStringArrayList(MEAL_FOODS_QUANTITY, mealFoodsQuantity);
+        outState.putStringArrayList(MEAL_FOODS_UNITS, mealFoodsUnits);
+    }
+
     @Override
     public void onListItemClick(int position) {
 
         // "Add new" row clicked.
-        if (position == mealFoods[0].length) {
+        if (position == mealFoodsNames.size()) {
             Fragment fragment = new MealAddFoodFragment();
             onMealAddFoodFragment.openMealAddFoodFragment(fragment, R.string.toolbar_meal_add_food);
         }

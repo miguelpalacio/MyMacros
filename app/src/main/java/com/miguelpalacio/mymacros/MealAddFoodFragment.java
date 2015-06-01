@@ -28,6 +28,7 @@ public class MealAddFoodFragment extends Fragment implements SubheadersListAdapt
     String[][] foodInfo;
 
     EditText foodQuantity;
+    TextView foodQuantityUnits;
 
     TextView emptyPageMessage;
 
@@ -95,6 +96,10 @@ public class MealAddFoodFragment extends Fragment implements SubheadersListAdapt
 
         // Dialog EditText.
         foodQuantity = (EditText) view.findViewById(R.id.dialog_meal_food_quantity);
+
+        // Set units label.
+        foodQuantityUnits = (TextView) view.findViewById(R.id.dialog_meal_food_quantity_units);
+        foodQuantityUnits.setText(foodInfo[4][position]);
 
         // Show dialog.
         AlertDialog dialog = builder.create();

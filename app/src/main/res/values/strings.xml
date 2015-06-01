@@ -309,7 +309,7 @@
     <string name="meal_name_hint">Meal name</string>
 
     <string name="meal_ingredients">Ingredients</string>
-    <string name="meal_add_food">Add food</string>
+    <string name="meal_add_new">Add new</string>
 
     <string name="meal_nutrition_facts">Nutrition Facts</string>
     <string name="meal_protein">Protein</string>

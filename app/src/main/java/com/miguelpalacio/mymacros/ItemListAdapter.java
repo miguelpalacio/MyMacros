@@ -6,6 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Adapter for lists of items done using RecyclerView.
  */
@@ -15,8 +18,8 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
     private static final int TYPE_ROW = 1;
     private static final int TYPE_ROW_LAST = 2;
 
-    private final String[] titles;
-    private final String[] summaries;
+    private final List<String> titles;
+    private final List<String> summaries;
 
     private final int headerLayout;
     private final int rowLayout;
@@ -25,8 +28,8 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
     private ViewHolder.ClickListener clickListener;
 
     // Class constructor.
-    public ItemListAdapter(String[] titles, String[] summaries, int headerLayout, int rowLayout,
-                           int lastRowLayout, ViewHolder.ClickListener clickListener) {
+    public ItemListAdapter(List<String> titles, List<String> summaries, int headerLayout,
+                           int rowLayout, int lastRowLayout, ViewHolder.ClickListener clickListener) {
         super();
 
         this.titles = titles;
@@ -108,15 +111,15 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
     public void onBindViewHolder(ViewHolder holder, int position) {
         int pos = headerLayout == 0 ? position : position - 1;
         if (holder.holderId == 1) {
-            holder.titleTextView.setText(titles[pos]);
-            holder.summaryTextView.setText(summaries[pos]);
+            holder.titleTextView.setText(titles.get(pos));
+            holder.summaryTextView.setText(summaries.get(pos));
         }
     }
 
     // Return the number of items present in the list (header + rows).
     @Override
     public int getItemCount() {
-        return headerLayout == 0 ? titles.length : titles.length + 1;
+        return headerLayout == 0 ? titles.size() : titles.size() + 1;
     }
 
     // Return the type of the view that is being passed.
