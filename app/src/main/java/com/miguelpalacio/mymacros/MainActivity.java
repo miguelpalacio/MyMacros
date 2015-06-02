@@ -25,7 +25,8 @@ import android.view.inputmethod.InputMethodManager;
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
         FoodsFragment.OnFoodEditorFragment, FoodEditorFragment.OnFoodSaved,
-        MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealAddFoodFragment {
+        MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealAddFoodFragment,
+        MealAddFoodFragment.OnFoodQuantitySet {
 
     private static final String CURRENT_FRAGMENT = "currentFragment";
     private static final String IN_INNER_FRAGMENT = "inInnerFragment";
@@ -48,6 +49,8 @@ public class MainActivity extends ActionBarActivity implements
 
     Runnable onDrawerClosedRunnable;
     Handler mHandler = new Handler();
+
+    MealEditorFragment mealEditorFragment;
 
     int currentFragment;
     boolean inInnerFragment;
@@ -249,6 +252,7 @@ public class MainActivity extends ActionBarActivity implements
     // Open the Meal Editor fragment.
     @Override
     public void openMealEditorFragment(Fragment fragment, int newToolbarTitle) {
+        mealEditorFragment = (MealEditorFragment) fragment; // <---------- HERE!
         openInnerFragment(fragment, newToolbarTitle);
     }
 
@@ -256,6 +260,14 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void openMealAddFoodFragment(Fragment fragment, int newToolbarTitle) {
         openInnerFragment(fragment, newToolbarTitle);
+    }
+
+    // Send information of food selected in MealAddFoodFragment to MealEditorFragment.
+    @Override
+    public void setFoodOnMealEditor(long foodId, double foodQuantity) {
+        backToPreviousFragment();
+        mealEditorFragment.setFoodSelected(foodId, foodQuantity);
+        mealEditorFragment = null;
     }
 
     // Foods Callbacks.

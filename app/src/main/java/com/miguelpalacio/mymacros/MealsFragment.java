@@ -43,7 +43,7 @@ public class MealsFragment extends Fragment implements SubheadersListAdapter.Vie
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // Ensure that the host activity implements the OnFoodEditorFragment interface.
+        // Ensure that the host activity implements the OnMealEditorFragment interface.
         try {
             onMealEditorFragment = (OnMealEditorFragment) activity;
         } catch (ClassCastException e) {

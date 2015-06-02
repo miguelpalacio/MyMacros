@@ -1,11 +1,14 @@
 package com.miguelpalacio.mymacros;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,10 +30,12 @@ public class MealAddFoodFragment extends Fragment implements SubheadersListAdapt
     DatabaseAdapter databaseAdapter;
     String[][] foodInfo;
 
-    EditText foodQuantity;
+    EditText foodQuantityEditText;
     TextView foodQuantityUnits;
 
     TextView emptyPageMessage;
+
+    OnFoodQuantitySet onFoodQuantitySet;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +44,16 @@ public class MealAddFoodFragment extends Fragment implements SubheadersListAdapt
         return inflater.inflate(R.layout.fragment_meal_add_food, container, false);
     }
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Ensure that the host activity implements the OnFoodQuantitySet interface.
+        try {
+            onFoodQuantitySet = (OnFoodQuantitySet) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFoodQuantitySet interface");
+        }
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -70,7 +85,7 @@ public class MealAddFoodFragment extends Fragment implements SubheadersListAdapt
     }
 
     @Override
-    public void onListItemClick(int position) {
+    public void onListItemClick(final int position) {
 
         // Create a dialog so the user can define the amount of the food selected.
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -80,7 +95,11 @@ public class MealAddFoodFragment extends Fragment implements SubheadersListAdapt
         builder.setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                long foodId = Long.parseLong(foodInfo[0][position]);
+                double foodQuantity = Double.parseDouble(foodQuantityEditText.getText().toString());
 
+                // Send the food selected and the amount set by the user, back to MainActivity.
+                onFoodQuantitySet.setFoodOnMealEditor(foodId, foodQuantity);
             }
         });
         builder.setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
@@ -95,20 +114,47 @@ public class MealAddFoodFragment extends Fragment implements SubheadersListAdapt
         builder.setView(view);
 
         // Dialog EditText.
-        foodQuantity = (EditText) view.findViewById(R.id.dialog_meal_food_quantity);
+        foodQuantityEditText = (EditText) view.findViewById(R.id.dialog_meal_food_quantity);
 
         // Set units label.
         foodQuantityUnits = (TextView) view.findViewById(R.id.dialog_meal_food_quantity_units);
         foodQuantityUnits.setText(foodInfo[4][position]);
 
         // Show dialog.
-        AlertDialog dialog = builder.create();
+        final AlertDialog dialog = builder.create();
         dialog.show();
 
+        // Disable dialog's OK button.
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        // Enable dialog's OK button if foodQuantityEditText EditText contains a valid value.
+        foodQuantityEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("") || s.toString().equals(".")) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
         // Set focus on dialog's EditText, and show soft keyboard.
-        foodQuantity.requestFocus();
+        foodQuantityEditText.requestFocus();
         dialog.getWindow().
                 setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
+    }
+
+    public interface OnFoodQuantitySet {
+        void setFoodOnMealEditor(long foodId, double foodQuantity);
     }
 }

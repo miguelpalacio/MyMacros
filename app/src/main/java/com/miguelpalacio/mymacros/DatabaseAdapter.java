@@ -261,7 +261,7 @@ public class DatabaseAdapter {
      * · (5) carbs: as it is in the Foods table.
      * · (6) fat: as it is in the Foods table.
      * · (7) fiber: as it is in the Foods table.
-     * · (8) foodQuantity: the amount of food for the respective meal.
+     * · (8) foodQuantityEditText: the amount of food for the respective meal.
      */
     public List<List<String>> getMealFoodsInfo(long mealId) {
         SQLiteDatabase db = helper.getReadableDatabase();

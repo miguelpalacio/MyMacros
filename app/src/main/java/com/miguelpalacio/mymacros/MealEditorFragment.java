@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        // Ensure that the host activity implements the OnFoodEditorFragment interface.
+        // Ensure that the host activity implements the OnMealAddFoodFragment interface.
         try {
             onMealAddFoodFragment = (OnMealAddFoodFragment) activity;
         } catch (ClassCastException e) {
@@ -118,6 +119,21 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             Fragment fragment = new MealAddFoodFragment();
             onMealAddFoodFragment.openMealAddFoodFragment(fragment, R.string.toolbar_meal_add_food);
         }
+    }
+
+    /**
+     * This method is called by MainActivity in the MealAddFoodFragment callback.
+     * @param foodId ID of the food that was selected by the user.
+     * @param foodQuantity the amount of food set by the user.
+     */
+    public void setFoodSelected(long foodId, double foodQuantity) {
+        //Toast.makeText(getActivity(), "Food selected: " + foodId + ", Quantity: " + foodQuantity, Toast.LENGTH_SHORT).show();
+        // Get the food info.
+        String[] foodInfo = databaseAdapter.getFoodInfo(foodId);
+        int index = mealFoodsNames.size() - 1;
+        mealFoodsNames.add(index, foodInfo[0]);
+        mealFoodsQuantity.add(index, Double.toString(foodQuantity));
+        mealFoodsUnits.add(index, foodInfo[2]);
     }
 
     public interface OnMealAddFoodFragment {
