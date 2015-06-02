@@ -65,11 +65,13 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         databaseAdapter = new DatabaseAdapter(getActivity());
 
-        // Load savedInstanceState data.
-        if (savedInstanceState != null) {
-            mealFoodsNames = savedInstanceState.getStringArrayList(MEAL_FOODS_NAMES);
-            mealFoodsQuantity = savedInstanceState.getStringArrayList(MEAL_FOODS_QUANTITY);
-            mealFoodsUnits = savedInstanceState.getStringArrayList(MEAL_FOODS_UNITS);
+        // Look for instance data.
+        Bundle mySavedInstanceState = getArguments();
+
+        if (mySavedInstanceState.containsKey(MEAL_FOODS_NAMES)) {
+            mealFoodsNames = mySavedInstanceState.getStringArrayList(MEAL_FOODS_NAMES);
+            mealFoodsQuantity = mySavedInstanceState.getStringArrayList(MEAL_FOODS_QUANTITY);
+            mealFoodsUnits = mySavedInstanceState.getStringArrayList(MEAL_FOODS_UNITS);
         } else {
             // Query to DB goes here (MORE OR LESS... NEEDS FIXES).
             //List<List<String>> mealFoodsInfo = databaseAdapter.getMealFoodsInfo(1);
@@ -102,13 +104,17 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     /**
      * Save local variables in case of restart of fragment (due to re-orientation,
      * because it went into stopped state, etc).
+     *
+     * <e>Note: onSaveInstanceState doesn't work because it is called when the activity
+     * stops, not the Fragment.</e>
      */
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putStringArrayList(MEAL_FOODS_NAMES, mealFoodsNames);
-        outState.putStringArrayList(MEAL_FOODS_QUANTITY, mealFoodsQuantity);
-        outState.putStringArrayList(MEAL_FOODS_UNITS, mealFoodsUnits);
+    public void onPause() {
+        super.onPause();
+
+        getArguments().putStringArrayList(MEAL_FOODS_NAMES, mealFoodsNames);
+        getArguments().putStringArrayList(MEAL_FOODS_QUANTITY, mealFoodsQuantity);
+        getArguments().putStringArrayList(MEAL_FOODS_UNITS, mealFoodsUnits);
     }
 
     @Override
@@ -127,13 +133,18 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
      * @param foodQuantity the amount of food set by the user.
      */
     public void setFoodSelected(long foodId, double foodQuantity) {
-        //Toast.makeText(getActivity(), "Food selected: " + foodId + ", Quantity: " + foodQuantity, Toast.LENGTH_SHORT).show();
         // Get the food info.
-        String[] foodInfo = databaseAdapter.getFoodInfo(foodId);
+        Food food = databaseAdapter.getFood(foodId);
+
+        // sasdaaasdas
         int index = mealFoodsNames.size() - 1;
-        mealFoodsNames.add(index, foodInfo[0]);
+        mealFoodsNames.add(index, food.getName());
         mealFoodsQuantity.add(index, Double.toString(foodQuantity));
-        mealFoodsUnits.add(index, foodInfo[2]);
+        mealFoodsUnits.add(index, food.getPortionUnits());
+
+        Toast.makeText(getActivity(), "New list size: " + mealFoodsNames.size(), Toast.LENGTH_SHORT).show();
+
+        foodsListAdapter.notifyItemInserted(index);
     }
 
     public interface OnMealAddFoodFragment {

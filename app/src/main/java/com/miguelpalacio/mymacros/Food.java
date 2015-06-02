@@ -27,7 +27,7 @@ public class Food {
         this.fiber = 0;
     }
 
-    public Food(long id, String name, double portionQuantity, String portionUnits,
+/*    public Food(long id, String name, double portionQuantity, String portionUnits,
                 double protein, double carbohydrates, double fat, double fiber) {
         this.id = id;
         this.name = name;
@@ -49,7 +49,7 @@ public class Food {
         this.carbohydrates = carbohydrates;
         this.fat = fat;
         this.fiber = fiber;
-    }
+    }*/
 
     // Getters and Setters.
 

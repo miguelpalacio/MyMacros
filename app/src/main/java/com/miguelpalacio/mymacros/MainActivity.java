@@ -252,7 +252,7 @@ public class MainActivity extends ActionBarActivity implements
     // Open the Meal Editor fragment.
     @Override
     public void openMealEditorFragment(Fragment fragment, int newToolbarTitle) {
-        mealEditorFragment = (MealEditorFragment) fragment; // <---------- HERE!
+        mealEditorFragment = (MealEditorFragment) fragment;
         openInnerFragment(fragment, newToolbarTitle);
     }
 
@@ -267,7 +267,7 @@ public class MainActivity extends ActionBarActivity implements
     public void setFoodOnMealEditor(long foodId, double foodQuantity) {
         backToPreviousFragment();
         mealEditorFragment.setFoodSelected(foodId, foodQuantity);
-        mealEditorFragment = null;
+        //mealEditorFragment = null; // causes exception here.
     }
 
     // Foods Callbacks.

@@ -63,7 +63,7 @@ public class MealAddFoodFragment extends Fragment implements SubheadersListAdapt
         databaseAdapter = new DatabaseAdapter(getActivity());
 
         // Get the names and summaries of foods inserted by the user.
-        foodInfo = databaseAdapter.getFoods();
+        foodInfo = databaseAdapter.getFoodsList();
 
         // Food List RecyclerView.
         foodListView = (RecyclerView) getActivity().findViewById(R.id.meal_add_food_list);

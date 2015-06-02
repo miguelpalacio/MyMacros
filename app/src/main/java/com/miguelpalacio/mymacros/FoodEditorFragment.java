@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
+
 /**
  * Foods Editor Page.
  * Allows the creation and edition of foods.
@@ -101,14 +103,17 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         }
 
         // Restore the food's details in the views.
-        String[] foodInfo = databaseAdapter.getFoodInfo(foodId);
+        Food food = databaseAdapter.getFood(foodId);
 
-        foodNameEditText.setText(foodInfo[0]);
-        portionEditText.setText(foodInfo[1]);
+        // Don't show more than 1 decimal position.
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+        foodNameEditText.setText(food.getName());
+        portionEditText.setText(decimalFormat.format(food.getPortionQuantity()));
 
         // Set spinner selection.
         int spinnerSelection;
-        switch (foodInfo[2]) {
+        switch (food.getPortionUnits()) {
             case "g":
                 spinnerSelection = 0;
                 break;
@@ -127,12 +132,12 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         }
         portionUnitsSpinner.setSelection(spinnerSelection);
 
-        proteinEditText.setText(foodInfo[3]);
-        carbosEditText.setText(foodInfo[4]);
-        fatEditText.setText(foodInfo[5]);
-        fiberEditText.setText(foodInfo[6]);
+        proteinEditText.setText(decimalFormat.format(food.getProtein()));
+        carbosEditText.setText(decimalFormat.format(food.getCarbohydrates()));
+        fatEditText.setText(decimalFormat.format(food.getFat()));
+        fiberEditText.setText(decimalFormat.format(food.getFiber()));
 
-        oldFoodName = foodInfo[0];
+        oldFoodName = food.getName();
     }
 
     @Override

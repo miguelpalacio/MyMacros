@@ -31,15 +31,6 @@ public class DatabaseAdapter {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
 
-        // Decimal format to prepare the data prior to insertion into database.
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-
-        proteinQuantity = Double.parseDouble(decimalFormat.format(proteinQuantity));
-        carbosQuantity = Double.parseDouble(decimalFormat.format(carbosQuantity));
-        fatQuantity = Double.parseDouble(decimalFormat.format(fatQuantity));
-        fiberQuantity = Double.parseDouble(decimalFormat.format(fiberQuantity));
-        portionQuantity = Double.parseDouble(decimalFormat.format(portionQuantity));
-
         contentValues.put(DatabaseHelper.NAME, name);
         contentValues.put(DatabaseHelper.PORTION_QUANTITY, portionQuantity);
         contentValues.put(DatabaseHelper.PORTION_UNITS, portionUnits);
@@ -56,7 +47,7 @@ public class DatabaseAdapter {
      * @return array of strings with:
      * Name, PortionQuantity, PortionUnits, Protein, Carbohydrates, Fat, Fiber.
      */
-    public String[] getFoodInfo(long foodId) {
+    public Food getFood(long foodId) {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         String column = "*";
@@ -66,30 +57,36 @@ public class DatabaseAdapter {
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
                 selection, selectionArgs, null, null, null);
 
-        String[] foodInfo = new String[7];
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+        Food food = new Food();
+        food.setId(foodId);
 
         while (cursor.moveToNext()) {
             int index;
 
             index = cursor.getColumnIndex(DatabaseHelper.NAME);
-            foodInfo[0] = cursor.getString(index);
+            food.setName(cursor.getString(index));
+
             index = cursor.getColumnIndex(DatabaseHelper.PORTION_QUANTITY);
-            foodInfo[1] = decimalFormat.format(cursor.getDouble(index));
+            food.setPortionQuantity(cursor.getDouble(index));
+
             index = cursor.getColumnIndex(DatabaseHelper.PORTION_UNITS);
-            foodInfo[2] = cursor.getString(index);
+            food.setPortionUnits(cursor.getString(index));
+
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
-            foodInfo[3] = decimalFormat.format(cursor.getDouble(index));
+            food.setProtein(cursor.getDouble(index));
+
             index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            foodInfo[4] = decimalFormat.format(cursor.getDouble(index));
+            food.setCarbohydrates(cursor.getDouble(index));
+
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
-            foodInfo[5] = decimalFormat.format(cursor.getDouble(index));
+            food.setFat(cursor.getDouble(index));
+
             index = cursor.getColumnIndex(DatabaseHelper.FIBER);
-            foodInfo[6] = decimalFormat.format(cursor.getDouble(index));
+            food.setFiber(cursor.getDouble(index));
         }
         cursor.close();
 
-        return foodInfo;
+        return food;
     }
 
     // Update a tuple from the Foods table given an ID and the updated data.
@@ -98,15 +95,6 @@ public class DatabaseAdapter {
                           double fatQuantity, double fiberQuantity) {
         SQLiteDatabase db = helper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-
-        // Decimal format to prepare the data prior to insertion into database.
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-
-        proteinQuantity = Double.parseDouble(decimalFormat.format(proteinQuantity));
-        carbosQuantity = Double.parseDouble(decimalFormat.format(carbosQuantity));
-        fatQuantity = Double.parseDouble(decimalFormat.format(fatQuantity));
-        fiberQuantity = Double.parseDouble(decimalFormat.format(fiberQuantity));
-        portionQuantity = Double.parseDouble(decimalFormat.format(portionQuantity));
 
         contentValues.put(DatabaseHelper.NAME, name);
         contentValues.put(DatabaseHelper.PORTION_QUANTITY, portionQuantity);
@@ -141,7 +129,7 @@ public class DatabaseAdapter {
      * info[3]: it's a "boolean" array expressing which position corresponds to a subheader.
      * info[4]: contains the units used to indicate the portion quantity.
      */
-    public String[][] getFoods() {
+    public String[][] getFoodsList() {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
@@ -167,14 +155,19 @@ public class DatabaseAdapter {
             // Get Food information.
             index = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
             long id = cursor.getLong(index);
+
             index = cursor.getColumnIndex(DatabaseHelper.NAME);
             String name = cursor.getString(index);
+
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
             double protein = cursor.getDouble(index);
+
             index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
             double carbohydrates = cursor.getDouble(index);
+
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
             double fat = cursor.getDouble(index);
+
             index = cursor.getColumnIndex(DatabaseHelper.PORTION_UNITS);
             String units = cursor.getString(index);
 
@@ -252,18 +245,9 @@ public class DatabaseAdapter {
     /**
      * Retrieve all the information about the foods belonging to a meal.
      * @param mealId the ID of the meal.
-     * @return the following String Lists:
-     * · (0) foodsIds: the IDs of the foods.
-     * · (1) names: the names of the foods.
-     * · (2) portionQuantities.
-     * · (3) portionUnits.
-     * · (4) protein: as it is in the Foods table.
-     * · (5) carbs: as it is in the Foods table.
-     * · (6) fat: as it is in the Foods table.
-     * · (7) fiber: as it is in the Foods table.
-     * · (8) foodQuantityEditText: the amount of food for the respective meal.
+     * @return the foods in that meal, and their respective quantity.
      */
-    public List<List<String>> getMealFoodsInfo(long mealId) {
+    public List<MealFood> getMealFoods(long mealId) {
         SQLiteDatabase db = helper.getReadableDatabase();
 
         // Perform a query with an INNER JOIN between Foods and MealFoods.
@@ -271,41 +255,47 @@ public class DatabaseAdapter {
         Cursor cursor = db.rawQuery(DatabaseHelper.FOODS_JOIN_MEAL_FOODS,
                 new String[]{Long.toString(mealId)});
 
-        List<List<String>> mealFoodsInfo = new ArrayList<>(9);
+        List<MealFood> mealFoods = new ArrayList<>();
 
         while (cursor.moveToNext()) {
             int index;
+            MealFood mealFood = new MealFood();
+
+            // Get tuple information and add it to mealFood.
 
             index = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
-            mealFoodsInfo.get(0).add(Long.toString(cursor.getLong(index)));
+            mealFood.setId(cursor.getLong(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.NAME);
-            mealFoodsInfo.get(1).add(cursor.getString(index));
+            mealFood.setName(cursor.getString(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.PORTION_QUANTITY);
-            mealFoodsInfo.get(2).add(Double.toString(cursor.getDouble(index)));
+            mealFood.setPortionQuantity(cursor.getDouble(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.PORTION_UNITS);
-            mealFoodsInfo.get(3).add(cursor.getString(index));
+            mealFood.setPortionUnits(cursor.getString(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
-            mealFoodsInfo.get(4).add(Double.toString(cursor.getDouble(index)));
+            mealFood.setProtein(cursor.getDouble(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            mealFoodsInfo.get(5).add(Double.toString(cursor.getDouble(index)));
+            mealFood.setCarbohydrates(cursor.getDouble(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
-            mealFoodsInfo.get(6).add(Double.toString(cursor.getDouble(index)));
+            mealFood.setFat(cursor.getDouble(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.FIBER);
-            mealFoodsInfo.get(7).add(Double.toString(cursor.getDouble(index)));
+            mealFood.setFiber(cursor.getDouble(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.FOOD_QUANTITY);
-            mealFoodsInfo.get(8).add(Double.toString(cursor.getDouble(index)));
+            mealFood.setFoodQuantity(cursor.getDouble(index));
+
+            // Add mealFood to the mealFoods list.
+            mealFoods.add(mealFood);
         }
 
         cursor.close();
-        return mealFoodsInfo;
+        return mealFoods;
     }
 
     /**
@@ -336,27 +326,27 @@ public class DatabaseAdapter {
                 "CREATE TABLE " + TABLE_FOODS +
                         " (" + FOOD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         NAME + " VARCHAR(50) UNIQUE, " +
-                        PORTION_QUANTITY + " NUMERIC(5,1), " +
+                        PORTION_QUANTITY + " REAL, " +
                         PORTION_UNITS + " VARCHAR(4), " +
-                        PROTEIN + " NUMERIC(5,1), " +
-                        CARBOHYDRATES + " NUMERIC(5,1), " +
-                        FAT + " NUMERIC(5,1), " +
-                        FIBER + " NUMERIC(5,1));";
+                        PROTEIN + " REAL, " +
+                        CARBOHYDRATES + " REAL, " +
+                        FAT + " REAL, " +
+                        FIBER + " REAL);";
 
         private static final String CREATE_MEALS_TABLE =
                 "CREATE TABLE " + TABLE_MEALS +
                         " (" + MEAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         NAME + " VARCHAR(50) UNIQUE, " +
-                        PROTEIN + " NUMERIC(5,1), " +
-                        CARBOHYDRATES + " NUMERIC(5,1), " +
-                        FAT + " NUMERIC(5,1), " +
-                        FIBER + " NUMERIC(5,1));";
+                        PROTEIN + " REAL, " +
+                        CARBOHYDRATES + " REAL, " +
+                        FAT + " REAL, " +
+                        FIBER + " REAL);";
 
         private static final String CREATE_MEAL_FOODS_TABLE =
                 "CREATE TABLE " + TABLE_MEAL_FOODS +
                         " (" + MEAL_ID + " INTEGER, " +
                         FOOD_ID + " INTEGER, " +
-                        FOOD_QUANTITY + " NUMERIC(5,1), " +
+                        FOOD_QUANTITY + " REAL, " +
                         "PRIMARY KEY (" + MEAL_ID + ", " + FOOD_ID + ");";
 
         private static final String FOODS_JOIN_MEAL_FOODS =
