@@ -97,7 +97,8 @@
                         android:layout_gravity="center_vertical"
                         android:background="@color/chart_protein" />
 
-                    <TextView android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:paddingLeft="8dp"
                         android:paddingRight="8dp"
@@ -107,6 +108,7 @@
                         android:textColor="@color/primary_text"/>
 
                     <TextView
+                        android:id="@+id/meal_protein"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="33 g"
@@ -145,6 +147,7 @@
                         android:textColor="@color/primary_text"/>
 
                     <TextView
+                        android:id="@+id/meal_carbs"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="633 g"
@@ -183,6 +186,7 @@
                         android:textColor="@color/primary_text"/>
 
                     <TextView
+                        android:id="@+id/meal_fat"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:text="33 g"
@@ -213,6 +217,7 @@
                 android:textColor="@color/primary_text"/>
 
             <TextView
+                android:id="@+id/meal_fiber"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="18 g"
@@ -240,6 +245,7 @@
                 android:textColor="@color/primary_text"/>
 
             <TextView
+                android:id="@+id/meal_energy"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="457 kcal"

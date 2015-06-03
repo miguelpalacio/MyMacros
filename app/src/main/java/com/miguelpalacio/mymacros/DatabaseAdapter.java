@@ -318,7 +318,7 @@ public class DatabaseAdapter {
 
         private static final String TABLE_MEALS = "Meals";
         private static final String MEAL_ID = "_MealID";
-        private static final String FOOD_QUANTITY = "foodQuantity";
+        private static final String FOOD_QUANTITY = "foodQuantityList";
 
         private static final String TABLE_MEAL_FOODS = "MealFoods";
 

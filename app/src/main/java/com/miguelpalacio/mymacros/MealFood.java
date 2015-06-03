@@ -1,7 +1,7 @@
 package com.miguelpalacio.mymacros;
 
 /**
- * This class, inheriting from Food, adds the foodQuantity property to be used in MyMeals pages.
+ * This class, inheriting from Food, adds the foodQuantityList property to be used in MyMeals pages.
  */
 public class MealFood extends Food {
 

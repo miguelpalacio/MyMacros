@@ -28,7 +28,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     EditText foodNameEditText;
     EditText portionEditText;
     EditText proteinEditText;
-    EditText carbosEditText;
+    EditText carbsEditText;
     EditText fatEditText;
     EditText fiberEditText;
     Spinner portionUnitsSpinner;
@@ -37,7 +37,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     String foodName;
     Double portionQuantity;
     Double proteinQuantity;
-    Double carbosQuantity;
+    Double carbsQuantity;
     Double fatQuantity;
     Double fiberQuantity;
     String portionUnits;
@@ -83,7 +83,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         foodNameEditText = (EditText) getActivity().findViewById(R.id.food_name);
         portionEditText = (EditText) getActivity().findViewById(R.id.food_portion);
         proteinEditText = (EditText) getActivity().findViewById(R.id.food_protein);
-        carbosEditText = (EditText) getActivity().findViewById(R.id.food_carbos);
+        carbsEditText = (EditText) getActivity().findViewById(R.id.food_carbos);
         fatEditText = (EditText) getActivity().findViewById(R.id.food_fat);
         fiberEditText = (EditText) getActivity().findViewById(R.id.food_fiber);
 
@@ -133,7 +133,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         portionUnitsSpinner.setSelection(spinnerSelection);
 
         proteinEditText.setText(decimalFormat.format(food.getProtein()));
-        carbosEditText.setText(decimalFormat.format(food.getCarbohydrates()));
+        carbsEditText.setText(decimalFormat.format(food.getCarbohydrates()));
         fatEditText.setText(decimalFormat.format(food.getFat()));
         fiberEditText.setText(decimalFormat.format(food.getFiber()));
 
@@ -216,8 +216,8 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
             proteinEditText.setError("Please enter the protein quantity");
             missingData = true;
         }
-        if (carbosEditText.getText().toString().length() == 0) {
-            carbosEditText.setError("Please enter the carbohydrates quantity");
+        if (carbsEditText.getText().toString().length() == 0) {
+            carbsEditText.setError("Please enter the carbohydrates quantity");
             missingData = true;
         }
         if (fatEditText.getText().toString().length() == 0) {
@@ -238,7 +238,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         foodName = foodNameEditText.getText().toString();
         portionQuantity = Double.parseDouble(portionEditText.getText().toString());
         proteinQuantity = Double.parseDouble(proteinEditText.getText().toString());
-        carbosQuantity = Double.parseDouble(carbosEditText.getText().toString());
+        carbsQuantity = Double.parseDouble(carbsEditText.getText().toString());
         fatQuantity = Double.parseDouble(fatEditText.getText().toString());
         fiberQuantity = Double.parseDouble(fiberEditText.getText().toString());
 
@@ -275,7 +275,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
      */
     private void insertFood() {
         long id = databaseAdapter.insertFood(foodName, portionQuantity, portionUnits,
-                proteinQuantity, carbosQuantity, fatQuantity, fiberQuantity);
+                proteinQuantity, carbsQuantity, fatQuantity, fiberQuantity);
 
         // Inform the user about the outcome of the transaction.
         if (id < 0) {
@@ -311,7 +311,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
         // Update the Foods table.
         int updateResult = databaseAdapter.updateFood(foodId, foodName, portionQuantity,
-                portionUnits, proteinQuantity, carbosQuantity, fatQuantity, fiberQuantity);
+                portionUnits, proteinQuantity, carbsQuantity, fatQuantity, fiberQuantity);
 
         // Inform the user about the outcome of the transaction.
         if (updateResult == 1) {
