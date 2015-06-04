@@ -50,11 +50,13 @@ public class MainActivity extends ActionBarActivity implements
     Runnable onDrawerClosedRunnable;
     Handler mHandler = new Handler();
 
-    MealEditorFragment mealEditorFragment;
-
     int currentFragment;
     boolean inInnerFragment;
     boolean drawerIconAnimation;
+
+    private boolean foodAddedToMeal;
+    private long mealFoodId;
+    private double mealFoodQuantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,11 @@ public class MainActivity extends ActionBarActivity implements
         // Initialize local variables.
         drawerIconAnimation = false;
         inInnerFragment = false;
+
+        // Initialize private variables that are accessed by child fragments.
+        foodAddedToMeal = false;
+        mealFoodId = -1;
+        mealFoodQuantity = 0;
 
         // Load savedInstanceState data.
         if (savedInstanceState != null) {
@@ -252,7 +259,6 @@ public class MainActivity extends ActionBarActivity implements
     // Open the Meal Editor fragment.
     @Override
     public void openMealEditorFragment(Fragment fragment, int newToolbarTitle) {
-        mealEditorFragment = (MealEditorFragment) fragment;
         openInnerFragment(fragment, newToolbarTitle);
     }
 
@@ -266,8 +272,10 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void setFoodOnMealEditor(long foodId, double foodQuantity) {
         backToPreviousFragment();
-        mealEditorFragment.setFoodSelected(foodId, foodQuantity);
-        //mealEditorFragment = null; // causes exception here.
+
+        foodAddedToMeal = true;
+        mealFoodId = foodId;
+        mealFoodQuantity = foodQuantity;
     }
 
     // Foods Callbacks.
@@ -362,10 +370,13 @@ public class MainActivity extends ActionBarActivity implements
      */
     public void openInnerFragment(Fragment fragment, int newToolbarTitle) {
 
+        // Define tag to later retrieve references to fragments in the BackStack.
+        String tag = getString(newToolbarTitle);
+
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
+                .replace(R.id.fragment_container, fragment, tag)
+                .addToBackStack(tag)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
 
@@ -443,4 +454,23 @@ public class MainActivity extends ActionBarActivity implements
         imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
 
     }
+
+
+    // Getters and Setters.
+
+    public double getMealFoodQuantity() {
+        return mealFoodQuantity;
+    }
+
+    public long getMealFoodId() {
+        return mealFoodId;
+    }
+
+    public boolean wasFoodAddedToMeal() {
+        return foodAddedToMeal;
+    }
+    public void setFoodAddedToMeal(boolean foodAddedToMeal) {
+        this.foodAddedToMeal = foodAddedToMeal;
+    }
 }
+
