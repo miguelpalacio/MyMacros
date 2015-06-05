@@ -9,6 +9,9 @@ import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -26,19 +29,19 @@ import java.util.ArrayList;
  */
 public class MealEditorFragment extends Fragment implements ItemListAdapter.ViewHolder.ClickListener {
 
-    public static boolean mealChosen;
-
     private static final String MEAL_NAME = "mealName";
     private static final String FOOD_ID_LIST = "foodIdList";
     private static final String FOOD_NAME_LIST = "foodNameList";
     private static final String FOOD_SUMMARY_LIST = "foodSummaryList";
     private static final String FOOD_QUANTITY_LIST = "foodQuantityList";
-/*    private static final String FOOD_PORTION_UNITS_LIST = "foodPortionUnitsList";
-    private static final String FOOD_PORTION_QUANTITY_LIST = "foodPortionQuantityList";*/
     private static final String FOOD_PROTEIN_LIST = "foodProteinList";
     private static final String FOOD_CARBS_LIST = "foodCarbsList";
     private static final String FOOD_FAT_LIST = "foodFatList";
     private static final String FOOD_FIBER_LIST = "foodFiberList";
+
+    RecyclerView itemListView;
+    RecyclerView.LayoutManager itemListLayoutManager;
+    ItemListAdapter itemListAdapter;
 
     LinearLayout listHeader;
     EditText mealNameEditText;
@@ -49,16 +52,10 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     TextView fiberTextView;
     TextView energyTextView;
 
-    RecyclerView itemListView;
-    RecyclerView.LayoutManager itemListLayoutManager;
-    ItemListAdapter itemListAdapter;
-
     ArrayList<String> foodIdList;
     ArrayList<String> foodNameList;
     ArrayList<String> foodSummaryList;
     ArrayList<String> foodQuantityList;
-/*    ArrayList<String> foodPortionQuantityList;
-    ArrayList<String> foodPortionUnitsList;*/
     ArrayList<String> foodProteinList;
     ArrayList<String> foodCarbsList;
     ArrayList<String> foodFatList;
@@ -69,6 +66,30 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     OnMealAddFoodFragment onMealAddFoodFragment;
 
     final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+    double totalProtein;
+    double totalEnergy;
+    double totalCarbs;
+    double totalFat;
+    double totalFiber;
+    String energyUnits;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Enable menu entries to receive calls.
+        setHasOptionsMenu(true);
+
+/*        // Check if New Food page was requested.
+        if (getArguments().getBoolean(FoodsFragment.isNewFoodArg)) {
+            foodId = -1;
+            return;
+        }
+
+        // If it is Edit Food page, retrieve the ID of the food to be shown.
+        foodId = getArguments().getLong(FoodsFragment.foodIdArg);*/
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,23 +117,14 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         final Bundle mySavedInstanceState = getArguments();
 
-        final double totalEnergy;
-        final double totalProtein;
-        final double totalCarbs;
-        final double totalFat;
-        final double totalFiber;
-        final String energyUnits;
-
         // Look for instance data.
-        if (foodIdList != null) {
+        if (mySavedInstanceState.containsKey(FOOD_ID_LIST)) {
 
             // Load previously saved data.
             foodIdList = mySavedInstanceState.getStringArrayList(FOOD_ID_LIST);
             foodNameList = mySavedInstanceState.getStringArrayList(FOOD_NAME_LIST);
             foodSummaryList = mySavedInstanceState.getStringArrayList(FOOD_SUMMARY_LIST);
             foodQuantityList = mySavedInstanceState.getStringArrayList(FOOD_QUANTITY_LIST);
-/*            foodPortionQuantityList = mySavedInstanceState.getStringArrayList(FOOD_PORTION_QUANTITY_LIST);
-            foodPortionUnitsList = mySavedInstanceState.getStringArrayList(FOOD_PORTION_UNITS_LIST);*/
             foodProteinList = mySavedInstanceState.getStringArrayList(FOOD_PROTEIN_LIST);
             foodCarbsList = mySavedInstanceState.getStringArrayList(FOOD_CARBS_LIST);
             foodFatList = mySavedInstanceState.getStringArrayList(FOOD_FAT_LIST);
@@ -149,8 +161,6 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             foodNameList = new ArrayList<>();
             foodSummaryList = new ArrayList<>();
             foodQuantityList = new ArrayList<>();
-/*            foodPortionQuantityList = new ArrayList<>();
-            foodPortionUnitsList = new ArrayList<>();*/
             foodProteinList = new ArrayList<>();
             foodCarbsList = new ArrayList<>();
             foodFatList = new ArrayList<>();
@@ -160,9 +170,8 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             foodNameList.add(getString(R.string.meal_add_new));
             foodSummaryList.add("");
             foodQuantityList.add("");
-/*            foodPortionUnitsList.add("");*/
 
-            // Default values.
+            // Default nutrition facts values.
             totalProtein = 0;
             totalCarbs = 0;
             totalFat = 0;
@@ -228,6 +237,39 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         });
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.menu_meal_editor, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        // If New Food page, enable Scan Barcode option, otherwise enable Delete option.
+/*        if (foodId < 0) {
+            MenuItem scanBarcodeOption = menu.findItem(R.id.action_scan_barcode);
+            scanBarcodeOption.setVisible(true);
+        } else {
+            MenuItem deleteFoodOption = menu.findItem(R.id.action_delete_food);
+            deleteFoodOption.setVisible(true);
+        }*/
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        // Insert/Update Food.
+        if (id == R.id.action_save_meal) {
+            saveMeal();
+        } else if (id == R.id.action_delete_meal) {
+            //onMealDelete();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * Save local variables in case of restart of fragment (due to re-orientation,
      * because it went into stopped state, etc).
@@ -245,8 +287,6 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         getArguments().putStringArrayList(FOOD_NAME_LIST, foodNameList);
         getArguments().putStringArrayList(FOOD_SUMMARY_LIST, foodSummaryList);
         getArguments().putStringArrayList(FOOD_QUANTITY_LIST, foodQuantityList);
-/*        getArguments().putStringArrayList(FOOD_PORTION_QUANTITY_LIST, foodPortionQuantityList);
-        getArguments().putStringArrayList(FOOD_PORTION_UNITS_LIST, foodPortionUnitsList);*/
         getArguments().putStringArrayList(FOOD_PROTEIN_LIST, foodProteinList);
         getArguments().putStringArrayList(FOOD_CARBS_LIST, foodCarbsList);
         getArguments().putStringArrayList(FOOD_FAT_LIST, foodFatList);
@@ -263,8 +303,11 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         }
     }
 
+    public interface OnMealAddFoodFragment {
+        void openMealAddFoodFragment(Fragment fragment, int newToolbarTitle);
+    }
+
     /**
-     * This method is called by MainActivity in the MealAddFoodFragment callback.
      * Retrieves the food info, and set useful information into lists.
      * @param foodId ID of the food that was selected by the user.
      * @param foodQuantity the amount of food set by the user.
@@ -279,33 +322,56 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         double fat = food.getFat() * (foodQuantity / food.getPortionQuantity());
         double fiber = food.getFiber() * (foodQuantity / food.getPortionQuantity());
 
+        // Define food summary.
+        String foodSummary = decimalFormat.format(foodQuantity) + " " + food.getPortionUnits();
+
         // Add food information to the lists.
         int position = foodNameList.size() - 1;
+        boolean foodPreviouslyAdded = false;
 
-        foodIdList.add(position, Long.toString(foodId));
+        // Check that the selected food is not already in the meal's food list.
+        for (int i = 0; i < foodIdList.size(); i++) {
+            if (foodIdList.get(i).equals(Long.toString(foodId))) {
+                position = i;
+                foodPreviouslyAdded = true;
+            }
+        }
 
-        foodNameList.add(position, food.getName());
-        foodSummaryList.add(position, decimalFormat.format(foodQuantity) + " " + food.getPortionUnits());
-        foodQuantityList.add(position, Double.toString(foodQuantity));
+        if (foodPreviouslyAdded) {
+            // Set the new values.
+            foodSummaryList.set(position, foodSummary);
+            foodQuantityList.set(position, Double.toString(foodQuantity));
 
-        foodProteinList.add(position, Double.toString(protein));
-        foodCarbsList.add(position, Double.toString(carbs));
-        foodFatList.add(position, Double.toString(fat));
-        foodFiberList.add(position, Double.toString(fiber));
+            foodProteinList.set(position, Double.toString(protein));
+            foodCarbsList.set(position, Double.toString(carbs));
+            foodFatList.set(position, Double.toString(fat));
+            foodFiberList.set(position, Double.toString(fiber));
 
-/*        foodPortionQuantityList.add(position, Double.toString(food.getPortionQuantity()));
-        foodPortionUnitsList.add(position, food.getPortionUnits());
-        foodProteinList.add(position, Double.toString(food.getProtein()));
-        foodCarbsList.add(position, Double.toString(food.getCarbohydrates()));
-        foodFatList.add(position, Double.toString(food.getFat()));
-        foodFiberList.add(position, Double.toString(food.getFiber()));*/
+            // Notify the RecyclerView's adapter that data changed.
+            itemListAdapter.notifyItemChanged(position);
 
-        // Notify to the RecyclerView's adapter that the data set changed.
-        itemListAdapter.notifyItemInserted(position);
+        } else {
+            // Insert all the food data into the lists.
+            foodIdList.add(position, Long.toString(foodId));
+
+            foodNameList.add(position, food.getName());
+            foodSummaryList.add(position, decimalFormat.format(foodQuantity) + " " + food.getPortionUnits());
+            foodQuantityList.add(position, Double.toString(foodQuantity));
+
+            foodProteinList.add(position, Double.toString(protein));
+            foodCarbsList.add(position, Double.toString(carbs));
+            foodFatList.add(position, Double.toString(fat));
+            foodFiberList.add(position, Double.toString(fiber));
+
+            // Notify to the RecyclerView's adapter that the data set changed.
+            itemListAdapter.notifyItemInserted(position);
+        }
     }
 
-    public interface OnMealAddFoodFragment {
-        void openMealAddFoodFragment(Fragment fragment, int newToolbarTitle);
+    private void saveMeal() {
+        String mealName = mealNameEditText.getText().toString();
+        databaseAdapter.insertMeal(mealName, totalProtein, totalCarbs, totalFat,
+                totalFiber, foodIdList, foodQuantityList);
     }
 
     // Take a list of numbers (String) and return its summation.

@@ -370,13 +370,10 @@ public class MainActivity extends ActionBarActivity implements
      */
     public void openInnerFragment(Fragment fragment, int newToolbarTitle) {
 
-        // Define tag to later retrieve references to fragments in the BackStack.
-        String tag = getString(newToolbarTitle);
-
         getFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, fragment, tag)
-                .addToBackStack(tag)
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
                 .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                 .commit();
 

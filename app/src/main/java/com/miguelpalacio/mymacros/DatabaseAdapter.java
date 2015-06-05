@@ -243,6 +243,48 @@ public class DatabaseAdapter {
 
 
     /**
+     * Inserts a new row in the Meals table. Also inserts the information of the foods
+     * added to the meal, into the MealFoods table.
+     * @return the id given in the database for the new meal.
+     */
+    public long insertMeal(String name, double proteinQuantity, double carbsQuantity, double fatQuantity,
+                           double fiberQuantity, List<String> foodIdList, List<String> foodQuantityList) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        long mealId = -1;
+
+        // Perform the insertions into the Meals and MealFoods tables by means of a transaction.
+        db.beginTransaction();
+        try {
+            // Insert Meal's data into the Meals table.
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DatabaseHelper.NAME, name);
+            contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
+            contentValues.put(DatabaseHelper.CARBOHYDRATES, carbsQuantity);
+            contentValues.put(DatabaseHelper.FAT, fatQuantity);
+            contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
+
+            mealId = db.insert(DatabaseHelper.TABLE_MEALS, null, contentValues);
+
+            // Insert meal foods' info the MealFoods table.
+            for (int i = 0; i < foodIdList.size(); i++) {
+                contentValues = new ContentValues();
+                contentValues.put(DatabaseHelper.MEAL_ID, mealId);
+                contentValues.put(DatabaseHelper.FOOD_ID, Long.parseLong(foodIdList.get(i)));
+                contentValues.put(DatabaseHelper.FOOD_QUANTITY, Double.parseDouble(foodQuantityList.get(i)));
+
+                db.insert(DatabaseHelper.TABLE_MEAL_FOODS, null, contentValues);
+            }
+
+            db.setTransactionSuccessful();
+        } finally {
+            db.endTransaction();
+        }
+
+        return mealId;
+    }
+
+    /**
      * Retrieve all the information about the foods belonging to a meal.
      * @param mealId the ID of the meal.
      * @return the foods in that meal, and their respective quantity.
@@ -347,7 +389,7 @@ public class DatabaseAdapter {
                         " (" + MEAL_ID + " INTEGER, " +
                         FOOD_ID + " INTEGER, " +
                         FOOD_QUANTITY + " REAL, " +
-                        "PRIMARY KEY (" + MEAL_ID + ", " + FOOD_ID + ");";
+                        "PRIMARY KEY (" + MEAL_ID + ", " + FOOD_ID + "));";
 
         private static final String FOODS_JOIN_MEAL_FOODS =
                 "SELECT " + FOOD_ID + ", " + NAME + ", " + PORTION_QUANTITY + ", " +
