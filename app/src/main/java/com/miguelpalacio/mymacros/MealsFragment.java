@@ -58,25 +58,25 @@ public class MealsFragment extends Fragment implements SubheadersListAdapter.Vie
         databaseAdapter = new DatabaseAdapter(getActivity());
 
         // Get the names and summaries of meals inserted by the user.
-        //mealInfo = databaseAdapter.getMeals();
+        mealInfo = databaseAdapter.getMealsList();
 
         // Food List RecyclerView.
         mealListView = (RecyclerView) getActivity().findViewById(R.id.meal_list);
 
         // Set the adapter.
-/*        mealListAdapter = new SubheadersListAdapter(mealInfo[1], mealInfo[2], mealInfo[3], this);
-        mealListView.setAdapter(mealListAdapter);*/
+        mealListAdapter = new SubheadersListAdapter(mealInfo[1], mealInfo[2], mealInfo[3], this);
+        mealListView.setAdapter(mealListAdapter);
 
         // Set the layout manager for the RecyclerView.
         mealListLayoutManager = new LinearLayoutManager(getActivity());
         mealListView.setLayoutManager(mealListLayoutManager);
 
         // If there are no meals, show the default message for empty page.
-/*        if (mealInfo[0].length == 0) {*/
+        if (mealInfo[0].length == 0) {
             emptyPageMessage = (TextView) getActivity().findViewById(R.id.meals_empty_page);
             emptyPageMessage.setVisibility(View.VISIBLE);
             mealListView.setVisibility(View.INVISIBLE);
-/*        }*/
+        }
 
         // Define the add new meal button, and set a listener.
         addMeal = (FloatingActionButton) getActivity().findViewById(R.id.button_add_meal);

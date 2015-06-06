@@ -22,6 +22,9 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
         FoodsFragment.OnFoodEditorFragment, FoodEditorFragment.OnFoodSaved,
@@ -31,6 +34,8 @@ public class MainActivity extends ActionBarActivity implements
     private static final String CURRENT_FRAGMENT = "currentFragment";
     private static final String IN_INNER_FRAGMENT = "inInnerFragment";
     private static final String DRAWER_ICON_ANIMATION = "drawerIconAnimation";
+    private static final String CURRENT_TOOLBAR_TITLE = "currentToolbarTitle";
+    private static final String TOOLBAR_TITLES = "toolbarTitles";
 
     Toolbar toolbar;
 
@@ -53,6 +58,8 @@ public class MainActivity extends ActionBarActivity implements
     int currentFragment;
     boolean inInnerFragment;
     boolean drawerIconAnimation;
+    int currentToolbarTitle;
+    ArrayList<Integer> toolbarTitles;
 
     private boolean foodAddedToMeal;
     private long mealFoodId;
@@ -80,9 +87,13 @@ public class MainActivity extends ActionBarActivity implements
             currentFragment = savedInstanceState.getInt(CURRENT_FRAGMENT);
             inInnerFragment = savedInstanceState.getBoolean(IN_INNER_FRAGMENT);
             drawerIconAnimation = savedInstanceState.getBoolean(DRAWER_ICON_ANIMATION);
+            currentToolbarTitle = savedInstanceState.getInt(CURRENT_TOOLBAR_TITLE);
+            toolbarTitles = savedInstanceState.getIntegerArrayList(TOOLBAR_TITLES);
         } else {
             // Set to 0 to init in openFragment() when activity starts.
             currentFragment = 0;
+            // Init the "stack" with the toolbar titles.
+            toolbarTitles = new ArrayList<>();
         }
 
         // Toolbar.
@@ -165,7 +176,7 @@ public class MainActivity extends ActionBarActivity implements
             }
         });
 
-        // Open fragment.
+        // Open fragment and set title.
         openFragment(currentFragment);
 
         // Highlight corresponding entry on Navigation Drawer.
@@ -217,6 +228,8 @@ public class MainActivity extends ActionBarActivity implements
         outState.putInt(CURRENT_FRAGMENT, currentFragment);
         outState.putBoolean(IN_INNER_FRAGMENT, inInnerFragment);
         outState.putBoolean(DRAWER_ICON_ANIMATION, drawerIconAnimation);
+        outState.putInt(CURRENT_TOOLBAR_TITLE, currentToolbarTitle);
+        outState.putIntegerArrayList(TOOLBAR_TITLES, toolbarTitles);
     }
 
     /**
@@ -297,6 +310,7 @@ public class MainActivity extends ActionBarActivity implements
      * Opens the respective fragment according to the item selected.
      * <p>
      *      If item selected corresponds to the fragment currently shown, don't reopen it.
+     *      When the application is in an inner fragment, retrieves the corresponding title.
      *      Also sets the title on the Toolbar for the corresponding fragment.
      * </p>
      * @param position item clicked by the user on the navigation drawer.
@@ -309,31 +323,32 @@ public class MainActivity extends ActionBarActivity implements
         }
 
         Fragment fragment;
+        int toolbarTitle;
 
         switch (position) {
 
             case 1:
-                getSupportActionBar().setTitle(R.string.toolbar_planner);
+                toolbarTitle = R.string.toolbar_planner;
                 fragment = new PlannerFragment();
                 break;
 
             case 2:
-                getSupportActionBar().setTitle(R.string.toolbar_stats);
+                toolbarTitle = R.string.toolbar_stats;
                 fragment = new StatsFragment();
                 break;
 
             case 3:
-                getSupportActionBar().setTitle(R.string.toolbar_profile);
+                toolbarTitle = R.string.toolbar_profile;
                 fragment = new ProfileFragment();
                 break;
 
             case 4:
-                getSupportActionBar().setTitle(R.string.toolbar_meals);
+                toolbarTitle = R.string.toolbar_meals;
                 fragment = new MealsFragment();
                 break;
 
             case 5:
-                getSupportActionBar().setTitle(R.string.toolbar_foods);
+                toolbarTitle = R.string.toolbar_foods;
                 fragment = new FoodsFragment();
                 break;
 
@@ -346,6 +361,18 @@ public class MainActivity extends ActionBarActivity implements
 
             default:
                 fragment = new Fragment();
+                toolbarTitle = 0;
+        }
+
+        // Set toolbar title: If the app is in inner fragment, set the respective title.
+        if (toolbarTitles.size() > 1) {
+            getSupportActionBar().setTitle(toolbarTitles.get(0));
+        } else if (toolbarTitles.size() == 1) {
+            toolbarTitles.set(0, toolbarTitle);
+            getSupportActionBar().setTitle(toolbarTitle);
+        } else {
+            toolbarTitles.add(toolbarTitle);
+            getSupportActionBar().setTitle(toolbarTitle);
         }
 
         // If item selected is the current selected, no need to replace fragment.
@@ -379,8 +406,10 @@ public class MainActivity extends ActionBarActivity implements
 
         inInnerFragment = true;
 
-        // Enable back-arrow in toolbar.
+        // Set title.
+        toolbarTitles.add(0, newToolbarTitle);
         getSupportActionBar().setTitle(newToolbarTitle);
+
 /*      // Apparently, this is not needed since onDrawerSlide below take care of this.
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);*/
@@ -407,6 +436,10 @@ public class MainActivity extends ActionBarActivity implements
             drawerIconAnimation = true;
             animator.start();
         }
+
+        // Close Soft Keyboard if it's open.
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
     }
 
     /**
@@ -418,11 +451,14 @@ public class MainActivity extends ActionBarActivity implements
         getFragmentManager().popBackStack();
         int NewBackStackEntryCount = getFragmentManager().getBackStackEntryCount() - 1;
 
+        // Set the toolbar title.
+        toolbarTitles.remove(0);
+        getSupportActionBar().setTitle(toolbarTitles.get(0));
+
         if (NewBackStackEntryCount == 0) {
 
             // Re-enable the navigation drawer.
             mDrawerToggle.syncState();
-            openFragment(currentFragment);
             drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
             inInnerFragment = false;
 
@@ -449,7 +485,6 @@ public class MainActivity extends ActionBarActivity implements
         // Close Soft Keyboard if it's open.
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
-
     }
 
 

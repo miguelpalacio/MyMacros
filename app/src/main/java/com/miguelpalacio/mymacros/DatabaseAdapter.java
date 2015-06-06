@@ -122,7 +122,7 @@ public class DatabaseAdapter {
 
     /**
      * Retrieve the name and a summary for each item in the Foods table.
-     * @return four arrays:
+     * @return five arrays:
      * info[0]: contains the list of food ids.
      * info[1]: contains the list of food names and subheaders for the food list.
      * info[2]: contains the summaries
@@ -285,6 +285,92 @@ public class DatabaseAdapter {
     }
 
     /**
+     * Retrieve the name and a summary for each item in the Meals table.
+     * @return four arrays:
+     * info[0]: contains the list of meal ids.
+     * info[1]: contains the list of meal names and subheaders for the meal list.
+     * info[2]: contains the summaries.
+     * info[3]: it's a "boolean" array expressing which position corresponds to a subheader.
+     */
+    public String[][] getMealsList() {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
+        String[] columns = {DatabaseHelper.MEAL_ID, DatabaseHelper.NAME,
+                DatabaseHelper.PROTEIN, DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
+        String orderBy = DatabaseHelper.NAME;
+        Cursor cursor = db.query(DatabaseHelper.TABLE_MEALS, columns,
+                null, null, null, null, orderBy + " COLLATE LOCALIZED ASC");
+
+        List<String> ids = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        List<String> summaries = new ArrayList<>();
+        List<String> isSubheader = new ArrayList<>();
+
+        Character lastSubheader = '\0';
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
+        while (cursor.moveToNext()) {
+            int index;
+
+            // Get Food information.
+            index = cursor.getColumnIndex(DatabaseHelper.MEAL_ID);
+            long id = cursor.getLong(index);
+
+            index = cursor.getColumnIndex(DatabaseHelper.NAME);
+            String name = cursor.getString(index);
+
+            index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
+            double protein = cursor.getDouble(index);
+
+            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
+            double carbohydrates = cursor.getDouble(index);
+
+            index = cursor.getColumnIndex(DatabaseHelper.FAT);
+            double fat = cursor.getDouble(index);
+
+            // Define if a lastSubheader should be placed.
+            if (lastSubheader != Utilities.flattenToAscii(name.charAt(0))) {
+                // Check for numeric characters and special symbols.
+                if (Character.isLetter(name.charAt(0))) {
+                    lastSubheader = name.charAt(0);
+                    ids.add("-1");
+                    names.add(lastSubheader.toString());
+                    summaries.add("");
+                    isSubheader.add("1");
+                }
+                // If special character, set subheader as '#' if it hasn't been set.
+                else if (lastSubheader != '#') {
+                    lastSubheader = '#';
+                    ids.add("-1");
+                    names.add(lastSubheader.toString());
+                    summaries.add("");
+                    isSubheader.add("1");
+                }
+            }
+            ids.add("" + id);
+            names.add(name);
+            isSubheader.add("0");
+
+            // Parse data and place it in summaries.
+            String mealSummary = "Protein: " + decimalFormat.format(protein) +
+                    " g, Carbohydrates: " + decimalFormat.format(carbohydrates) +
+                    " g, Fat: " + decimalFormat.format(fat) + " g";
+            summaries.add(mealSummary);
+        }
+        cursor.close();
+
+        // Store the resulting ArrayLists in a single data structure, and return it.
+        String[][] info = new String[5][ids.size()];
+        info[0] = ids.toArray(new String[ids.size()]);
+        info[1] = names.toArray(new String[ids.size()]);
+        info[2] = summaries.toArray(new String[ids.size()]);
+        info[3] = isSubheader.toArray(new String[ids.size()]);
+
+        return info;
+    }
+
+    /**
      * Retrieve all the information about the foods belonging to a meal.
      * @param mealId the ID of the meal.
      * @return the foods in that meal, and their respective quantity.
@@ -360,7 +446,7 @@ public class DatabaseAdapter {
 
         private static final String TABLE_MEALS = "Meals";
         private static final String MEAL_ID = "_MealID";
-        private static final String FOOD_QUANTITY = "foodQuantityList";
+        private static final String FOOD_QUANTITY = "foodQuantity";
 
         private static final String TABLE_MEAL_FOODS = "MealFoods";
 
