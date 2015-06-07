@@ -73,6 +73,17 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        // Ensure that the host activity implements the OnFoodEditorFragment interface.
+        try {
+            onFoodSaved = (OnFoodSaved) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnFoodSaved interface");
+        }
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -175,17 +186,6 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        // Ensure that the host activity implements the OnFoodEditorFragment interface.
-        try {
-            onFoodSaved = (OnFoodSaved) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnFoodSaved interface");
-        }
-    }
-
     // Spinner methods.
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -242,28 +242,16 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         fatQuantity = Double.parseDouble(fatEditText.getText().toString());
         fiberQuantity = Double.parseDouble(fiberEditText.getText().toString());
 
-        // Get rid of space chars at the beginning and end of the string.
-        while (Character.isSpaceChar(foodName.charAt(0)) && foodName.length() > 1) {
-            foodName = foodName.substring(1);
-        }
-        while (Character.isSpaceChar(foodName.charAt(foodName.length() - 1)) && foodName.length() > 1) {
-            foodName = foodName.substring(0, foodName.length() - 1);
-        }
+        // Format the foodName string and check its validity.
+        foodName = Utilities.formatNameString(foodName);
         if (foodName.length() == 1 && Character.isSpaceChar(foodName.charAt(0))) {
             foodNameEditText.setText("");
             foodNameEditText.setError("Please enter a valid name");
             return;
         }
 
-        // Capitalize the first letter of the foodName string.
-        if (foodName.length() > 1) {
-            foodName = foodName.substring(0, 1).toUpperCase() + foodName.substring(1);
-        } else {
-            foodName = foodName.toUpperCase();
-        }
-
         // Insert/Update food.
-        if (foodId < 1) {
+        if (foodId < 0) {
             insertFood();
         } else {
             updateFood();

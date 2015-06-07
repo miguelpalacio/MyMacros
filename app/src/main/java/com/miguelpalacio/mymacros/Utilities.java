@@ -8,7 +8,7 @@ import java.text.Normalizer;
 public final class Utilities {
 
     /**
-     * Remove the accents from a string.
+     * Removes the accents from a string.
      * @param string string with accents.
      * @return string without accents.
      */
@@ -22,7 +22,7 @@ public final class Utilities {
     }
 
     /**
-     * Remove the accent from a character.
+     * Removes the accent from a character.
      * @param character character with accents.
      * @return character without accent.
      */
@@ -33,5 +33,30 @@ public final class Utilities {
             if (c <= '\u007F') sb.append(c);
         }
         return sb.toString().charAt(0);
+    }
+
+    /**
+     * Gets rid of spaces (if any) at the beginning and at the end of the given string.
+     * Also capitalizes the first letter of the given string.
+     * @param name the given string.
+     * @return the string formatted.
+     */
+    public static String formatNameString(String name) {
+        // Get rid of space chars at the beginning and end of the string.
+        while (Character.isSpaceChar(name.charAt(0)) && name.length() > 1) {
+            name = name.substring(1);
+        }
+        while (Character.isSpaceChar(name.charAt(name.length() - 1)) && name.length() > 1) {
+            name = name.substring(0, name.length() - 1);
+        }
+
+        // Capitalize the first letter of the name string.
+        if (name.length() > 1) {
+            name = name.substring(0, 1).toUpperCase() + name.substring(1);
+        } else {
+            name = name.toUpperCase();
+        }
+
+        return name;
     }
 }

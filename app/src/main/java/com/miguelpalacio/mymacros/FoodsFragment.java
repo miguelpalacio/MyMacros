@@ -97,7 +97,6 @@ public class FoodsFragment extends Fragment implements SubheadersListAdapter.Vie
     // When an item on the food list is selected, open FoodEditorFragment with the food data.
     @Override
     public void onListItemClick(int position) {
-        //Toast.makeText(getActivity(), "Item with ID " + foodInfo[0][position] + " was clicked", Toast.LENGTH_SHORT).show();
         Fragment foodEditorFragment = new FoodEditorFragment();
 
         Bundle args = new Bundle();

@@ -43,9 +43,8 @@ public class DatabaseAdapter {
     }
 
     /**
-     * Get information for a given Food ID.
-     * @return array of strings with:
-     * Name, PortionQuantity, PortionUnits, Protein, Carbohydrates, Fat, Fiber.
+     * Gets information for a given Food ID.
+     * @return an object of class Food containing all the info of the food corresponding to that ID.
      */
     public Food getFood(long foodId) {
         SQLiteDatabase db = helper.getReadableDatabase();
@@ -252,6 +251,7 @@ public class DatabaseAdapter {
         SQLiteDatabase db = helper.getWritableDatabase();
 
         long mealId = -1;
+        boolean transactionSuccessful = true;
 
         // Perform the insertions into the Meals and MealFoods tables by means of a transaction.
         db.beginTransaction();
@@ -266,6 +266,10 @@ public class DatabaseAdapter {
 
             mealId = db.insert(DatabaseHelper.TABLE_MEALS, null, contentValues);
 
+            if (mealId < 0) {
+                transactionSuccessful = false;
+            }
+
             // Insert meal foods' info the MealFoods table.
             for (int i = 0; i < foodIdList.size(); i++) {
                 contentValues = new ContentValues();
@@ -273,15 +277,85 @@ public class DatabaseAdapter {
                 contentValues.put(DatabaseHelper.FOOD_ID, Long.parseLong(foodIdList.get(i)));
                 contentValues.put(DatabaseHelper.FOOD_QUANTITY, Double.parseDouble(foodQuantityList.get(i)));
 
-                db.insert(DatabaseHelper.TABLE_MEAL_FOODS, null, contentValues);
+                long mealFoodId = db.insert(DatabaseHelper.TABLE_MEAL_FOODS, null, contentValues);
+
+                if (mealFoodId < 0) {
+                    transactionSuccessful = false;
+                    mealId = -1;
+                }
             }
 
-            db.setTransactionSuccessful();
+            if (transactionSuccessful) {
+                db.setTransactionSuccessful();
+            }
         } finally {
             db.endTransaction();
         }
 
         return mealId;
+    }
+
+    /**
+     * Gets information for a given Meal ID.
+     * @return an object of class Meal containing all the info of the meal corresponding to that ID.
+     */
+    public Meal getMeal(long mealId) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        String column = "*";
+        String[] columns = {column};
+        String selection = DatabaseHelper.MEAL_ID + " = ?";
+        String[] selectionArgs = {Double.toString(mealId)};
+
+        // Query the Meals table.
+        Cursor cursor = db.query(DatabaseHelper.TABLE_MEALS, columns,
+                selection, selectionArgs, null, null, null);
+
+        Meal meal = new Meal();
+        meal.setId(mealId);
+
+        while (cursor.moveToNext()) {
+            int index;
+
+            index = cursor.getColumnIndex(DatabaseHelper.NAME);
+            meal.setName(cursor.getString(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
+            meal.setProtein(cursor.getDouble(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
+            meal.setCarbohydrates(cursor.getDouble(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.FAT);
+            meal.setFat(cursor.getDouble(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.FIBER);
+            meal.setFiber(cursor.getDouble(index));
+        }
+        cursor.close();
+
+        // Query the MealFoods table.
+        cursor = db.query(DatabaseHelper.TABLE_MEAL_FOODS, columns,
+                selection, selectionArgs, null, null, null);
+
+        List<MealFood> foods = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            MealFood food;
+            int index;
+
+            index = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
+            food = new MealFood(getFood(cursor.getLong(index)));
+
+            index = cursor.getColumnIndex(DatabaseHelper.FOOD_QUANTITY);
+            food.setFoodQuantity(cursor.getDouble(index));
+
+            foods.add(food);
+        }
+        cursor.close();
+        meal.setFoods(foods);
+
+        return meal;
     }
 
     /**
@@ -424,6 +498,31 @@ public class DatabaseAdapter {
 
         cursor.close();
         return mealFoods;
+    }
+
+    /**
+     * Check that there is no food tuple with the same name in the Foods table.
+     */
+    public boolean isNameInMeals(String mealName) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // SELECT COUNT(*) WHERE Name = mealName;
+        String column = "COUNT(*)";
+        String[] columns = {column};
+        String selection = DatabaseHelper.NAME + " = ?";
+        String[] selectionArgs = {mealName};
+        Cursor cursor = db.query(DatabaseHelper.TABLE_MEALS, columns,
+                selection, selectionArgs, null, null, null);
+
+        int numberOfMeals = 0;
+
+        while (cursor.moveToNext()) {
+            int index = cursor.getColumnIndex(column);
+            numberOfMeals = cursor.getInt(index);
+        }
+        cursor.close();
+
+        return (numberOfMeals > 0);
     }
 
     /**

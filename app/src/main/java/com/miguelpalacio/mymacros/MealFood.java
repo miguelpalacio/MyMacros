@@ -14,6 +14,11 @@ public class MealFood extends Food {
         foodQuantity = 0;
     }
 
+    public MealFood(Food food) {
+        super(food.getId(), food.getName(), food.getPortionQuantity(), food.getPortionUnits(),
+                food.getProtein(), food.getCarbohydrates(), food.getFat(), food.getFiber());
+    }
+
     // Getters and Setters.
     public double getFoodQuantity() {
         return foodQuantity;

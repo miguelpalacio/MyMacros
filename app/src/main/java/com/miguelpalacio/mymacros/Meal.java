@@ -10,18 +10,16 @@ public class Meal {
 
     private long id;
     private String name;
-    private double foodQuantity;
     private double protein;
     private double carbohydrates;
     private double fat;
     private double fiber;
-    private List<Food> foods;
+    private List<MealFood> foods;
 
     // Constructor.
     public Meal() {
         id = -1;
         name = "";
-        foodQuantity = 0;
         protein = 0;
         carbohydrates = 0;
         fat = 0;
@@ -73,17 +71,10 @@ public class Meal {
         this.fiber = fiber;
     }
 
-    public double getFoodQuantity() {
-        return foodQuantity;
-    }
-    public void setFoodQuantity(double foodQuantity) {
-        this.foodQuantity = foodQuantity;
-    }
-
-    public List<Food> getFoods() {
+    public List<MealFood> getFoods() {
         return foods;
     }
-    public void setFoods(List<Food> foods) {
+    public void setFoods(List<MealFood> foods) {
         this.foods = foods;
     }
 }

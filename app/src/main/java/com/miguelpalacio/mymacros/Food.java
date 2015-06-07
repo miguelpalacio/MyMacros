@@ -27,7 +27,7 @@ public class Food {
         this.fiber = 0;
     }
 
-/*    public Food(long id, String name, double portionQuantity, String portionUnits,
+    public Food(long id, String name, double portionQuantity, String portionUnits,
                 double protein, double carbohydrates, double fat, double fiber) {
         this.id = id;
         this.name = name;
@@ -39,7 +39,7 @@ public class Food {
         this.fiber = fiber;
     }
 
-    public Food(String name, double portionQuantity, String portionUnits,
+/*    public Food(String name, double portionQuantity, String portionUnits,
                 double protein, double carbohydrates, double fat, double fiber) {
         this.id = -1;
         this.name = name;

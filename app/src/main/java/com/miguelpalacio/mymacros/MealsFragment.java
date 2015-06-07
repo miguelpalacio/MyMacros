@@ -96,14 +96,14 @@ public class MealsFragment extends Fragment implements SubheadersListAdapter.Vie
     // When an item on the meal list is selected, open mealEditorFragment with the meal data.
     @Override
     public void onListItemClick(int position) {
-        Fragment foodEditorFragment = new FoodEditorFragment();
+        Fragment mealEditorFragment = new MealEditorFragment();
 
         Bundle args = new Bundle();
         args.putBoolean(isNewMealArg, false);
         args.putLong(mealIdArg, Long.parseLong(mealInfo[0][position]));
-        foodEditorFragment.setArguments(args);
+        mealEditorFragment.setArguments(args);
 
-        onMealEditorFragment.openMealEditorFragment(foodEditorFragment, R.string.toolbar_meal_edit);
+        onMealEditorFragment.openMealEditorFragment(mealEditorFragment, R.string.toolbar_meal_edit);
     }
 
     public interface OnMealEditorFragment {

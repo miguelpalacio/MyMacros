@@ -28,13 +28,12 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
         FoodsFragment.OnFoodEditorFragment, FoodEditorFragment.OnFoodSaved,
-        MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealAddFoodFragment,
-        MealAddFoodFragment.OnFoodQuantitySet {
+        MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealSaved,
+        MealEditorFragment.OnMealAddFoodFragment, MealAddFoodFragment.OnFoodQuantitySet {
 
     private static final String CURRENT_FRAGMENT = "currentFragment";
     private static final String IN_INNER_FRAGMENT = "inInnerFragment";
     private static final String DRAWER_ICON_ANIMATION = "drawerIconAnimation";
-    private static final String CURRENT_TOOLBAR_TITLE = "currentToolbarTitle";
     private static final String TOOLBAR_TITLES = "toolbarTitles";
 
     Toolbar toolbar;
@@ -58,7 +57,6 @@ public class MainActivity extends ActionBarActivity implements
     int currentFragment;
     boolean inInnerFragment;
     boolean drawerIconAnimation;
-    int currentToolbarTitle;
     ArrayList<Integer> toolbarTitles;
 
     private boolean foodAddedToMeal;
@@ -87,7 +85,6 @@ public class MainActivity extends ActionBarActivity implements
             currentFragment = savedInstanceState.getInt(CURRENT_FRAGMENT);
             inInnerFragment = savedInstanceState.getBoolean(IN_INNER_FRAGMENT);
             drawerIconAnimation = savedInstanceState.getBoolean(DRAWER_ICON_ANIMATION);
-            currentToolbarTitle = savedInstanceState.getInt(CURRENT_TOOLBAR_TITLE);
             toolbarTitles = savedInstanceState.getIntegerArrayList(TOOLBAR_TITLES);
         } else {
             // Set to 0 to init in openFragment() when activity starts.
@@ -228,7 +225,6 @@ public class MainActivity extends ActionBarActivity implements
         outState.putInt(CURRENT_FRAGMENT, currentFragment);
         outState.putBoolean(IN_INNER_FRAGMENT, inInnerFragment);
         outState.putBoolean(DRAWER_ICON_ANIMATION, drawerIconAnimation);
-        outState.putInt(CURRENT_TOOLBAR_TITLE, currentToolbarTitle);
         outState.putIntegerArrayList(TOOLBAR_TITLES, toolbarTitles);
     }
 
@@ -279,6 +275,12 @@ public class MainActivity extends ActionBarActivity implements
     @Override
     public void openMealAddFoodFragment(Fragment fragment, int newToolbarTitle) {
         openInnerFragment(fragment, newToolbarTitle);
+    }
+
+    // After saving (create/edit) meal, close inner fragment a go back to the Meals page.
+    @Override
+    public void onMealSavedSuccessfully() {
+        backToPreviousFragment();
     }
 
     // Send information of food selected in MealAddFoodFragment to MealEditorFragment.

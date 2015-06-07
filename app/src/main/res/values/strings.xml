@@ -4,9 +4,13 @@
     <!-- Menus Strings -->
     <string name="action_settings">Settings</string>
     <string name="action_faq">FAQ</string>
+
     <string name="action_delete_food">Delete Food</string>
     <string name="action_scan_barcode">Scan Barcode</string>
     <string name="action_save_food">Save Food</string>
+
+    <string name="action_delete_meal">Delete Meal</string>
+    <string name="action_save_meal">Save Meal</string>
 
     <string name="open_drawer"> </string>
     <string name="close_drawer">MyMacros</string>
@@ -319,12 +323,22 @@
     <string name="meal_energy">Energy</string>
     <string name="meal_fiber">Fiber</string>
 
-    <string name="toast_meal_edit">Please enter the missing data</string>
-
     <string name="meal_add_food_empty_page">
         No foods in the database  :(\n\n
         Please go to Foods and add some!
     </string>
+
+    <!-- Messages. -->
+    <string name="toast_meal_edit">Please enter the missing data</string>
+    <string name="toast_meal_foods_missing">This meal doesn\u0027t contain any food</string>
+    <string name="toast_meal_foods_no_macros">This meal doesn\u0027t have any macronutrients</string>
+    <string name="error_meal_name_missing">Please enter a name</string>
+
+    <string name="toast_meal_already_registered">There is a meal registered with that name</string>
+    <string name="toast_meal_name_registered">Please enter a different name</string>
+    <string name="toast_meal_database_problem">There was an internal problem</string>
+    <string name="toast_meal_not_created">Meal not created</string>
+    <string name="toast_meal_created">Meal created</string>
 
     <string name="dialog_meal_delete_message">Delete meal?</string>
     <string name="dialog_meal_delete_ok">DELETE</string>
