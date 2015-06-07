@@ -89,7 +89,7 @@ public class DatabaseAdapter {
     }
 
     // Update a tuple from the Foods table given an ID and the updated data.
-    public int updateFood(long foodId, String name,double portionQuantity, String portionUnits,
+    public int updateFood(long foodId, String name, double portionQuantity, String portionUnits,
                           double proteinQuantity, double carbosQuantity,
                           double fatQuantity, double fiberQuantity) {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -358,6 +358,118 @@ public class DatabaseAdapter {
         return meal;
     }
 
+    // Update a tuple from the Meals table, and its corresponding ones in MealFoods table.
+    public int updateMeal(Long mealId, String name, double proteinQuantity, double carbsQuantity,
+                          double fatQuantity, double fiberQuantity, List<Long> deletedFoods,
+                          List<Long> newFoods, List<Double> newFoodsQuantities,
+                          List<Long> updatedFoods, List<Double> updatedFoodQuantities ) {
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        int updateResult = -1;
+        boolean transactionSuccessful = true;
+
+        // Perform the insertions into the Meals and MealFoods tables by means of a transaction.
+        db.beginTransaction();
+        try {
+            // Update Meal's data in Meals table.
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(DatabaseHelper.NAME, name);
+            contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
+            contentValues.put(DatabaseHelper.CARBOHYDRATES, carbsQuantity);
+            contentValues.put(DatabaseHelper.FAT, fatQuantity);
+            contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
+
+            String whereClause = DatabaseHelper.MEAL_ID + " = ?";
+            String[] whereArgs = {Long.toString(mealId)};
+
+            updateResult = db.update(DatabaseHelper.TABLE_MEALS, contentValues, whereClause, whereArgs);
+
+            if (updateResult != 1) {
+                transactionSuccessful = false;
+            }
+
+            // Delete in MealFoods table, the foods that were deleted from meal.
+            whereClause = DatabaseHelper.MEAL_ID + " = ? AND " + DatabaseHelper.FOOD_ID + " = ?";
+
+            for (int i = 0; i < deletedFoods.size(); i++) {
+                whereArgs = new String[]{Long.toString(mealId), Long.toString(deletedFoods.get(i))};
+                int result = db.delete(DatabaseHelper.TABLE_MEAL_FOODS, whereClause, whereArgs);
+                if (result != 1) {
+                    transactionSuccessful = false;
+                }
+            }
+
+            // Insert in MealFoods table, the foods that were added to meal.
+            for (int i = 0; i < newFoods.size(); i++) {
+                contentValues = new ContentValues();
+                contentValues.put(DatabaseHelper.MEAL_ID, mealId);
+                contentValues.put(DatabaseHelper.FOOD_ID, newFoods.get(i));
+                contentValues.put(DatabaseHelper.FOOD_QUANTITY, newFoodsQuantities.get(i));
+
+                long mealFoodId = db.insert(DatabaseHelper.TABLE_MEAL_FOODS, null, contentValues);
+                if (mealFoodId < 0) {
+                    transactionSuccessful = false;
+                }
+            }
+
+            // Update in MealFoods table, the foods that were updated in meal.
+            whereClause = DatabaseHelper.MEAL_ID + " = ? AND " + DatabaseHelper.FOOD_ID + " = ?";
+
+            for (int i = 0; i < updatedFoods.size(); i++) {
+                whereArgs = new String[]{Long.toString(mealId), Long.toString(updatedFoods.get(i))};
+                contentValues = new ContentValues();
+                contentValues.put(DatabaseHelper.FOOD_QUANTITY, updatedFoodQuantities.get(i));
+
+                int result = db.update(DatabaseHelper.TABLE_MEAL_FOODS, contentValues,
+                        whereClause, whereArgs);
+                if (result != 1) {
+                    transactionSuccessful = false;
+                }
+            }
+
+            if (transactionSuccessful) {
+                db.setTransactionSuccessful();
+            }
+        } finally {
+            db.endTransaction();
+        }
+
+        return updateResult;
+    }
+
+    // Delete a tuple from the Meals table, and its corresponding ones in MealFoods table.
+    public int deleteMeal(long mealId) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+
+        String whereClause = DatabaseHelper.MEAL_ID + " = ?";
+        String[] whereArgs = {Long.toString(mealId)};
+
+        int mealsDeleted;
+        boolean transactionSuccessful = true;
+
+        // Perform the deletions on the Meals and MealFoods tables by means of a transaction.
+        db.beginTransaction();
+        try {
+            mealsDeleted = db.delete(DatabaseHelper.TABLE_MEALS, whereClause, whereArgs);
+
+            // Delete the foods corresponding to meal in the MealFoods table.
+            int foodsDeleted = db.delete(DatabaseHelper.TABLE_MEAL_FOODS, whereClause, whereArgs);
+
+            if (mealsDeleted != 1 || foodsDeleted < 1) {
+                transactionSuccessful = false;
+            }
+
+            if (transactionSuccessful) {
+                db.setTransactionSuccessful();
+            }
+        } finally {
+            db.endTransaction();
+        }
+
+        return mealsDeleted;
+    }
+
     /**
      * Retrieve the name and a summary for each item in the Meals table.
      * @return four arrays:
@@ -442,62 +554,6 @@ public class DatabaseAdapter {
         info[3] = isSubheader.toArray(new String[ids.size()]);
 
         return info;
-    }
-
-    /**
-     * Retrieve all the information about the foods belonging to a meal.
-     * @param mealId the ID of the meal.
-     * @return the foods in that meal, and their respective quantity.
-     */
-    public List<MealFood> getMealFoods(long mealId) {
-        SQLiteDatabase db = helper.getReadableDatabase();
-
-        // Perform a query with an INNER JOIN between Foods and MealFoods.
-
-        Cursor cursor = db.rawQuery(DatabaseHelper.FOODS_JOIN_MEAL_FOODS,
-                new String[]{Long.toString(mealId)});
-
-        List<MealFood> mealFoods = new ArrayList<>();
-
-        while (cursor.moveToNext()) {
-            int index;
-            MealFood mealFood = new MealFood();
-
-            // Get tuple information and add it to mealFood.
-
-            index = cursor.getColumnIndex(DatabaseHelper.FOOD_ID);
-            mealFood.setId(cursor.getLong(index));
-
-            index = cursor.getColumnIndex(DatabaseHelper.NAME);
-            mealFood.setName(cursor.getString(index));
-
-            index = cursor.getColumnIndex(DatabaseHelper.PORTION_QUANTITY);
-            mealFood.setPortionQuantity(cursor.getDouble(index));
-
-            index = cursor.getColumnIndex(DatabaseHelper.PORTION_UNITS);
-            mealFood.setPortionUnits(cursor.getString(index));
-
-            index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
-            mealFood.setProtein(cursor.getDouble(index));
-
-            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            mealFood.setCarbohydrates(cursor.getDouble(index));
-
-            index = cursor.getColumnIndex(DatabaseHelper.FAT);
-            mealFood.setFat(cursor.getDouble(index));
-
-            index = cursor.getColumnIndex(DatabaseHelper.FIBER);
-            mealFood.setFiber(cursor.getDouble(index));
-
-            index = cursor.getColumnIndex(DatabaseHelper.FOOD_QUANTITY);
-            mealFood.setFoodQuantity(cursor.getDouble(index));
-
-            // Add mealFood to the mealFoods list.
-            mealFoods.add(mealFood);
-        }
-
-        cursor.close();
-        return mealFoods;
     }
 
     /**

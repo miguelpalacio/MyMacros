@@ -1,6 +1,8 @@
 package com.miguelpalacio.mymacros;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -39,6 +42,10 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     private static final String FOOD_CARBS_LIST = "foodCarbsList";
     private static final String FOOD_FAT_LIST = "foodFatList";
     private static final String FOOD_FIBER_LIST = "foodFiberList";
+    private static final String EDIT_MEAL_INIT = "editMealInit";
+    private static final String OLD_MEAL_NAME = "oldMealName";
+    private static final String OLD_FOOD_ID_LIST = "oldFoodIdList";
+    private static final String OLD_FOOD_QUANTITY_LIST = "oldFoodQuantityList";
 
     RecyclerView itemListView;
     RecyclerView.LayoutManager itemListLayoutManager;
@@ -79,6 +86,9 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     String energyUnits;
 
     boolean editMealInit;
+    String oldMealName;
+    ArrayList<String> oldFoodIdList;
+    ArrayList<String> oldFoodQuantityList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,6 +156,11 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             foodFatList = mySavedInstanceState.getStringArrayList(FOOD_FAT_LIST);
             foodFiberList = mySavedInstanceState.getStringArrayList(FOOD_FIBER_LIST);
 
+            editMealInit = mySavedInstanceState.getBoolean(EDIT_MEAL_INIT);
+            oldMealName = mySavedInstanceState.getString(OLD_MEAL_NAME);
+            oldFoodIdList = mySavedInstanceState.getStringArrayList(OLD_FOOD_ID_LIST);
+            oldFoodQuantityList = mySavedInstanceState.getStringArrayList(OLD_FOOD_QUANTITY_LIST);
+
             // When coming back from MealAddFoodFragment, check if user selected a food.
             MainActivity activity = (MainActivity) getActivity();
             if (activity.wasFoodAddedToMeal()) {
@@ -173,9 +188,18 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                 Meal meal = databaseAdapter.getMeal(mealId);
 
                 mealName = meal.getName();
+                oldMealName = mealName;
 
                 for (int i = 0; i < meal.getFoods().size(); i++) {
                     setFoodOnLists(meal.getFoods().get(i));
+                }
+
+                // Lists to check possible future changes on foods.
+                oldFoodIdList = new ArrayList<>();
+                oldFoodQuantityList = new ArrayList<>();
+                for (int i = 0; i < foodIdList.size(); i++) {
+                    oldFoodIdList.add(foodIdList.get(i));
+                    oldFoodQuantityList.add(foodQuantityList.get(i));
                 }
 
                 editMealInit = false;
@@ -256,7 +280,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         if (id == R.id.action_save_meal) {
             saveMeal();
         } else if (id == R.id.action_delete_meal) {
-            //onMealDelete();
+            onMealDelete();
         }
 
         return super.onOptionsItemSelected(item);
@@ -283,6 +307,11 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         getArguments().putStringArrayList(FOOD_CARBS_LIST, foodCarbsList);
         getArguments().putStringArrayList(FOOD_FAT_LIST, foodFatList);
         getArguments().putStringArrayList(FOOD_FIBER_LIST, foodFiberList);
+
+        getArguments().putBoolean(EDIT_MEAL_INIT, editMealInit);
+        getArguments().putString(OLD_MEAL_NAME, oldMealName);
+        getArguments().putStringArrayList(OLD_FOOD_ID_LIST, oldFoodIdList);
+        getArguments().putStringArrayList(OLD_FOOD_QUANTITY_LIST, oldFoodQuantityList);
     }
 
     @Override
@@ -311,7 +340,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
      */
     public void setFoodSelected(long foodId, double foodQuantity) {
         // Retrieve the food info.
-        MealFood food = (MealFood) databaseAdapter.getFood(foodId);
+        MealFood food = new MealFood(databaseAdapter.getFood(foodId));
         food.setFoodQuantity(foodQuantity);
 
         setFoodOnLists(food);
@@ -430,7 +459,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             if (databaseAdapter.isNameInMeals(mealName)) {
                 Toast.makeText(getActivity(), R.string.toast_meal_already_registered,
                         Toast.LENGTH_SHORT).show();
-                mealNameEditText.setError(getString(R.string.toast_meal_name_registered));
+                mealNameEditText.setError(getString(R.string.error_meal_name_registered));
             } else {
                 Toast.makeText(getActivity(), R.string.toast_meal_database_problem,
                         Toast.LENGTH_SHORT).show();
@@ -443,31 +472,133 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     }
 
     /**
-     * Updates Meal in the database using the data entered by the user.
+     * Updates Meal (and its foods) in the database using the data entered by the user.
      */
     private void updateMeal() {
 
-/*        // Check that the (possibly) new food name, is not registered by other food in the DB.
-        if (!foodName.equals(oldFoodName)) {
-            if (databaseAdapter.isNameInFoods(foodName)) {
-                Toast.makeText(getActivity(), "There is a food registered with that name",
+        // Check that the (possibly) new meal name, is not registered by other food in the DB.
+        if (!mealName.equals(oldMealName)) {
+            if (databaseAdapter.isNameInFoods(mealName)) {
+                Toast.makeText(getActivity(), R.string.toast_meal_already_registered,
                         Toast.LENGTH_SHORT).show();
-                foodNameEditText.setError("Please enter a different name");
+                mealNameEditText.setError(getString(R.string.error_meal_name_registered));
                 return;
             }
         }
 
-        // Update the Foods table.
-        int updateResult = databaseAdapter.updateFood(foodId, foodName, portionQuantity,
-                portionUnits, proteinQuantity, carbsQuantity, fatQuantity, fiberQuantity);
+        // Check for changes in meal's foods.
+
+        // Lists to indicate changes.
+        ArrayList<Long> deletedFoods = new ArrayList<>();
+        ArrayList<Long> newFoods = new ArrayList<>();
+        ArrayList<Double> newFoodQuantities = new ArrayList<>();
+        ArrayList<Long> updatedFoods = new ArrayList<>();
+        ArrayList<Double> updatedFoodQuantities = new ArrayList<>();
+
+        // Look for deleted foods.
+        for (int i = 0; i < oldFoodIdList.size(); i++) {
+            boolean foodDeleted = true;
+            for (int j = 0; j < foodIdList.size(); j++) {
+                if (oldFoodIdList.get(i).equals(foodIdList.get(j))) {
+                    foodDeleted = false;
+                    break;
+                }
+            }
+            if (foodDeleted) {
+                deletedFoods.add(Long.parseLong(oldFoodIdList.remove(i)));
+                i = i - 1;
+            }
+        }
+
+        // Look for new foods.
+        for (int i = 0; i < foodIdList.size(); i++) {
+            boolean newAdded = true;
+            for (int j = 0; j < oldFoodIdList.size(); j++) {
+                if (foodIdList.get(i).equals(oldFoodIdList.get(j))) {
+                    newAdded = false;
+                    break;
+                }
+            }
+            if (newAdded) {
+                newFoods.add(Long.parseLong(foodIdList.remove(i)));
+                newFoodQuantities.add(Double.parseDouble(foodQuantityList.remove(i)));
+                i = i - 1;
+            }
+        }
+
+        // Look for updated foods.
+        for (int i = 0; i < foodIdList.size(); i++) {
+            boolean updated = true;
+            for (int j = 0; j < oldFoodIdList.size(); j++) {
+                if (foodIdList.get(i).equals(oldFoodIdList.get(j))) {
+                    Log.d("Old value? ", "" + oldFoodQuantityList.get(j));
+                    Log.d("New value? ", "" + foodQuantityList.get(i));
+                    if (foodQuantityList.get(i).equals(oldFoodQuantityList.get(j))) {
+                        updated = false;
+                        break;
+                    }
+                }
+            }
+            if (updated) {
+                Log.d("Food updated? ", "apparently YES");
+                updatedFoods.add(Long.parseLong(foodIdList.remove(i)));
+                updatedFoodQuantities.add(Double.parseDouble(foodQuantityList.remove(i)));
+                i = i - 1;
+            }
+        }
+
+        // Update both the Meals and MealFoods tables.
+        int updateResult = databaseAdapter.updateMeal(mealId, mealName, totalProtein, totalCarbs,
+                totalFat, totalFiber, deletedFoods, newFoods, newFoodQuantities, updatedFoods,
+                updatedFoodQuantities);
 
         // Inform the user about the outcome of the transaction.
         if (updateResult == 1) {
-            Toast.makeText(getActivity(), "Food updated", Toast.LENGTH_SHORT).show();
-            onFoodSaved.onFoodSavedSuccessfully();
+            Toast.makeText(getActivity(), R.string.toast_meal_updated, Toast.LENGTH_SHORT).show();
+            onMealSaved.onMealSavedSuccessfully();
         } else {
-            Toast.makeText(getActivity(), "There was an internal problem", Toast.LENGTH_SHORT).show();
-        }*/
+            Toast.makeText(getActivity(), R.string.toast_meal_internal_problem, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Deletes the tuple in the Meals table corresponding to the current mealId.
+     * Moreover, deletes all the tuples in MealFoods related to meal.
+     */
+    private void deleteMeal() {
+
+        int rowsDeleted = databaseAdapter.deleteMeal(mealId);
+
+        if (rowsDeleted == 1) {
+            Toast.makeText(getActivity(), getString(R.string.toast_meal_deleted), Toast.LENGTH_SHORT).show();
+            onMealSaved.onMealSavedSuccessfully();
+        }
+    }
+
+    /**
+     * Launches a dialog so that the user confirms the meal deletion.
+     */
+    private void onMealDelete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        // Set the dialog properties.
+        builder.setMessage(R.string.dialog_meal_delete_message);
+        builder.setPositiveButton(R.string.dialog_meal_delete_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteMeal();
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_meal_delete_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // User cancelled the dialog.
+            }
+        });
+
+        // Launch the dialog.
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
 

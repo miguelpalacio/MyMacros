@@ -335,10 +335,14 @@
     <string name="error_meal_name_missing">Please enter a name</string>
 
     <string name="toast_meal_already_registered">There is a meal registered with that name</string>
-    <string name="toast_meal_name_registered">Please enter a different name</string>
+    <string name="error_meal_name_registered">Please enter a different name</string>
     <string name="toast_meal_database_problem">There was an internal problem</string>
     <string name="toast_meal_not_created">Meal not created</string>
     <string name="toast_meal_created">Meal created</string>
+    <string name="toast_meal_updated">Meal updated</string>
+    <string name="toast_meal_deleted">Meal deleted</string>
+
+    <string name="toast_meal_internal_problem">There was an internal problem</string>
 
     <string name="dialog_meal_delete_message">Delete meal?</string>
     <string name="dialog_meal_delete_ok">DELETE</string>
