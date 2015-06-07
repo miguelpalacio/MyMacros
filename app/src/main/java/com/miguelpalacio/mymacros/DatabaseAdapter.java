@@ -632,14 +632,6 @@ public class DatabaseAdapter {
                         FOOD_QUANTITY + " REAL, " +
                         "PRIMARY KEY (" + MEAL_ID + ", " + FOOD_ID + "));";
 
-        private static final String FOODS_JOIN_MEAL_FOODS =
-                "SELECT " + FOOD_ID + ", " + NAME + ", " + PORTION_QUANTITY + ", " +
-                        PORTION_UNITS + ", " + PROTEIN + ", " + CARBOHYDRATES + ", " +
-                        FAT + ", " + FIBER + ", " + FOOD_QUANTITY +
-                        " FROM " + TABLE_FOODS + " INNER JOIN " + TABLE_MEAL_FOODS + " ON " +
-                        TABLE_FOODS + "." + FOOD_ID + " = " + TABLE_MEAL_FOODS + "." + FOOD_ID +
-                        " WHERE " + MEAL_ID + " = ?";
-
         private static final int DATABASE_VERSION = 1;
 
         Context context;

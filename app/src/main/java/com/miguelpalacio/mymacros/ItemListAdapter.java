@@ -46,7 +46,9 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
     }
 
     // ViewHolder Inner Class.
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public static class ViewHolder extends RecyclerView.ViewHolder implements
+            View.OnClickListener, View.OnLongClickListener {
+
         int holderId;
 
         TextView titleTextView;
@@ -71,6 +73,7 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
                 // Set click listener for the row.
                 this.listener = listener;
                 itemView.setOnClickListener(this);
+                itemView.setOnLongClickListener(this);
             } else {
                 holderId = 0;
             }
@@ -83,9 +86,15 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
             }
         }
 
+        @Override
+        public boolean onLongClick(View v) {
+            return listener!= null && listener.onItemLongClicked(getAdapterPosition());
+        }
+
         // Interface to route back click events to Activity.
         public interface ClickListener {
             void onListItemClick(int position);
+            boolean onItemLongClicked(int position);
         }
     }
 

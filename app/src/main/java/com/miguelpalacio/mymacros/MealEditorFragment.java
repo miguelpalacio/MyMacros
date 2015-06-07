@@ -10,6 +10,8 @@ import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,6 +20,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -89,6 +92,9 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     String oldMealName;
     ArrayList<String> oldFoodIdList;
     ArrayList<String> oldFoodQuantityList;
+
+    EditText foodQuantityEditText;
+    TextView foodQuantityUnits;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -324,6 +330,48 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         }
     }
 
+    @Override
+    public boolean onItemLongClicked(int position) {
+        if (position == foodNameList.size()) {
+            return false;
+        }
+
+        // Fix position value (don't count header).
+        final int pos = position - 1;
+
+        // Open a dialog that gives two options: change food quantity, or delete food from list.
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setItems(R.array.dialog_meal_choose_action, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    // Change food quantity.
+                    showSetFoodQuantityDialog(pos);
+                } else {
+                    // Remove food from list.
+                    foodIdList.remove(pos);
+
+                    foodNameList.remove(pos);
+                    foodSummaryList.remove(pos);
+                    foodQuantityList.remove(pos);
+
+                    foodProteinList.remove(pos);
+                    foodCarbsList.remove(pos);
+                    foodFatList.remove(pos);
+                    foodFiberList.remove(pos);
+
+                    itemListAdapter.notifyItemRemoved(pos + 1);
+                }
+            }
+        });
+
+        // Launch the dialog.
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        return true;
+    }
+
     // Public Interfaces to be implemented in MainActivity.
     public interface OnMealSaved {
         void onMealSavedSuccessfully();
@@ -365,7 +413,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         String foodSummary = decimalFormat.format(foodQuantity) + " " + food.getPortionUnits();
 
         // Add food information to the lists.
-        int position = foodNameList.size() - 1;
+        int position = foodIdList.size() - 1;
         if (editMealInit) {
             position = 0;
         }
@@ -657,5 +705,84 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             accumulated = accumulated + Double.parseDouble(list.get(i));
         }
         return accumulated;
+    }
+
+
+    /**
+     * Shows a dialog in order to edit the amount of food in a selected food from the list.
+      */
+    private void showSetFoodQuantityDialog(final int position) {
+        // Create a dialog so the user can define the amount of the food selected.
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setTitle(R.string.dialog_meal_add_food_title);
+
+        builder.setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                long foodId = Long.parseLong(foodIdList.get(position));
+                double foodQuantity = Double.parseDouble(foodQuantityEditText.getText().toString());
+
+                // Set changes on lists.
+                setFoodSelected(foodId, foodQuantity);
+                setHeaderData();
+                itemListAdapter.notifyDataSetChanged();
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        // Load data to a MealFood object.
+        long foodId = Long.parseLong(foodIdList.get(position));
+        MealFood food = new MealFood(databaseAdapter.getFood(foodId));
+
+        // Pass a custom layout to the dialog.
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_meal_add_food, null);
+        builder.setView(view);
+
+        // Dialog EditText.
+        foodQuantityEditText = (EditText) view.findViewById(R.id.dialog_meal_food_quantity);
+        foodQuantityEditText.setText(decimalFormat.
+                format(Double.parseDouble(foodQuantityList.get(position))));
+
+        // Set units label.
+        foodQuantityUnits = (TextView) view.findViewById(R.id.dialog_meal_food_quantity_units);
+        foodQuantityUnits.setText(food.getPortionUnits());
+
+        // Show dialog.
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Disable dialog's OK button.
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        // Enable dialog's OK button if foodQuantityEditText EditText contains a valid value.
+        foodQuantityEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("") || s.toString().equals(".")) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        // Set focus on dialog's EditText, and show soft keyboard.
+        foodQuantityEditText.requestFocus();
+        dialog.getWindow().
+                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
     }
 }

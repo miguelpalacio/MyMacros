@@ -343,6 +343,12 @@
     <string name="toast_meal_deleted">Meal deleted</string>
 
     <string name="toast_meal_internal_problem">There was an internal problem</string>
+    
+    <!-- Dialogs. -->
+    <string-array name="dialog_meal_choose_action">
+        <item>Change quantity</item>
+        <item>Remove</item>
+    </string-array>
 
     <string name="dialog_meal_delete_message">Delete meal?</string>
     <string name="dialog_meal_delete_ok">DELETE</string>
