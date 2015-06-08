@@ -18,18 +18,16 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
         FoodsFragment.OnFoodEditorFragment, FoodEditorFragment.OnFoodSaved,
         MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealSaved,
-        MealEditorFragment.OnMealAddFoodFragment, MealAddFoodFragment.OnFoodQuantitySet {
+        MealEditorFragment.OnMealAddFood, MealAddFoodFragment.OnFoodQuantitySet {
 
     private static final String CURRENT_FRAGMENT = "currentFragment";
     private static final String IN_INNER_FRAGMENT = "inInnerFragment";

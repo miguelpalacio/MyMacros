@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -25,6 +26,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.PieData;
+import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.utils.PercentFormatter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -74,7 +84,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
     DatabaseAdapter databaseAdapter;
 
-    OnMealAddFoodFragment onMealAddFoodFragment;
+    OnMealAddFood onMealAddFoodFragment;
     OnMealSaved onMealSaved;
 
     final DecimalFormat decimalFormat = new DecimalFormat("#.#");
@@ -95,6 +105,8 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
     EditText foodQuantityEditText;
     TextView foodQuantityUnits;
+
+    PieChart pieChart;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,11 +136,11 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        // Ensure that the host activity implements the OnMealAddFoodFragment interface.
+        // Ensure that the host activity implements the OnMealAddFood interface.
         try {
-            onMealAddFoodFragment = (OnMealAddFoodFragment) activity;
+            onMealAddFoodFragment = (OnMealAddFood) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnMealAddFoodFragment interface");
+            throw new ClassCastException(activity.toString() + " must implement OnMealAddFood interface");
         }
 
         // Ensure that the host activity implements the OnMealSaved interface.
@@ -238,6 +250,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                 if (itemListView.getViewTreeObserver().isAlive()) {
 
                     // Get the references to the views in the header.
+
                     listHeader = (LinearLayout) itemListView.getChildAt(0);
                     mealNameEditText = (EditText) listHeader.findViewById(R.id.meal_name);
                     nutritionFactsLayout = (LinearLayout) listHeader.findViewById(R.id.meal_nutrition_facts);
@@ -246,16 +259,36 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                     fatTextView = (TextView) listHeader.findViewById(R.id.meal_fat);
                     fiberTextView = (TextView) listHeader.findViewById(R.id.meal_fiber);
                     energyTextView = (TextView) listHeader.findViewById(R.id.meal_energy);
+                    pieChart = (PieChart) getActivity().findViewById(R.id.stats_pie_chart);
 
-                    // Remove listener.
+                    // Since the references are ready, set data in the list header.
+                    setHeaderData();
+
+                    // Configure Pie Chart.
+
+                    // Chart interaction.
+                    pieChart.setHighlightEnabled(true);
+                    pieChart.highlightValues(null);
+                    pieChart.setDrawHoleEnabled(false);
+
+                    pieChart.setTransparentCircleColor(getResources().getColor(R.color.text_background));
+                    pieChart.setTransparentCircleRadius(61f);
+
+                    pieChart.setRotationAngle(0);
+                    pieChart.setRotationEnabled(false);
+
+                    pieChart.setDescription("% Energy");
+                    pieChart.setDescriptionTextSize(12f);
+
+                    setPieChartData();
+
+
+                    // Remove listener to avoid further callings to this method.
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                         itemListView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     } else {
                         itemListView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
                     }
-
-                    // Since the references are ready, set data in the list header.
-                    setHeaderData();
                 }
             }
         });
@@ -349,18 +382,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                     showSetFoodQuantityDialog(pos);
                 } else {
                     // Remove food from list.
-                    foodIdList.remove(pos);
-
-                    foodNameList.remove(pos);
-                    foodSummaryList.remove(pos);
-                    foodQuantityList.remove(pos);
-
-                    foodProteinList.remove(pos);
-                    foodCarbsList.remove(pos);
-                    foodFatList.remove(pos);
-                    foodFiberList.remove(pos);
-
-                    itemListAdapter.notifyItemRemoved(pos + 1);
+                    removeFromFoodLists(pos);
                 }
             }
         });
@@ -372,14 +394,16 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         return true;
     }
 
+
     // Public Interfaces to be implemented in MainActivity.
     public interface OnMealSaved {
         void onMealSavedSuccessfully();
     }
 
-    public interface OnMealAddFoodFragment {
+    public interface OnMealAddFood {
         void openMealAddFoodFragment(Fragment fragment, int newToolbarTitle);
     }
+
 
     /**
      * Retrieves the food info and calls setFoodOnLists.
@@ -460,7 +484,229 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         }
     }
 
+    /**
+     * Sets data in the list header (which is the first child of the RecyclerView used
+     * for the MealEditorFragment).
+     */
+    private void setHeaderData() {
 
+        if (foodIdList.size() > 0) {
+            // Set nutrition facts values for the meal.
+            totalProtein = getSummation(foodProteinList);
+            totalCarbs = getSummation(foodCarbsList);
+            totalFat = getSummation(foodFatList);
+            totalFiber = getSummation(foodFiberList);
+
+            // Get the energy units setting.
+            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            energyUnits = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
+
+            // Calculate the energy.
+            if (energyUnits.equals("kJ")) {
+                totalEnergy = 4.184 * (4 * totalProtein + 4 * totalCarbs + 9 * totalFat);
+            } else {
+                totalEnergy = 4 * totalProtein + 4 * totalCarbs + 9 * totalFat;
+            }
+
+        } else {
+            // Default nutrition facts values.
+            totalProtein = 0;
+            totalCarbs = 0;
+            totalFat = 0;
+            totalFiber = 0;
+            totalEnergy = 0;
+            energyUnits = "";
+        }
+
+        // Set meal name in mealNameEditText.
+        mealNameEditText.setText(mealName);
+
+        // Show the meal's nutrition facts.
+        if (totalEnergy != 0) {
+            proteinTextView.setText(decimalFormat.format(totalProtein) + " g");
+            carbsTextView.setText(decimalFormat.format(totalCarbs) + " g");
+            fatTextView.setText(decimalFormat.format(totalFat) + " g");
+            fiberTextView.setText(decimalFormat.format(totalFiber) + " g");
+            energyTextView.setText(decimalFormat.format(totalEnergy) + " " + energyUnits);
+            nutritionFactsLayout.setVisibility(View.VISIBLE);
+        } else {
+            nutritionFactsLayout.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void setPieChartData() {
+
+        // Calculate macronutrient percentages.
+        double totalCalories = 4 * totalProtein + 4 * totalCarbs + 9 * totalFat;
+        float proteinRate = (float) (100 * 4 * totalProtein / totalCalories);
+        float carbsRate = (float) (100 * 4 * totalCarbs / totalCalories);
+        float fatRate = (float) (100 * 9 * totalFat / totalCalories);
+
+        // Y Axis (Pie Chart entries).
+        ArrayList<Entry> macronutrientEntries = new ArrayList<>();
+
+        macronutrientEntries.add(new Entry(proteinRate, 0));
+        macronutrientEntries.add(new Entry(carbsRate, 1));
+        macronutrientEntries.add(new Entry(fatRate, 2));
+
+        // Pie Chart Data Set.
+        PieDataSet macrosDataSet = new PieDataSet(macronutrientEntries, "");
+        macrosDataSet.setSliceSpace(3f);
+        macrosDataSet.setSelectionShift(5f);
+        //macrosDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        // Add colors to data set.
+        ArrayList<Integer> colors = new ArrayList<>();
+
+        colors.add(getResources().getColor(R.color.chart_protein));
+        colors.add(getResources().getColor(R.color.chart_carbs));
+        colors.add(getResources().getColor(R.color.chart_fat));
+
+        macrosDataSet.setColors(colors);
+
+        // X Axis (Legends).
+        ArrayList<String> legendMacros = new ArrayList<>();
+        legendMacros.add("Protein");
+        legendMacros.add("Carbs");
+        legendMacros.add("Fat");
+
+        // Data for the chart.
+        PieData pieData = new PieData(legendMacros, macrosDataSet);
+
+        pieData.setValueFormatter(new PercentFormatter());
+        pieData.setValueTextSize(12f);
+        pieChart.setData(pieData);
+
+        // Hide Chart legend and labels.
+        pieChart.getLegend().setEnabled(false);
+        pieChart.setDrawSliceText(false);
+
+        // Refresh chart.
+        pieChart.invalidate();
+
+        // Animate the chart.
+        //pieChart.animateY(800, Easing.EasingOption.EaseInQuad);
+        pieChart.animateXY(1200, 1200);
+    }
+
+
+    // Take a list of numbers (String) and return its summation.
+    private double getSummation(ArrayList<String> list) {
+        double accumulated = 0;
+        for (int i = 0; i < list.size(); i++) {
+            accumulated = accumulated + Double.parseDouble(list.get(i));
+        }
+        return accumulated;
+    }
+
+
+    // Shows a dialog in order to edit the amount of food in a selected food from the list.
+    private void showSetFoodQuantityDialog(final int position) {
+        // Create a dialog so the user can define the amount of the food selected.
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setTitle(R.string.dialog_meal_add_food_title);
+
+        builder.setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                long foodId = Long.parseLong(foodIdList.get(position));
+                double foodQuantity = Double.parseDouble(foodQuantityEditText.getText().toString());
+
+                // Set changes on lists.
+                setFoodSelected(foodId, foodQuantity);
+                setHeaderData();
+                setPieChartData();
+                itemListAdapter.notifyDataSetChanged();
+
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+
+        // Load data to a MealFood object.
+        long foodId = Long.parseLong(foodIdList.get(position));
+        MealFood food = new MealFood(databaseAdapter.getFood(foodId));
+
+        // Pass a custom layout to the dialog.
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_meal_add_food, null);
+        builder.setView(view);
+
+        // Dialog EditText.
+        foodQuantityEditText = (EditText) view.findViewById(R.id.dialog_meal_food_quantity);
+        foodQuantityEditText.setText(decimalFormat.
+                format(Double.parseDouble(foodQuantityList.get(position))));
+
+        // Set units label.
+        foodQuantityUnits = (TextView) view.findViewById(R.id.dialog_meal_food_quantity_units);
+        foodQuantityUnits.setText(food.getPortionUnits());
+
+        // Show dialog.
+        final AlertDialog dialog = builder.create();
+        dialog.show();
+
+        // Disable dialog's OK button.
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+
+        // Enable dialog's OK button if foodQuantityEditText EditText contains a valid value.
+        foodQuantityEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.toString().equals("") || s.toString().equals(".")) {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                } else {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        // Set focus on dialog's EditText, and show soft keyboard.
+        foodQuantityEditText.requestFocus();
+        dialog.getWindow().
+                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    }
+
+
+    // Deletes a food's info from the lists.
+    public void removeFromFoodLists(int position) {
+        foodIdList.remove(position);
+
+        foodNameList.remove(position);
+        foodSummaryList.remove(position);
+        foodQuantityList.remove(position);
+
+        foodProteinList.remove(position);
+        foodCarbsList.remove(position);
+        foodFatList.remove(position);
+        foodFiberList.remove(position);
+
+        //itemListAdapter.notifyItemRemoved(position + 1);
+
+        setHeaderData();
+        setPieChartData();
+        itemListAdapter.notifyDataSetChanged();
+    }
+
+
+    // *********************************************************************************************
+    // Methods to perform operations in the database.
+
+    /**
+     * Verifies that there's all the required data to save changes in the Meal,
+     * and calls the appropriate method to either create or update meal.
+     */
     private void saveMeal() {
 
         // Verify that all the information required is present. If not, inform the user.
@@ -649,140 +895,4 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         dialog.show();
     }
 
-
-    /**
-     * Sets data in the list header (which is the first child of the RecyclerView used
-     * for the MealEditorFragment).
-     */
-    private void setHeaderData() {
-
-        if (foodIdList.size() > 0) {
-            // Set nutrition facts values for the meal.
-            totalProtein = getTotalValue(foodProteinList);
-            totalCarbs = getTotalValue(foodCarbsList);
-            totalFat = getTotalValue(foodFatList);
-            totalFiber = getTotalValue(foodFiberList);
-
-            // Get the energy units setting.
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            energyUnits = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
-
-            // Calculate the energy.
-            if (energyUnits.equals("kJ")) {
-                totalEnergy = 4.184 * (4 * totalProtein + 4 * totalCarbs + 9 * totalFat);
-            } else {
-                totalEnergy = 4 * totalProtein + 4 * totalCarbs + 9 * totalFat;
-            }
-
-        } else {
-            // Default nutrition facts values.
-            totalProtein = 0;
-            totalCarbs = 0;
-            totalFat = 0;
-            totalFiber = 0;
-            totalEnergy = 0;
-            energyUnits = "";
-        }
-
-        // Set meal name in mealNameEditText.
-        mealNameEditText.setText(mealName);
-
-        // Show the meal's nutrition facts.
-        if (totalEnergy != 0) {
-            proteinTextView.setText(decimalFormat.format(totalProtein) + " g");
-            carbsTextView.setText(decimalFormat.format(totalCarbs) + " g");
-            fatTextView.setText(decimalFormat.format(totalFat) + " g");
-            fiberTextView.setText(decimalFormat.format(totalFiber) + " g");
-            energyTextView.setText(decimalFormat.format(totalEnergy) + " " + energyUnits);
-            nutritionFactsLayout.setVisibility(View.VISIBLE);
-        }
-    }
-
-    // Take a list of numbers (String) and return its summation.
-    private double getTotalValue(ArrayList<String> list) {
-        double accumulated = 0;
-        for (int i = 0; i < list.size(); i++) {
-            accumulated = accumulated + Double.parseDouble(list.get(i));
-        }
-        return accumulated;
-    }
-
-
-    /**
-     * Shows a dialog in order to edit the amount of food in a selected food from the list.
-      */
-    private void showSetFoodQuantityDialog(final int position) {
-        // Create a dialog so the user can define the amount of the food selected.
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        builder.setTitle(R.string.dialog_meal_add_food_title);
-
-        builder.setPositiveButton(R.string.dialog_button_positive, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                long foodId = Long.parseLong(foodIdList.get(position));
-                double foodQuantity = Double.parseDouble(foodQuantityEditText.getText().toString());
-
-                // Set changes on lists.
-                setFoodSelected(foodId, foodQuantity);
-                setHeaderData();
-                itemListAdapter.notifyDataSetChanged();
-            }
-        });
-        builder.setNegativeButton(R.string.dialog_button_negative, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-
-        // Load data to a MealFood object.
-        long foodId = Long.parseLong(foodIdList.get(position));
-        MealFood food = new MealFood(databaseAdapter.getFood(foodId));
-
-        // Pass a custom layout to the dialog.
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_meal_add_food, null);
-        builder.setView(view);
-
-        // Dialog EditText.
-        foodQuantityEditText = (EditText) view.findViewById(R.id.dialog_meal_food_quantity);
-        foodQuantityEditText.setText(decimalFormat.
-                format(Double.parseDouble(foodQuantityList.get(position))));
-
-        // Set units label.
-        foodQuantityUnits = (TextView) view.findViewById(R.id.dialog_meal_food_quantity_units);
-        foodQuantityUnits.setText(food.getPortionUnits());
-
-        // Show dialog.
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-
-        // Disable dialog's OK button.
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-
-        // Enable dialog's OK button if foodQuantityEditText EditText contains a valid value.
-        foodQuantityEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.toString().equals("") || s.toString().equals(".")) {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-                } else {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        });
-
-        // Set focus on dialog's EditText, and show soft keyboard.
-        foodQuantityEditText.requestFocus();
-        dialog.getWindow().
-                setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-    }
 }

@@ -70,7 +70,7 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
                 titleTextView = (TextView) itemView.findViewById(R.id.list_item_title);
                 summaryTextView = (TextView) itemView.findViewById(R.id.list_item_summary);
 
-                // Set click listener for the row.
+                // Set click listeners for the row.
                 this.listener = listener;
                 itemView.setOnClickListener(this);
                 itemView.setOnLongClickListener(this);

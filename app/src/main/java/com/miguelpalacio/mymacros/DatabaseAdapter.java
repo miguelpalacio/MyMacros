@@ -23,7 +23,11 @@ public class DatabaseAdapter {
         helper = new DatabaseHelper(context);
     }
 
-    // Insert a tuple into the FOODS table.
+
+    // *********************************************************************************************
+    // Methods to perform operations in the Foods table.
+
+    // Insert a tuple into the Foods table.
     public long insertFood(String name, double portionQuantity, String portionUnits,
                            double proteinQuantity, double carbosQuantity,
                            double fatQuantity, double fiberQuantity) {
@@ -240,6 +244,9 @@ public class DatabaseAdapter {
         return (numberOfFoods > 0);
     }
 
+
+    // *********************************************************************************************
+    // Methods to perform operations in the Meals and MealFoods tables.
 
     /**
      * Inserts a new row in the Meals table. Also inserts the information of the foods
@@ -580,6 +587,9 @@ public class DatabaseAdapter {
 
         return (numberOfMeals > 0);
     }
+
+
+    // *********************************************************************************************
 
     /**
      * This inner class takes care of opening the database if it exists,
