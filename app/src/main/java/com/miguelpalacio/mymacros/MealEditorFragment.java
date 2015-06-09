@@ -275,11 +275,10 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                     pieChart.setRotationAngle(0);
                     pieChart.setRotationEnabled(false);
 
-                    pieChart.setDescription("% Energy");
+                    pieChart.setDescription(getString(R.string.pie_chart_meal_description));
                     pieChart.setDescriptionTextSize(12f);
 
                     setPieChartData();
-
 
                     // Remove listener to avoid further callings to this method.
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
@@ -572,7 +571,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         // X Axis (Legends).
         ArrayList<String> legendMacros = new ArrayList<>();
         legendMacros.add("Protein");
-        legendMacros.add("Carbs");
+        legendMacros.add("Carbohydrates");
         legendMacros.add("Fat");
 
         // Data for the chart.
@@ -584,7 +583,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         // Hide Chart legend and labels.
         pieChart.getLegend().setEnabled(false);
-        pieChart.setDrawSliceText(false);
+/*        pieChart.setDrawSliceText(false);*/
 
         // Refresh chart.
         pieChart.invalidate();

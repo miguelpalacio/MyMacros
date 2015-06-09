@@ -16,7 +16,10 @@
     <color name="drawer_item_label">#333333</color>
     <color name="inset_foreground">#4000</color>
 
-    <color name="chart_protein">#64B5F6</color>
+<!--    <color name="chart_protein">#64B5F6</color>
     <color name="chart_carbs">#E57373</color>
-    <color name="chart_fat">#FFF176</color>
+    <color name="chart_fat">#FFF176</color>-->
+    <color name="chart_protein">#BBDEFB</color>
+    <color name="chart_carbs">#FFCDD2</color>
+    <color name="chart_fat">#FFF9C4</color>
 </resources>

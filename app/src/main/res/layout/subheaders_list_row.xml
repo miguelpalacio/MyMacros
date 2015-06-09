@@ -14,6 +14,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:textSize="16sp"
+        android:lines="1"
         android:textColor="@color/primary_text" />
 
     <TextView
@@ -24,6 +25,7 @@
         android:paddingRight="16dp"
         android:paddingBottom="8dp"
         android:textSize="14sp"
+        android:lines="1"
         android:textColor="@color/secondary_text" />
 
 </LinearLayout>

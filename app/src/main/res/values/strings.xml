@@ -356,6 +356,9 @@
 
     <string name="dialog_meal_add_food_title">Define quantity</string>
 
+    <!-- Pie Chart. -->
+    <string name="pie_chart_meal_description">Energy distribution</string>
+
 
     <!-- *************************************************************************************** -->
     <!-- Misc Strings. -->
