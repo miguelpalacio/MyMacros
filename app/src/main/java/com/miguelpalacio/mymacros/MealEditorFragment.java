@@ -2,6 +2,7 @@ package com.miguelpalacio.mymacros;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -55,7 +57,6 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     private static final String FOOD_CARBS_LIST = "foodCarbsList";
     private static final String FOOD_FAT_LIST = "foodFatList";
     private static final String FOOD_FIBER_LIST = "foodFiberList";
-    private static final String EDIT_MEAL_INIT = "editMealInit";
     private static final String OLD_MEAL_NAME = "oldMealName";
     private static final String OLD_FOOD_ID_LIST = "oldFoodIdList";
     private static final String OLD_FOOD_QUANTITY_LIST = "oldFoodQuantityList";
@@ -98,13 +99,14 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     double totalFiber;
     String energyUnits;
 
-    boolean editMealInit;
     String oldMealName;
     ArrayList<String> oldFoodIdList;
     ArrayList<String> oldFoodQuantityList;
 
     EditText foodQuantityEditText;
     TextView foodQuantityUnits;
+
+    //AlertDialog dialog;
 
     PieChart pieChart;
 
@@ -174,7 +176,6 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             foodFatList = mySavedInstanceState.getStringArrayList(FOOD_FAT_LIST);
             foodFiberList = mySavedInstanceState.getStringArrayList(FOOD_FIBER_LIST);
 
-            editMealInit = mySavedInstanceState.getBoolean(EDIT_MEAL_INIT);
             oldMealName = mySavedInstanceState.getString(OLD_MEAL_NAME);
             oldFoodIdList = mySavedInstanceState.getStringArrayList(OLD_FOOD_ID_LIST);
             oldFoodQuantityList = mySavedInstanceState.getStringArrayList(OLD_FOOD_QUANTITY_LIST);
@@ -202,7 +203,6 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
             // If Edit Meal page, restore the meal's details.
             if (mealId >= 0) {
-                editMealInit = true;
                 Meal meal = databaseAdapter.getMeal(mealId);
 
                 mealName = meal.getName();
@@ -219,8 +219,6 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                     oldFoodIdList.add(foodIdList.get(i));
                     oldFoodQuantityList.add(foodQuantityList.get(i));
                 }
-
-                editMealInit = false;
             }
 
             // Add new food "button".
@@ -347,7 +345,6 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         getArguments().putStringArrayList(FOOD_FAT_LIST, foodFatList);
         getArguments().putStringArrayList(FOOD_FIBER_LIST, foodFiberList);
 
-        getArguments().putBoolean(EDIT_MEAL_INIT, editMealInit);
         getArguments().putString(OLD_MEAL_NAME, oldMealName);
         getArguments().putStringArrayList(OLD_FOOD_ID_LIST, oldFoodIdList);
         getArguments().putStringArrayList(OLD_FOOD_QUANTITY_LIST, oldFoodQuantityList);
@@ -395,7 +392,15 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     }
 
 
+/*    // Implemented interfaces for dialogs.
+
+    @Override
+    public void onDeleteMeal(DialogFragment dialog) {
+        deleteMeal();
+    }*/
+
     // Public Interfaces to be implemented in MainActivity.
+
     public interface OnMealSaved {
         void onMealSavedSuccessfully();
     }
@@ -438,7 +443,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         // Add food information to the lists.
         int position = foodIdList.size() - 1;
-        if (editMealInit) {
+        if (position < 0) {
             position = 0;
         }
         boolean foodPreviouslyAdded = false;
@@ -478,7 +483,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             foodFiberList.add(position, Double.toString(fiber));
 
             // Notify to the RecyclerView's adapter that the data set changed.
-            if (!editMealInit) {
+            if (itemListAdapter != null) {
                 itemListAdapter.notifyItemInserted(position);
             }
         }
@@ -530,7 +535,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             energyTextView.setText(decimalFormat.format(totalEnergy) + " " + energyUnits);
             nutritionFactsLayout.setVisibility(View.VISIBLE);
         } else {
-            nutritionFactsLayout.setVisibility(View.INVISIBLE);
+            nutritionFactsLayout.setVisibility(View.GONE);
         }
     }
 
@@ -646,11 +651,14 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         foodQuantityUnits.setText(food.getPortionUnits());
 
         // Show dialog.
-        final AlertDialog dialog = builder.create();
+        AlertDialog dialog = builder.create();
         dialog.show();
 
+        final Button positiveButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+
         // Disable dialog's OK button.
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        //dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        positiveButton.setEnabled(false);
 
         // Enable dialog's OK button if foodQuantityEditText EditText contains a valid value.
         foodQuantityEditText.addTextChangedListener(new TextWatcher() {
@@ -661,9 +669,11 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.toString().equals("") || s.toString().equals(".")) {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    //dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                    positiveButton.setEnabled(false);
                 } else {
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    //dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    positiveButton.setEnabled(true);
                 }
             }
 
@@ -893,6 +903,8 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         // Launch the dialog.
         AlertDialog dialog = builder.create();
         dialog.show();
+/*        DialogFragment deleteMealDialog = new DialogDeleteMeal();
+        deleteMealDialog.show(getFragmentManager(), "deleteMealDialog");*/
     }
 
 }
