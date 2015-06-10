@@ -2,10 +2,8 @@ package com.miguelpalacio.mymacros;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -29,10 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -106,9 +101,26 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
     EditText foodQuantityEditText;
     TextView foodQuantityUnits;
 
-    //AlertDialog dialog;
-
     PieChart pieChart;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // Ensure that the host activity implements the OnMealAddFood interface.
+        try {
+            onMealAddFoodFragment = (OnMealAddFood) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnMealAddFood interface");
+        }
+
+        // Ensure that the host activity implements the OnMealSaved interface.
+        try {
+            onMealSaved = (OnMealSaved) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnMealSaved interface");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,25 +144,6 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                              Bundle savedInstanceState) {
         // Inflate layout for this fragment.
         return inflater.inflate(R.layout.fragment_meal_editor, container, false);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-
-        // Ensure that the host activity implements the OnMealAddFood interface.
-        try {
-            onMealAddFoodFragment = (OnMealAddFood) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnMealAddFood interface");
-        }
-
-        // Ensure that the host activity implements the OnMealSaved interface.
-        try {
-            onMealSaved = (OnMealSaved) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnMealSaved interface");
-        }
     }
 
     @Override
@@ -222,7 +215,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             }
 
             // Add new food "button".
-            foodNameList.add(getString(R.string.meal_add_new));
+            foodNameList.add(getString(R.string.meal_add_food));
             foodSummaryList.add("");
             foodQuantityList.add("");
         }
@@ -243,52 +236,52 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         // Set an observer in the RecyclerView's layout (needed to know when it's accessible).
         itemListView.getViewTreeObserver().
                 addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (itemListView.getViewTreeObserver().isAlive()) {
+                    @Override
+                    public void onGlobalLayout() {
+                        if (itemListView.getViewTreeObserver().isAlive()) {
 
-                    // Get the references to the views in the header.
+                            // Get the references to the views in the header.
 
-                    listHeader = (LinearLayout) itemListView.getChildAt(0);
-                    mealNameEditText = (EditText) listHeader.findViewById(R.id.meal_name);
-                    nutritionFactsLayout = (LinearLayout) listHeader.findViewById(R.id.meal_nutrition_facts);
-                    proteinTextView = (TextView) listHeader.findViewById(R.id.meal_protein);
-                    carbsTextView = (TextView) listHeader.findViewById(R.id.meal_carbs);
-                    fatTextView = (TextView) listHeader.findViewById(R.id.meal_fat);
-                    fiberTextView = (TextView) listHeader.findViewById(R.id.meal_fiber);
-                    energyTextView = (TextView) listHeader.findViewById(R.id.meal_energy);
-                    pieChart = (PieChart) getActivity().findViewById(R.id.stats_pie_chart);
+                            listHeader = (LinearLayout) itemListView.getChildAt(0);
+                            mealNameEditText = (EditText) listHeader.findViewById(R.id.meal_name);
+                            nutritionFactsLayout = (LinearLayout) listHeader.findViewById(R.id.meal_nutrition_facts);
+                            proteinTextView = (TextView) listHeader.findViewById(R.id.meal_protein);
+                            carbsTextView = (TextView) listHeader.findViewById(R.id.meal_carbs);
+                            fatTextView = (TextView) listHeader.findViewById(R.id.meal_fat);
+                            fiberTextView = (TextView) listHeader.findViewById(R.id.meal_fiber);
+                            energyTextView = (TextView) listHeader.findViewById(R.id.meal_energy);
+                            pieChart = (PieChart) getActivity().findViewById(R.id.stats_pie_chart);
 
-                    // Since the references are ready, set data in the list header.
-                    setHeaderData();
+                            // Since the references are ready, set data in the list header.
+                            setHeaderData();
 
-                    // Configure Pie Chart.
+                            // Configure Pie Chart.
 
-                    // Chart interaction.
-                    pieChart.setHighlightEnabled(true);
-                    pieChart.highlightValues(null);
-                    pieChart.setDrawHoleEnabled(false);
+                            // Chart interaction.
+                            pieChart.setHighlightEnabled(true);
+                            pieChart.highlightValues(null);
+                            pieChart.setDrawHoleEnabled(false);
 
-                    pieChart.setTransparentCircleColor(getResources().getColor(R.color.text_background));
-                    pieChart.setTransparentCircleRadius(61f);
+                            pieChart.setTransparentCircleColor(getResources().getColor(R.color.text_background));
+                            pieChart.setTransparentCircleRadius(61f);
 
-                    pieChart.setRotationAngle(0);
-                    pieChart.setRotationEnabled(false);
+                            pieChart.setRotationAngle(0);
+                            pieChart.setRotationEnabled(false);
 
-                    pieChart.setDescription(getString(R.string.pie_chart_meal_description));
-                    pieChart.setDescriptionTextSize(12f);
+                            pieChart.setDescription(getString(R.string.pie_chart_meal_description));
+                            pieChart.setDescriptionTextSize(12f);
 
-                    setPieChartData();
+                            setPieChartData();
 
-                    // Remove listener to avoid further callings to this method.
-                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
-                        itemListView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    } else {
-                        itemListView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            // Remove listener to avoid further callings to this method.
+                            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
+                                itemListView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                            } else {
+                                itemListView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
 
     }
 
@@ -562,9 +555,9 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         // Add colors to data set.
         ArrayList<Integer> colors = new ArrayList<>();
 
-        colors.add(getResources().getColor(R.color.chart_protein));
-        colors.add(getResources().getColor(R.color.chart_carbs));
-        colors.add(getResources().getColor(R.color.chart_fat));
+        colors.add(getResources().getColor(R.color.color_protein));
+        colors.add(getResources().getColor(R.color.color_carbs));
+        colors.add(getResources().getColor(R.color.color_fat));
 
         macrosDataSet.setColors(colors);
 

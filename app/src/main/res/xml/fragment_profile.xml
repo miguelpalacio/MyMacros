@@ -47,7 +47,7 @@
 
     <!-- Daily Calorie Needs. -->
     <PreferenceCategory
-        android:title="@string/profile_category_calorie_needs"
+        android:title="@string/profile_category_energy_needs"
         android:key="profile_calorie_needs">
         <ListPreference
             android:key="profile_activity_level"
@@ -64,7 +64,7 @@
             android:entries="@array/profile_goal_entries"
             android:entryValues="@array/profile_goal_entry_values" />
         <Preference
-            android:key="profile_daily_calorie_need"
+            android:key="profile_daily_energy_need"
             android:title="@string/profile_daily_calorie_need"
             android:defaultValue="@string/profile_daily_calorie_need_default"
             android:editable="true" />

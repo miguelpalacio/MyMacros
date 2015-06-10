@@ -4,23 +4,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/selected_item"
-    tools:context="com.miguelpalacio.mymacros.MealAddFoodFragment"
+    tools:context="com.miguelpalacio.mymacros.AddMealFragment"
     android:orientation="vertical">
 
     <!-- Default view when no foods. -->
     <TextView
-        android:id="@+id/meal_add_food_empty_page"
+        android:id="@+id/add_meal_empty_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
         android:textSize="16sp"
         android:textColor="@color/primary_text"
-        android:text="@string/meal_add_food_empty_page"
+        android:text="@string/add_meal_empty_page"
         android:visibility="invisible"/>
 
     <!-- Food list. -->
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/meal_add_food_list"
+        android:id="@+id/add_meal_list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@color/text_background"

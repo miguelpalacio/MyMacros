@@ -8,7 +8,6 @@ import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import java.text.DecimalFormat;
@@ -32,14 +31,14 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
     public static final String KEY_ACTIVITY_LEVEL = "profile_activity_level";
     public static final String KEY_GOAL = "profile_goal";
-    public static final String KEY_CALORIE_NEED = "profile_daily_calorie_need";
+    public static final String KEY_ENERGY_NEED = "profile_daily_energy_need";
 
     public static final String KEY_PROTEIN_RATE = "profile_protein_rate";
-    public static final String KEY_CARBOS_RATE = "profile_carbohydrates_rate";
+    public static final String KEY_CARBS_RATE = "profile_carbohydrates_rate";
     public static final String KEY_FAT_RATE = "profile_fat_rate";
 
     public static final String KEY_PROTEIN_GRAMS = "profile_protein_grams";
-    public static final String KEY_CARBOS_GRAMS = "profile_carbohydrates_grams";
+    public static final String KEY_CARBS_GRAMS = "profile_carbohydrates_grams";
     public static final String KEY_FAT_GRAMS = "profile_fat_grams";
 
     public static final String KEY_FIBER = "profile_fiber";
@@ -104,16 +103,16 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         // Calorie needs.
         activityLevel = (ListPreference) findPreference(KEY_ACTIVITY_LEVEL);
         goal = (ListPreference) findPreference(KEY_GOAL);
-        calorieNeed = findPreference(KEY_CALORIE_NEED);
+        calorieNeed = findPreference(KEY_ENERGY_NEED);
 
         // Macronutrient distribution.
         proteinRate = (SingleLineTextPreference) findPreference(KEY_PROTEIN_RATE);
-        carbosRate = (SingleLineTextPreference) findPreference(KEY_CARBOS_RATE);
+        carbosRate = (SingleLineTextPreference) findPreference(KEY_CARBS_RATE);
         fatRate = (SingleLineTextPreference) findPreference(KEY_FAT_RATE);
 
         // Macronutrient intake.
         proteinGrams = (SingleLinePreference) findPreference(KEY_PROTEIN_GRAMS);
-        carbosGrams = (SingleLinePreference) findPreference(KEY_CARBOS_GRAMS);
+        carbosGrams = (SingleLinePreference) findPreference(KEY_CARBS_GRAMS);
         fatGrams = (SingleLinePreference) findPreference(KEY_FAT_GRAMS);
 
         // Recommended intakes.
@@ -261,7 +260,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setMacroIntake();
                 break;
 
-            case KEY_CARBOS_RATE:
+            case KEY_CARBS_RATE:
                 setMacroRateSummary(carbosRate);
                 checkMacroDistribution();
                 setMacroIntake();
@@ -439,7 +438,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Store the bmr preference value.
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(KEY_CALORIE_NEED, "" + TDEE).apply();
+        editor.putString(KEY_ENERGY_NEED, "" + TDEE).apply();
 
         // Set summary.
         calorieNeed.setSummary((int) TDEE + " " + unitsEnergy);
@@ -458,7 +457,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         // Check that proteinRate + carbosRate + fatRate = 100.
         if (Integer.parseInt(proteinRate.getText()) + Integer.parseInt(carbosRate.getText()) +
                 Integer.parseInt(fatRate.getText()) != 100) {
-            Toast.makeText(getActivity(), "Macronutrient ditribution is not 100 %", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Macronutrient distribution is not 100 %", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), "Correct distribution", Toast.LENGTH_SHORT).show();
         }
@@ -471,8 +470,8 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private void setMacroIntake() {
 
         double TDEE;
-        if (sharedPref.getString(KEY_CALORIE_NEED, "0") != null) {
-            TDEE = Double.parseDouble(sharedPref.getString(KEY_CALORIE_NEED, "0"));
+        if (sharedPref.getString(KEY_ENERGY_NEED, "0") != null) {
+            TDEE = Double.parseDouble(sharedPref.getString(KEY_ENERGY_NEED, "0"));
         } else {
             return;
         }
@@ -498,7 +497,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         // Store the values in SharedPreferences.
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_PROTEIN_GRAMS, "" + (int) protein).apply();
-        editor.putString(KEY_CARBOS_GRAMS, "" + (int) carbos).apply();
+        editor.putString(KEY_CARBS_GRAMS, "" + (int) carbos).apply();
         editor.putString(KEY_FAT_GRAMS, "" + (int) fat).apply();
 
         // Set the summaries.
@@ -541,7 +540,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Calculate fiberEditText intake. Formula taken from:
         // http://healthyeating.sfgate.com/calculate-much-fiber-one-needs-day-4814.html
-        double f = Double.parseDouble(sharedPref.getString(KEY_CALORIE_NEED, "0"));
+        double f = Double.parseDouble(sharedPref.getString(KEY_ENERGY_NEED, "0"));
         if (unitsEnergy.equals("kJ")) {
             f = f / 4.184;
         }

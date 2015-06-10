@@ -17,6 +17,7 @@
 
     <!-- Toolbar Titles -->
     <string name="toolbar_planner">Daily Planner</string>
+    <string name="toolbar_planner_add_meal">Select Meal</string>
     <string name="toolbar_stats">Stats</string>
     <string name="toolbar_profile">Profile</string>
     <string name="toolbar_meals">My Meals</string>
@@ -172,8 +173,8 @@
     <string name="profile_bmr">Basal Metabolic Rate</string>
     <string name="profile_bmr_default">0</string>
 
-    <!-- Daily Calorie Needs category. -->
-    <string name="profile_category_calorie_needs">Calorie Needs</string>
+    <!-- Daily Energy Needs category. -->
+    <string name="profile_category_energy_needs">Energy Needs</string>
 
     <!-- Activity Level. -->
     <string name="profile_activity_level">Activity Level</string>
@@ -313,7 +314,7 @@
     <string name="meal_name_hint">Meal name</string>
 
     <string name="meal_ingredients">Ingredients</string>
-    <string name="meal_add_new">Add new</string>
+    <string name="meal_add_food">Add food</string>
 
     <string name="meal_nutrition_facts">Nutrition Facts</string>
     <string name="meal_protein">Protein</string>
@@ -358,6 +359,25 @@
 
     <!-- Pie Chart. -->
     <string name="pie_chart_meal_description">Energy distribution</string>
+
+
+    <!-- *************************************************************************************** -->
+    <!-- Daily Planner Pages Strings. -->
+    <string name="planner_targets">Targets</string>
+    <string name="planner_today_plan">Today\u0027s Plan</string>
+
+    <string name="planner_target_protein">Protein</string>
+    <string name="planner_target_carbs">Carbohydrates</string>
+    <string name="planner_target_fat">Fat</string>
+    <string name="planner_target_fiber">Fiber</string>
+    <string name="planner_target_energy">Energy</string>
+
+    <string name="add_meal_empty_page">
+            No meals in the database  :(\n\n
+        Please go to My Meals and create some!
+    </string>
+
+    <string name="planner_add_meal">Add meal</string>
 
 
     <!-- *************************************************************************************** -->

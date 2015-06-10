@@ -27,7 +27,8 @@ public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
         FoodsFragment.OnFoodEditorFragment, FoodEditorFragment.OnFoodSaved,
         MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealSaved,
-        MealEditorFragment.OnMealAddFood, MealAddFoodFragment.OnFoodQuantitySet {
+        MealEditorFragment.OnMealAddFood, MealAddFoodFragment.OnFoodQuantitySet,
+        PlannerFragment.OnPlannerAddMeal, AddMealFragment.OnMealSet {
 
     private static final String CURRENT_FRAGMENT = "currentFragment";
     private static final String IN_INNER_FRAGMENT = "inInnerFragment";
@@ -57,9 +58,15 @@ public class MainActivity extends ActionBarActivity implements
     boolean drawerIconAnimation;
     ArrayList<Integer> toolbarTitles;
 
+    // Private variables to be exposed to some fragment children.
+
     private boolean foodAddedToMeal;
     private long mealFoodId;
     private double mealFoodQuantity;
+
+    private boolean mealAddedToPlanner;
+    private long plannerMealId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,6 +267,21 @@ public class MainActivity extends ActionBarActivity implements
         drawerLayout.closeDrawers();
     }
 
+    // Daily Planner Callbacks.
+
+    // Open the Add Meal fragment.
+    @Override
+    public void openAddMealFragment(Fragment fragment, int newToolbarTitle) {
+        openInnerFragment(fragment, newToolbarTitle);
+    }
+
+    @Override
+    public void setMealOnPlanner(long mealId) {
+        backToPreviousFragment();
+
+        mealAddedToPlanner = true;
+        plannerMealId = mealId;
+    }
 
     // MyMeals Callbacks.
 
@@ -490,6 +512,13 @@ public class MainActivity extends ActionBarActivity implements
 
     // Getters and Setters.
 
+    public boolean wasFoodAddedToMeal() {
+        return foodAddedToMeal;
+    }
+    public void setFoodAddedToMeal(boolean foodAddedToMeal) {
+        this.foodAddedToMeal = foodAddedToMeal;
+    }
+
     public double getMealFoodQuantity() {
         return mealFoodQuantity;
     }
@@ -498,11 +527,16 @@ public class MainActivity extends ActionBarActivity implements
         return mealFoodId;
     }
 
-    public boolean wasFoodAddedToMeal() {
-        return foodAddedToMeal;
+    public boolean wasMealAddedToPlanner() {
+        return mealAddedToPlanner;
     }
-    public void setFoodAddedToMeal(boolean foodAddedToMeal) {
-        this.foodAddedToMeal = foodAddedToMeal;
+
+    public void setMealAddedToPlanner(boolean mealAddedToPlanner) {
+        this.mealAddedToPlanner = mealAddedToPlanner;
+    }
+
+    public long getPlannerMealId() {
+        return plannerMealId;
     }
 }
 

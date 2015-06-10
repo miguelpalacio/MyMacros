@@ -1,11 +1,16 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.miguelpalacio.mymacros.PlannerFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="DAILY PLANNER FRAGMENT"
-        android:textColor="#CC5555"/>
+    <!-- Added meals list. -->
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/planner_meal_list"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/text_background"
+        android:minHeight="?android:attr/listPreferredItemHeight" />
 
-</FrameLayout>
+</LinearLayout>
