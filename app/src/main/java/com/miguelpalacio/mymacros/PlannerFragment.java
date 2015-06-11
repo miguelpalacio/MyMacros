@@ -1,6 +1,8 @@
 package com.miguelpalacio.mymacros;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -217,7 +219,6 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
 
                             setHeaderData();
 
-
                             // Remove listener to avoid further callings to this method.
                             if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1) {
                                 itemListView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -227,6 +228,15 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
                         }
                     }
                 });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // If coming from a different Activity, recalculate data in the Header.
+        if (listHeader != null) {
+            setHeaderData();
+        }
     }
 
     // Persist changes prior to leave the fragment.
@@ -275,8 +285,38 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
 
     @Override
     public boolean onItemLongClicked(int position) {
-        return false;
+        if (position == mealNameList.size()) {
+            return false;
+        }
+
+        // Fix position value (don't count header).
+        final int pos = position - 1;
+
+        // Create a dialog so the user can remove the corresponding meal.
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        // Set the dialog properties.
+        builder.setMessage(R.string.dialog_planner_remove_meal_message);
+        builder.setPositiveButton(R.string.dialog_planner_remove_meal_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                removeMealFromPlanner(pos);
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_planner_remove_meal_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // User cancelled the dialog.
+            }
+        });
+
+        // Launch the dialog.
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        return true;
     }
+
 
     public interface OnPlannerAddMeal {
         void openAddMealFragment(Fragment fragment, int newToolbarTitle);
@@ -285,12 +325,12 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
 
     private void setMealSelected(long mealId) {
 
-/*        // Check that the selected meal is not already in Today's plan.
+        // Check that the selected meal is not already in Today's plan.
         for (int i = 0; i < mealIdList.size(); i++) {
             if (mealIdList.get(i) == mealId) {
                 return;
             }
-        }*/
+        }
 
         Meal meal = databaseAdapter.getMeal(mealId);
 
@@ -322,6 +362,24 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
     }
 
 
+    private void removeMealFromPlanner(int position) {
+        mealIdList.remove(position);
+        mealNameList.remove(position);
+        mealSummaryList.remove(position);
+
+        mealProteinList.remove(position);
+        mealCarbsList.remove(position);
+        mealFatList.remove(position);
+        mealFiberList.remove(position);
+
+        // Notify to the RecyclerView's adapter that an item was inserted to the lists.
+        itemListAdapter.notifyItemRemoved(position);
+
+        // Update data shown in RecyclerView List header.
+        setHeaderData();
+    }
+
+
     /**
      * Sets data in the list header (which is the first child of the RecyclerView used
      * for the MealEditorFragment).
@@ -345,11 +403,11 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
             consumedEnergy = 4.184 * consumedEnergy;
 
         // Calculate percentages of consumption.
-        int proteinPercentage = (int) (consumedProtein / targetProtein * 100);
-        int carbsPercentage = (int) (consumedCarbs / targetCarbs * 100);
-        int fatPercentage = (int) (consumedFat / targetFat * 100);
-        int fiberPercentage = (int) (consumedFiber / targetFiber * 100);
-        int energyPercentage = (int) (consumedEnergy / targetEnergy * 100);
+        int proteinPercentage = (targetProtein > 0) ? (int) (consumedProtein / targetProtein * 100) : 0;
+        int carbsPercentage = (targetCarbs > 0) ? (int) (consumedCarbs / targetCarbs * 100) : 0;
+        int fatPercentage = (targetFat > 0) ? (int) (consumedFat / targetFat * 100) : 0;
+        int fiberPercentage = (targetFiber > 0) ? (int) (consumedFiber / targetFiber * 100) : 0;
+        int energyPercentage = (targetEnergy > 0) ? (int) (consumedEnergy / targetEnergy * 100) : 0;
 
         // Set bars' progress.
         proteinProgressBar.setProgress(proteinPercentage);
@@ -360,11 +418,11 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
 
         // Set Header's TextViews.
 
-        proteinPercentageText.setText(proteinPercentage + "%");
-        carbsPercentageText.setText(carbsPercentage + "%");
-        fatPercentageText.setText(fatPercentage + "%");
-        fiberPercentageText.setText(fiberPercentage + "%");
-        energyPercentageText.setText(energyPercentage + "%");
+        proteinPercentageText.setText((targetProtein > 0) ? proteinPercentage + "%" : "?");
+        carbsPercentageText.setText((targetCarbs > 0) ? carbsPercentage + "%" : "?");
+        fatPercentageText.setText((targetFat > 0) ? fatPercentage + "%" : "?");
+        fiberPercentageText.setText((targetFiber > 0) ? fiberPercentage + "%" : "?");
+        energyPercentageText.setText((targetEnergy > 0) ? energyPercentage + "%" : "?");
 
         proteinConsumedText.setText(decimalFormat.format(consumedProtein) + "/" +
                 decimalFormat.format(targetProtein) + " g");

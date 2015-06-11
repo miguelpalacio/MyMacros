@@ -59,7 +59,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
     private ListPreference activityLevel;
     private ListPreference goal;
-    private Preference calorieNeed;
+    private Preference energyNeed;
 
     private SingleLineTextPreference proteinRate;
     private SingleLineTextPreference carbosRate;
@@ -103,7 +103,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         // Calorie needs.
         activityLevel = (ListPreference) findPreference(KEY_ACTIVITY_LEVEL);
         goal = (ListPreference) findPreference(KEY_GOAL);
-        calorieNeed = findPreference(KEY_ENERGY_NEED);
+        energyNeed = findPreference(KEY_ENERGY_NEED);
 
         // Macronutrient distribution.
         proteinRate = (SingleLineTextPreference) findPreference(KEY_PROTEIN_RATE);
@@ -400,7 +400,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // If there's missing data, set the default summary.
         if (activityLevel.getValue().equals("ND") || goal.getValue().equals("ND") || BMR == 0) {
-            calorieNeed.setSummary(defaultSummary2);
+            energyNeed.setSummary(defaultSummary2);
             return;
         }
 
@@ -429,7 +429,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
         }
 
-        // Calculate the calorie intake according to goal.
+        // Calculate the energy intake according to goal.
         if (goal.getValue().equals("Fat Loss")) {
             TDEE = TDEE * 0.8;
         } else if (goal.getValue().equals("Bulking")) {
@@ -441,7 +441,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         editor.putString(KEY_ENERGY_NEED, "" + TDEE).apply();
 
         // Set summary.
-        calorieNeed.setSummary((int) TDEE + " " + unitsEnergy);
+        energyNeed.setSummary((int) TDEE + " " + unitsEnergy);
     }
 
     private void setMacroRateSummary(EditTextPreference p) {
@@ -465,7 +465,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
     /**
      * Set the daily macronutrient intake in grams.
-     * Dependencies: calorieNeed.
+     * Dependencies: energyNeed.
      */
     private void setMacroIntake() {
 
@@ -534,7 +534,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
     /**
      * Set the recommended daily fiberEditText intake.
-     * Dependencies: calorieNeed.
+     * Dependencies: energyNeed.
      */
     private void setFiberIntake() {
 

@@ -29,6 +29,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private ListPreference gdrive;
 
     private SharedPreferences sharedPref;
+    DecimalFormat decimalFormat = new DecimalFormat("#.#");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,7 +85,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
             case KEY_WEIGHT:
                 double w = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_WEIGHT, "0"));
-                DecimalFormat decimalFormat = new DecimalFormat("#.#");
                 SharedPreferences.Editor wEditor = sharedPref.edit();
 
                 // Update the current value for weight in user profile data.
@@ -123,6 +123,24 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 break;
 
             case KEY_ENERGY:
+                double e;
+                SharedPreferences.Editor eEditor = sharedPreferences.edit();
+                String eUnits = sharedPreferences.getString(key, "");
+
+                // Update the current value for height in user profile data.
+                if (eUnits.equals("kJ")) {
+                    e = Double.parseDouble(sharedPreferences.getString(ProfileFragment.KEY_ENERGY_NEED, "0"));
+                    // Convert from kcal into kJ.
+                    e = e * 4.184;
+                    eEditor.putString(ProfileFragment.KEY_ENERGY_NEED, "" + decimalFormat.format(e)).apply();
+                } else {
+                    e = Double.parseDouble(sharedPreferences.getString(ProfileFragment.KEY_ENERGY_NEED, "0"));
+                    // Convert from kJ into kcal.
+                    e = e / 4.184;
+                    eEditor.putString(ProfileFragment.KEY_ENERGY_NEED, "" + decimalFormat.format(e)).apply();
+                }
+
+                // Change preference summary.
                 energy.setSummary(sharedPreferences.getString(key, ""));
                 break;
 

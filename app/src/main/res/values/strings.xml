@@ -211,8 +211,8 @@
     <string name="profile_goal_default">ND</string>
 
     <!-- Daily Calorie Need preference. -->
-    <string name="profile_daily_calorie_need">Daily Calorie Need</string>
-    <string name="profile_daily_calorie_need_default">0</string>
+    <string name="profile_daily_energy_need">Daily Calorie Need</string>
+    <string name="profile_daily_energy_need_default">0</string>
 
     <!-- Macronutrient Distribution category. -->
     <string name="profile_category_macronutrient_distribution">Macronutrient Distribution</string>
@@ -379,6 +379,10 @@
 
     <string name="planner_add_meal">Add meal</string>
 
+    <!-- Dialogs. -->
+    <string name="dialog_planner_remove_meal_message">Remove meal?</string>
+    <string name="dialog_planner_remove_meal_ok">REMOVE</string>
+    <string name="dialog_planner_remove_meal_cancel">Cancel</string>
 
     <!-- *************************************************************************************** -->
     <!-- Misc Strings. -->
