@@ -426,7 +426,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
 
         // Calculate macros given by the food, and its quantity.
         double protein = food.getProtein() * (foodQuantity / food.getPortionQuantity());
-        double carbs = food.getCarbohydrates() * (foodQuantity / food.getPortionQuantity());
+        double carbs = food.getCarbs() * (foodQuantity / food.getPortionQuantity());
         double fat = food.getFat() * (foodQuantity / food.getPortionQuantity());
         double fiber = food.getFiber() * (foodQuantity / food.getPortionQuantity());
 

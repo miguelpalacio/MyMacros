@@ -495,10 +495,13 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         fat = fat / 9;
 
         // Store the values in SharedPreferences.
+
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(KEY_PROTEIN_GRAMS, "" + (int) protein).apply();
-        editor.putString(KEY_CARBS_GRAMS, "" + (int) carbos).apply();
-        editor.putString(KEY_FAT_GRAMS, "" + (int) fat).apply();
+        editor.putString(KEY_PROTEIN_GRAMS, decimalFormat.format(protein)).apply();
+        editor.putString(KEY_CARBS_GRAMS, decimalFormat.format(carbos)).apply();
+        editor.putString(KEY_FAT_GRAMS, decimalFormat.format(fat)).apply();
 
         // Set the summaries.
         proteinGrams.setSummary((int) protein + " g/day");

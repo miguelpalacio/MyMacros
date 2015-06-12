@@ -10,7 +10,7 @@ public class Food {
     private double portionQuantity;
     private String portionUnits;
     private double protein;
-    private double carbohydrates;
+    private double carbs;
     private double fat;
     private double fiber;
 
@@ -22,31 +22,31 @@ public class Food {
         this.portionQuantity = 0;
         this.portionUnits = "";
         this.protein = 0;
-        this.carbohydrates = 0;
+        this.carbs = 0;
         this.fat = 0;
         this.fiber = 0;
     }
 
     public Food(long id, String name, double portionQuantity, String portionUnits,
-                double protein, double carbohydrates, double fat, double fiber) {
+                double protein, double carbs, double fat, double fiber) {
         this.id = id;
         this.name = name;
         this.portionQuantity = portionQuantity;
         this.portionUnits = portionUnits;
         this.protein = protein;
-        this.carbohydrates = carbohydrates;
+        this.carbs = carbs;
         this.fat = fat;
         this.fiber = fiber;
     }
 
 /*    public Food(String name, double portionQuantity, String portionUnits,
-                double protein, double carbohydrates, double fat, double fiber) {
+                double protein, double carbs, double fat, double fiber) {
         this.id = -1;
         this.name = name;
         this.portionQuantity = portionQuantity;
         this.portionUnits = portionUnits;
         this.protein = protein;
-        this.carbohydrates = carbohydrates;
+        this.carbs = carbs;
         this.fat = fat;
         this.fiber = fiber;
     }*/
@@ -88,11 +88,11 @@ public class Food {
         this.protein = protein;
     }
 
-    public double getCarbohydrates() {
-        return carbohydrates;
+    public double getCarbs() {
+        return carbs;
     }
-    public void setCarbohydrates(double carbohydrates) {
-        this.carbohydrates = carbohydrates;
+    public void setCarbs(double carbs) {
+        this.carbs = carbs;
     }
 
     public double getFat() {

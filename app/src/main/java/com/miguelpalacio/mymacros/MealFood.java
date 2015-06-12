@@ -16,7 +16,7 @@ public class MealFood extends Food {
 
     public MealFood(Food food) {
         super(food.getId(), food.getName(), food.getPortionQuantity(), food.getPortionUnits(),
-                food.getProtein(), food.getCarbohydrates(), food.getFat(), food.getFiber());
+                food.getProtein(), food.getCarbs(), food.getFat(), food.getFiber());
     }
 
     // Getters and Setters.

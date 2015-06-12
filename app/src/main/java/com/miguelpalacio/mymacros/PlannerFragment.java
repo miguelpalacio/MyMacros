@@ -10,7 +10,6 @@ import android.app.Fragment;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -163,17 +162,6 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
             setMealSelected(activity.getPlannerMealId());
             activity.setMealAddedToPlanner(false);
         }
-
-/*        // TEMPORAL!!!:
-        mealNameList = new ArrayList<>();
-        mealSummaryList = new ArrayList<>();
-
-        mealNameList.add("Breakfast A");
-        mealNameList.add("Post-Workout");
-        mealNameList.add("Add new meal or food");
-        mealSummaryList.add("Protein: 15 g, Carbohydrates: 36.5 g, Fat: 22 g");
-        mealSummaryList.add("Protein: 41.2 g, Carbohydrates: 146.3 g, Fat: 5.5 g");
-        mealSummaryList.add("");*/
 
         // Define the main view (the RecyclerView).
         itemListView = (RecyclerView) getActivity().findViewById(R.id.planner_meal_list);
@@ -342,7 +330,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
         }
 
         String summary = "Protein: " + decimalFormat.format(meal.getProtein()) + " g, " +
-                "Carbohydrates: " + decimalFormat.format(meal.getCarbohydrates()) + " g, " +
+                "Carbohydrates: " + decimalFormat.format(meal.getCarbs()) + " g, " +
                 "Fat: " + decimalFormat.format(meal.getFat()) + " g";
 
         mealIdList.add(position, mealId);
@@ -350,7 +338,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
         mealSummaryList.add(position, summary);
 
         mealProteinList.add(position, meal.getProtein());
-        mealCarbsList.add(position, meal.getCarbohydrates());
+        mealCarbsList.add(position, meal.getCarbs());
         mealFatList.add(position, meal.getFat());
         mealFiberList.add(position, meal.getFiber());
 
@@ -393,10 +381,10 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
         double targetFiber = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_FIBER, "0"));
         double targetEnergy = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_ENERGY_NEED, "0"));
 
-        double consumedProtein = getSummation(mealProteinList);
-        double consumedCarbs = getSummation(mealCarbsList);
-        double consumedFat = getSummation(mealFatList);
-        double consumedFiber = getSummation(mealFiberList);
+        double consumedProtein = Utilities.getSummation(mealProteinList);
+        double consumedCarbs = Utilities.getSummation(mealCarbsList);
+        double consumedFat = Utilities.getSummation(mealFatList);
+        double consumedFiber = Utilities.getSummation(mealFiberList);
         double consumedEnergy = 4 * consumedProtein + 4 * consumedCarbs + 9 * consumedFat;
 
         if (energyUnits.equals("kJ"))
@@ -436,13 +424,5 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
                 decimalFormat.format(targetEnergy) + " " + energyUnits);
 
         itemListAdapter.notifyDataSetChanged();
-    }
-
-    private double getSummation(ArrayList<Double> list) {
-        double accumulated = 0;
-        for (int i = 0; i < list.size(); i++) {
-            accumulated = accumulated + list.get(i);
-        }
-        return accumulated;
     }
 }

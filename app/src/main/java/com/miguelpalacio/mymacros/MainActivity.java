@@ -1,8 +1,10 @@
 package com.miguelpalacio.mymacros;
 
 import android.animation.ValueAnimator;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
@@ -22,6 +24,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends ActionBarActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
@@ -67,6 +70,8 @@ public class MainActivity extends ActionBarActivity implements
     private boolean mealAddedToPlanner;
     private long plannerMealId;
 
+    private AlarmManager alarmManager;
+    private PendingIntent alarmIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,6 +194,23 @@ public class MainActivity extends ActionBarActivity implements
             getSupportActionBar().setHomeButtonEnabled(true);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        // Set an alarm to save user stats every 24 hours in the database.
+
+        alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
+        alarmIntent = PendingIntent.getBroadcast(MainActivity.this, 0, intent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+
+/*        // Alarm goes off every minute... just a try-out. Start from AlarmReceiver to do what is needed!
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 60000, alarmIntent);*/
+
+        // Sets AlarmReceiver to go off every day at about 12:00 am.
+        alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, alarmIntent);
     }
 
     @Override

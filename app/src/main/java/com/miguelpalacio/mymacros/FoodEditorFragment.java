@@ -144,7 +144,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         portionUnitsSpinner.setSelection(spinnerSelection);
 
         proteinEditText.setText(decimalFormat.format(food.getProtein()));
-        carbsEditText.setText(decimalFormat.format(food.getCarbohydrates()));
+        carbsEditText.setText(decimalFormat.format(food.getCarbs()));
         fatEditText.setText(decimalFormat.format(food.getFat()));
         fiberEditText.setText(decimalFormat.format(food.getFiber()));
 

@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -39,7 +38,7 @@ public class DatabaseAdapter {
         contentValues.put(DatabaseHelper.PORTION_QUANTITY, portionQuantity);
         contentValues.put(DatabaseHelper.PORTION_UNITS, portionUnits);
         contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
-        contentValues.put(DatabaseHelper.CARBOHYDRATES, carbosQuantity);
+        contentValues.put(DatabaseHelper.CARBS, carbosQuantity);
         contentValues.put(DatabaseHelper.FAT, fatQuantity);
         contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
 
@@ -78,8 +77,8 @@ public class DatabaseAdapter {
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
             food.setProtein(cursor.getDouble(index));
 
-            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            food.setCarbohydrates(cursor.getDouble(index));
+            index = cursor.getColumnIndex(DatabaseHelper.CARBS);
+            food.setCarbs(cursor.getDouble(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
             food.setFat(cursor.getDouble(index));
@@ -103,7 +102,7 @@ public class DatabaseAdapter {
         contentValues.put(DatabaseHelper.PORTION_QUANTITY, portionQuantity);
         contentValues.put(DatabaseHelper.PORTION_UNITS, portionUnits);
         contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
-        contentValues.put(DatabaseHelper.CARBOHYDRATES, carbosQuantity);
+        contentValues.put(DatabaseHelper.CARBS, carbosQuantity);
         contentValues.put(DatabaseHelper.FAT, fatQuantity);
         contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
 
@@ -137,7 +136,7 @@ public class DatabaseAdapter {
 
         // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
         String[] columns = {DatabaseHelper.FOOD_ID, DatabaseHelper.NAME,
-                DatabaseHelper.PROTEIN, DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT,
+                DatabaseHelper.PROTEIN, DatabaseHelper.CARBS, DatabaseHelper.FAT,
                 DatabaseHelper.PORTION_UNITS};
         String orderBy = DatabaseHelper.NAME;
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
@@ -165,8 +164,8 @@ public class DatabaseAdapter {
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
             double protein = cursor.getDouble(index);
 
-            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            double carbohydrates = cursor.getDouble(index);
+            index = cursor.getColumnIndex(DatabaseHelper.CARBS);
+            double carbs = cursor.getDouble(index);
 
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
             double fat = cursor.getDouble(index);
@@ -202,7 +201,7 @@ public class DatabaseAdapter {
 
             // Parse data and place it in summaries.
             String foodSummary = "Protein: " + decimalFormat.format(protein) +
-                    " g, Carbohydrates: " + decimalFormat.format(carbohydrates) +
+                    " g, Carbohydrates: " + decimalFormat.format(carbs) +
                     " g, Fat: " + decimalFormat.format(fat) + " g";
             summaries.add(foodSummary);
         }
@@ -267,7 +266,7 @@ public class DatabaseAdapter {
             ContentValues contentValues = new ContentValues();
             contentValues.put(DatabaseHelper.NAME, name);
             contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
-            contentValues.put(DatabaseHelper.CARBOHYDRATES, carbsQuantity);
+            contentValues.put(DatabaseHelper.CARBS, carbsQuantity);
             contentValues.put(DatabaseHelper.FAT, fatQuantity);
             contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
 
@@ -330,8 +329,8 @@ public class DatabaseAdapter {
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
             meal.setProtein(cursor.getDouble(index));
 
-            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            meal.setCarbohydrates(cursor.getDouble(index));
+            index = cursor.getColumnIndex(DatabaseHelper.CARBS);
+            meal.setCarbs(cursor.getDouble(index));
 
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
             meal.setFat(cursor.getDouble(index));
@@ -383,7 +382,7 @@ public class DatabaseAdapter {
             ContentValues contentValues = new ContentValues();
             contentValues.put(DatabaseHelper.NAME, name);
             contentValues.put(DatabaseHelper.PROTEIN, proteinQuantity);
-            contentValues.put(DatabaseHelper.CARBOHYDRATES, carbsQuantity);
+            contentValues.put(DatabaseHelper.CARBS, carbsQuantity);
             contentValues.put(DatabaseHelper.FAT, fatQuantity);
             contentValues.put(DatabaseHelper.FIBER, fiberQuantity);
 
@@ -490,7 +489,7 @@ public class DatabaseAdapter {
 
         // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
         String[] columns = {DatabaseHelper.MEAL_ID, DatabaseHelper.NAME,
-                DatabaseHelper.PROTEIN, DatabaseHelper.CARBOHYDRATES, DatabaseHelper.FAT};
+                DatabaseHelper.PROTEIN, DatabaseHelper.CARBS, DatabaseHelper.FAT};
         String orderBy = DatabaseHelper.NAME;
         Cursor cursor = db.query(DatabaseHelper.TABLE_MEALS, columns,
                 null, null, null, null, orderBy + " COLLATE LOCALIZED ASC");
@@ -516,8 +515,8 @@ public class DatabaseAdapter {
             index = cursor.getColumnIndex(DatabaseHelper.PROTEIN);
             double protein = cursor.getDouble(index);
 
-            index = cursor.getColumnIndex(DatabaseHelper.CARBOHYDRATES);
-            double carbohydrates = cursor.getDouble(index);
+            index = cursor.getColumnIndex(DatabaseHelper.CARBS);
+            double carbs = cursor.getDouble(index);
 
             index = cursor.getColumnIndex(DatabaseHelper.FAT);
             double fat = cursor.getDouble(index);
@@ -547,7 +546,7 @@ public class DatabaseAdapter {
 
             // Parse data and place it in summaries.
             String mealSummary = "Protein: " + decimalFormat.format(protein) +
-                    " g, Carbohydrates: " + decimalFormat.format(carbohydrates) +
+                    " g, Carbohydrates: " + decimalFormat.format(carbs) +
                     " g, Fat: " + decimalFormat.format(fat) + " g";
             summaries.add(mealSummary);
         }
@@ -590,6 +589,33 @@ public class DatabaseAdapter {
 
 
     // *********************************************************************************************
+    // Methods to perform operations in the Meals and MealFoods tables.
+
+    /**
+     * Inserts a new row in the DailyLogs table.
+     * @return the id given in the database for the new log.
+     */
+    public long insertLog(double proteinTarget, double proteinConsumed, double carbsTarget,
+                          double carbsConsumed, double fatTarget, double fatConsumed,
+                          double userWeight, long logDateTime) {
+
+        SQLiteDatabase db = helper.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+
+        contentValues.put(DatabaseHelper.PROTEIN_TARGET, proteinTarget);
+        contentValues.put(DatabaseHelper.PROTEIN_CONSUMED, proteinConsumed);
+        contentValues.put(DatabaseHelper.CARBS_TARGET, carbsTarget);
+        contentValues.put(DatabaseHelper.CARBS_CONSUMED, carbsConsumed);
+        contentValues.put(DatabaseHelper.FAT_TARGET, fatTarget);
+        contentValues.put(DatabaseHelper.FAT_CONSUMED, fatConsumed);
+        contentValues.put(DatabaseHelper.USER_WEIGHT, userWeight);
+        contentValues.put(DatabaseHelper.LOG_DATE_TIME, logDateTime);
+
+        return db.insert(DatabaseHelper.TABLE_DAILY_LOGS, null, contentValues);
+    }
+
+
+    // *********************************************************************************************
 
     /**
      * This inner class takes care of opening the database if it exists,
@@ -603,7 +629,7 @@ public class DatabaseAdapter {
         private static final String FOOD_ID = "_FoodID";
         private static final String NAME = "Name";
         private static final String PROTEIN = "Protein";
-        private static final String CARBOHYDRATES = "Carbohydrates";
+        private static final String CARBS = "Carbs";
         private static final String FAT = "Fat";
         private static final String FIBER = "Fiber";
         private static final String PORTION_UNITS = "PortionUnits";
@@ -615,6 +641,17 @@ public class DatabaseAdapter {
 
         private static final String TABLE_MEAL_FOODS = "MealFoods";
 
+        private static final String TABLE_DAILY_LOGS = "DailyLogs";
+        private static final String LOG_ID = "_LogID";
+        private static final String PROTEIN_TARGET = "ProteinTarget";
+        private static final String PROTEIN_CONSUMED = "ProteinConsumed";
+        private static final String CARBS_TARGET = "CarbsTarget";
+        private static final String CARBS_CONSUMED = "CarbsConsumed";
+        private static final String FAT_TARGET = "FatTarget";
+        private static final String FAT_CONSUMED = "FatConsumed";
+        private static final String USER_WEIGHT = "UserWeight";
+        private static final String LOG_DATE_TIME = "LogDateTime";
+
         private static final String CREATE_FOODS_TABLE =
                 "CREATE TABLE " + TABLE_FOODS +
                         " (" + FOOD_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -622,7 +659,7 @@ public class DatabaseAdapter {
                         PORTION_QUANTITY + " REAL, " +
                         PORTION_UNITS + " VARCHAR(4), " +
                         PROTEIN + " REAL, " +
-                        CARBOHYDRATES + " REAL, " +
+                        CARBS + " REAL, " +
                         FAT + " REAL, " +
                         FIBER + " REAL);";
 
@@ -631,7 +668,7 @@ public class DatabaseAdapter {
                         " (" + MEAL_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                         NAME + " VARCHAR(50) UNIQUE, " +
                         PROTEIN + " REAL, " +
-                        CARBOHYDRATES + " REAL, " +
+                        CARBS + " REAL, " +
                         FAT + " REAL, " +
                         FIBER + " REAL);";
 
@@ -641,6 +678,18 @@ public class DatabaseAdapter {
                         FOOD_ID + " INTEGER, " +
                         FOOD_QUANTITY + " REAL, " +
                         "PRIMARY KEY (" + MEAL_ID + ", " + FOOD_ID + "));";
+
+        private static final String CREATE_DAILY_LOGS_TABLE =
+                "CREATE TABLE " + TABLE_DAILY_LOGS +
+                        " (" + LOG_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        PROTEIN_TARGET + " REAL, " +
+                        PROTEIN_CONSUMED + " REAL, " +
+                        CARBS_TARGET + " REAL, " +
+                        CARBS_CONSUMED + " REAL, " +
+                        FAT_TARGET + " REAL, " +
+                        FAT_CONSUMED + " REAL, " +
+                        USER_WEIGHT + " REAL, " +
+                        LOG_DATE_TIME + " INTEGER);";
 
         private static final int DATABASE_VERSION = 1;
 
@@ -677,6 +726,13 @@ public class DatabaseAdapter {
             // Create the MealFoods table.
             try {
                 db.execSQL(CREATE_MEAL_FOODS_TABLE);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            // Create the DailyLogs table.
+            try {
+                db.execSQL(CREATE_DAILY_LOGS_TABLE);
             } catch (SQLException e) {
                 e.printStackTrace();
             }

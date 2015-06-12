@@ -1,6 +1,7 @@
 package com.miguelpalacio.mymacros;
 
 import java.text.Normalizer;
+import java.util.List;
 
 /**
  * Utility functions that can be used across the whole app.
@@ -58,5 +59,17 @@ public final class Utilities {
         }
 
         return name;
+    }
+
+
+    /**
+     * Given an list, performs a summation with its elements and returns the result.
+     */
+    public static double getSummation(List<Double> list) {
+        double accumulated = 0;
+        for (int i = 0; i < list.size(); i++) {
+            accumulated = accumulated + list.get(i);
+        }
+        return accumulated;
     }
 }

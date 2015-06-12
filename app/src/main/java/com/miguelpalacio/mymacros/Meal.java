@@ -11,7 +11,7 @@ public class Meal {
     private long id;
     private String name;
     private double protein;
-    private double carbohydrates;
+    private double carbs;
     private double fat;
     private double fiber;
     private List<MealFood> foods;
@@ -21,7 +21,7 @@ public class Meal {
         id = -1;
         name = "";
         protein = 0;
-        carbohydrates = 0;
+        carbs = 0;
         fat = 0;
         fiber = 0;
         foods = new ArrayList<>();
@@ -50,11 +50,11 @@ public class Meal {
         this.protein = protein;
     }
 
-    public double getCarbohydrates() {
-        return carbohydrates;
+    public double getCarbs() {
+        return carbs;
     }
-    public void setCarbohydrates(double carbohydrates) {
-        this.carbohydrates = carbohydrates;
+    public void setCarbs(double carbs) {
+        this.carbs = carbs;
     }
 
     public double getFat() {
