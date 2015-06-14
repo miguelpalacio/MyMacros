@@ -3,8 +3,12 @@ package com.miguelpalacio.mymacros;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.PreferenceScreen;
+import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.text.DecimalFormat;
 
@@ -18,15 +22,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public static final String KEY_HEIGHT = "pref_height";
     public static final String KEY_ENERGY = "pref_energy";
     public static final String KEY_LIQUID = "pref_liquid";
-    public static final String KEY_WEEKDAY = "pref_weekday";
-    public static final String KEY_GDRIVE = "pref_gdrive";
+/*    public static final String KEY_WEEKDAY = "pref_weekday";*/
+/*    public static final String KEY_GDRIVE = "pref_gdrive";*/
 
     private ListPreference weight;
     private ListPreference height;
     private ListPreference energy;
     private ListPreference liquid;
-    private ListPreference weekday;
-    private ListPreference gdrive;
+/*    private ListPreference weekday;*/
+/*    private Preference gdrive;*/
 
     private SharedPreferences sharedPref;
     DecimalFormat decimalFormat = new DecimalFormat("#.#");
@@ -43,8 +47,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         height = (ListPreference) findPreference(KEY_HEIGHT);
         energy = (ListPreference) findPreference(KEY_ENERGY);
         liquid = (ListPreference) findPreference(KEY_LIQUID);
-        weekday = (ListPreference) findPreference(KEY_WEEKDAY);
-        gdrive = (ListPreference) findPreference(KEY_GDRIVE);
+/*        weekday = (ListPreference) findPreference(KEY_WEEKDAY);*/
+/*        gdrive = findPreference(KEY_GDRIVE);*/
 
         // Load the SharedPreferences file.
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -63,8 +67,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         height.setSummary(screenPreferences.getString(KEY_HEIGHT, ""));
         energy.setSummary(screenPreferences.getString(KEY_ENERGY, ""));
         liquid.setSummary(screenPreferences.getString(KEY_LIQUID, ""));
-        weekday.setSummary(screenPreferences.getString(KEY_WEEKDAY, ""));
-        gdrive.setSummary(screenPreferences.getString(KEY_GDRIVE, ""));
+/*        weekday.setSummary(screenPreferences.getString(KEY_WEEKDAY, ""));*/
+/*        gdrive.setSummary(screenPreferences.getString(KEY_GDRIVE, ""));*/
 
         // Set up a listener whenever a key changes.
         screenPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -148,16 +152,26 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 liquid.setSummary(sharedPreferences.getString(key, ""));
                 break;
 
-            case KEY_WEEKDAY:
+/*            case KEY_WEEKDAY:
                 weekday.setSummary(sharedPreferences.getString(key, ""));
-                break;
+                break;*/
 
-            case KEY_GDRIVE:
+/*            case KEY_GDRIVE:
                 gdrive.setSummary(sharedPreferences.getString(key, ""));
-                break;
+                break;*/
 
             default: break;
         }
     }
+
+/*    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, @NonNull Preference preference) {
+
+        if (preference.getKey().equals(KEY_GDRIVE)) {
+
+            Log.d("Preference clicked: ", preference.toString());
+        }
+        return true;
+    }*/
 
 }

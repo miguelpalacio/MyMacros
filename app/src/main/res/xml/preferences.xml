@@ -35,7 +35,7 @@
             android:entryValues="@array/pref_liquid_entry_values" />
     </PreferenceCategory>
 
-    <!-- Other Settings. -->
+<!--    &lt;!&ndash; Other Settings. &ndash;&gt;
     <PreferenceCategory
         android:title="@string/pref_category_others"
         android:key="pref_others_settings">
@@ -46,18 +46,16 @@
             android:summary="@string/pref_weekday_default"
             android:entries="@array/pref_weekday_entries"
             android:entryValues="@array/pref_weekday_entries" />
-    </PreferenceCategory>
+    </PreferenceCategory>-->
 
-    <!-- Online Storage Settings. -->
+<!--    &lt;!&ndash; Online Storage Settings. &ndash;&gt;
     <PreferenceCategory
         android:title="@string/pref_category_online_storage"
         android:key="pref_category_online_storage_settings">
-        <ListPreference
+        <Preference
             android:key="pref_gdrive"
             android:title="@string/pref_gdrive"
             android:defaultValue="@string/pref_gdrive_default"
-            android:summary="@string/pref_gdrive_default"
-            android:entries="@array/pref_gdrive_entries"
-            android:entryValues="@array/pref_gdrive_entry_default" />
-    </PreferenceCategory>
+            android:summary="@string/pref_gdrive_default" />
+    </PreferenceCategory>-->
 </PreferenceScreen>

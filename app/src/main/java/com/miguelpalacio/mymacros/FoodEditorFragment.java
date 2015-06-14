@@ -3,8 +3,10 @@ package com.miguelpalacio.mymacros;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,6 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.text.DecimalFormat;
 
@@ -152,6 +157,19 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        // Check if a food barcode was scanned.
+        MainActivity activity = (MainActivity) getActivity();
+        if (activity.wasProductScanned()) {
+            Toast.makeText(activity, "FORMAT: " + activity.getBarcodeScanFormat(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "CONTENT: " + activity.getBarcodeScanResult(), Toast.LENGTH_SHORT).show();
+            activity.setProductScanned(false);
+        }
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -178,7 +196,9 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         if (id == R.id.action_save_food) {
             saveFood();
         } else if (id == R.id.action_scan_barcode) {
-            Toast.makeText(getActivity(), "Functionality coming soon", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), "Functionality coming soon", Toast.LENGTH_SHORT).show();
+            IntentIntegrator integrator = new IntentIntegrator(getActivity());
+            integrator.initiateScan();
         } else if (id == R.id.action_delete_food) {
             onFoodDelete();
         }
@@ -199,6 +219,9 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     public interface OnFoodSaved {
         void onFoodSavedSuccessfully();
     }
+
+    // *********************************************************************************************
+    // Methods to perform operations in the database.
 
     private void saveFood() {
         boolean missingData = false;

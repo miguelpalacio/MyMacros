@@ -22,6 +22,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,6 +60,9 @@ public class MainActivity extends ActionBarActivity implements
     Runnable onDrawerClosedRunnable;
     Handler mHandler = new Handler();
 
+    AlarmManager alarmManager;
+    PendingIntent alarmIntent;
+
     int currentFragment;
     boolean inInnerFragment;
     boolean drawerIconAnimation;
@@ -70,8 +77,9 @@ public class MainActivity extends ActionBarActivity implements
     private boolean mealAddedToPlanner;
     private long plannerMealId;
 
-    private AlarmManager alarmManager;
-    private PendingIntent alarmIntent;
+    private String barcodeScanFormat;
+    private String barcodeScanResult;
+    private boolean productScanned;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -349,6 +357,21 @@ public class MainActivity extends ActionBarActivity implements
         backToPreviousFragment();
     }
 
+    // Check for the result of barcode scan.
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+            barcodeScanFormat = scanningResult.getFormatName();
+            barcodeScanResult = scanningResult.getContents();
+
+            if (barcodeScanFormat != null && barcodeScanResult != null) {
+                productScanned = true;
+            }
+        } else {
+            Toast.makeText(this, "No scan data received", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     /**
      * Opens the respective fragment according to the item selected.
@@ -559,6 +582,22 @@ public class MainActivity extends ActionBarActivity implements
 
     public long getPlannerMealId() {
         return plannerMealId;
+    }
+
+    public String getBarcodeScanFormat() {
+        return barcodeScanFormat;
+    }
+
+    public String getBarcodeScanResult() {
+        return barcodeScanResult;
+    }
+
+    public boolean wasProductScanned() {
+        return productScanned;
+    }
+
+    public void setProductScanned(boolean productScanned) {
+        this.productScanned = productScanned;
     }
 }
 
