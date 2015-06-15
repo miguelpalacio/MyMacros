@@ -2,8 +2,9 @@ package com.miguelpalacio.mymacros;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.util.Log;
@@ -20,15 +21,26 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Foods Editor Page.
  * Allows the creation and edition of foods.
  */
 public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+
+    private static final String URL_GET_FOOD = "http://miguelpalacio.co/mymacros-server/get-food.php";
+    private static final String URL_INSERT_FOOD = "http://miguelpalacio.co/mymacros-server/insert-food.php";
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
 
     EditText foodNameEditText;
     EditText portionEditText;
@@ -52,6 +64,9 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     DatabaseAdapter databaseAdapter;
 
     OnFoodSaved onFoodSaved;
+
+    JSONParser jsonParser = new JSONParser();
+    ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -201,6 +216,12 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
             integrator.initiateScan();
         } else if (id == R.id.action_delete_food) {
             onFoodDelete();
+        }
+
+        else if (id == R.id.action_save_food_external_db) {
+            new SaveFoodOnExternalDatabase().execute();
+        } else if (id == R.id.action_retrieve_food_external_db) {
+            new GetFoodInfoOnExternalDatabase().execute();
         }
 
         return super.onOptionsItemSelected(item);
@@ -370,5 +391,121 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         // Launch the dialog.
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    // *********************************************************************************************
+    // Inner classes to deal with external database.
+
+    class SaveFoodOnExternalDatabase extends AsyncTask<String, String, String> {
+
+        // Before starting background thread, show process dialog.
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("Uploading information...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // Check for success tag.
+            int success;
+            try {
+                // Building parameters.
+                List<NameValuePair> parameters = new ArrayList<>();
+                parameters.add(new BasicNameValuePair("name", "Nutella"));
+                parameters.add(new BasicNameValuePair("portionQuantity", "100"));
+                parameters.add(new BasicNameValuePair("portionUnits", "g"));
+                parameters.add(new BasicNameValuePair("protein", "8.5"));
+                parameters.add(new BasicNameValuePair("carbs", "55.8"));
+                parameters.add(new BasicNameValuePair("fat", "30.2"));
+                parameters.add(new BasicNameValuePair("fiber", "0"));
+                parameters.add(new BasicNameValuePair("barcode", "5423843524182"));
+
+                Log.d("Request!", "Starting");
+
+                // HTTP request.
+                JSONObject json = jsonParser.makeHttpRequest(URL_INSERT_FOOD, "POST", parameters);
+                Log.d("Insertion attempt", json.toString());
+
+                // JSON success tag.
+                success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                    Log.d("Insertion Successful!", json.toString());
+                    return json.getString(TAG_MESSAGE);
+                } else {
+                    Log.d("Insertion Failure!", json.getString(TAG_MESSAGE));
+                    return json.getString(TAG_MESSAGE);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        // After completing the background task, dismiss the process dialog.
+        protected void onPostExecute(String file_url) {
+            progressDialog.dismiss();
+            if (file_url != null) {
+                Toast.makeText(getActivity(), file_url, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    class GetFoodInfoOnExternalDatabase extends AsyncTask<String, String, String> {
+
+        // Before starting background thread, show process dialog.
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("Retrieving information...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            // Check for success tag.
+            int success;
+            try {
+                // Building parameters.
+                List<NameValuePair> parameters = new ArrayList<>();
+                parameters.add(new BasicNameValuePair("barcode", "5423843524182"));
+
+                Log.d("Request!", "Starting");
+
+                // HTTP request.
+                JSONObject json = jsonParser.makeHttpRequest(URL_GET_FOOD, "POST", parameters);
+                Log.d("Insertion attempt", json.toString());
+
+                // JSON success tag.
+                success = json.getInt(TAG_SUCCESS);
+                if (success == 1) {
+                    Log.d("Retrieval Successful!", json.toString());
+                    return json.getJSONObject("food").toString();
+                    //return json.getString(TAG_MESSAGE);
+                } else {
+                    Log.d("Retrieval Failure!", json.getString(TAG_MESSAGE));
+                    return json.getString(TAG_MESSAGE);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        // After completing the background task, dismiss the process dialog.
+        protected void onPostExecute(String file_url) {
+            progressDialog.dismiss();
+            if (file_url != null) {
+                Toast.makeText(getActivity(), file_url, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
