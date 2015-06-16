@@ -39,8 +39,12 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
     private static final String URL_GET_FOOD = "http://miguelpalacio.co/mymacros-server/get-food.php";
     private static final String URL_INSERT_FOOD = "http://miguelpalacio.co/mymacros-server/insert-food.php";
-    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_CODE_RESPONSE = "codeResponse";
     private static final String TAG_MESSAGE = "message";
+    private static final String TAG_FOOD = "food";
+
+    private static final String BARCODE_SCANNED = "barcodeScanned";
+    private static final String SAVE_ON_SERVER = "saveOnServer";
 
     EditText foodNameEditText;
     EditText portionEditText;
@@ -65,14 +69,15 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
     OnFoodSaved onFoodSaved;
 
-    JSONParser jsonParser = new JSONParser();
+    boolean saveOnServer;
+    String barcodeScanned;
+    JSONParser jsonParser;
     ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Enable menu entries to receive calls.
+// Enable menu entries to receive calls.
         setHasOptionsMenu(true);
 
         // Check if New Food page was requested.
@@ -108,6 +113,15 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         super.onActivityCreated(savedInstanceState);
 
         databaseAdapter = new DatabaseAdapter(getActivity());
+        jsonParser = new JSONParser();
+        saveOnServer = false;
+
+        // Look for instance data.
+        final Bundle mySavedInstanceState = getArguments();
+        if (mySavedInstanceState.containsKey(BARCODE_SCANNED)) {
+            barcodeScanned = mySavedInstanceState.getString(BARCODE_SCANNED);
+            saveOnServer = mySavedInstanceState.getBoolean(SAVE_ON_SERVER);
+        }
 
         // Get references to the views.
 
@@ -141,28 +155,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
         foodNameEditText.setText(food.getName());
         portionEditText.setText(decimalFormat.format(food.getPortionQuantity()));
-
-        // Set spinner selection.
-        int spinnerSelection;
-        switch (food.getPortionUnits()) {
-            case "g":
-                spinnerSelection = 0;
-                break;
-            case "oz":
-                spinnerSelection = 1;
-                break;
-            case "ml":
-                spinnerSelection = 2;
-                break;
-            case "lb":
-                spinnerSelection = 3;
-                break;
-            default:
-                spinnerSelection = 4;
-                break;
-        }
-        portionUnitsSpinner.setSelection(spinnerSelection);
-
+        setSpinnerSelection(food.getPortionUnits());
         proteinEditText.setText(decimalFormat.format(food.getProtein()));
         carbsEditText.setText(decimalFormat.format(food.getCarbs()));
         fatEditText.setText(decimalFormat.format(food.getFat()));
@@ -171,6 +164,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         oldFoodName = food.getName();
     }
 
+    // Override onResume to check the results of the barcode scanner activity.
     @Override
     public void onResume() {
         super.onResume();
@@ -178,8 +172,10 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         // Check if a food barcode was scanned.
         MainActivity activity = (MainActivity) getActivity();
         if (activity.wasProductScanned()) {
-            Toast.makeText(activity, "FORMAT: " + activity.getBarcodeScanFormat(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(activity, "CONTENT: " + activity.getBarcodeScanResult(), Toast.LENGTH_SHORT).show();
+/*            Toast.makeText(activity, "FORMAT: " + activity.getBarcodeScanFormat(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "CONTENT: " + activity.getBarcodeScanResult(), Toast.LENGTH_SHORT).show();*/
+            barcodeScanned = activity.getBarcodeScanResult();
+            new GetFoodInfoOnExternalDatabase().execute();
             activity.setProductScanned(false);
         }
     }
@@ -218,12 +214,6 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
             onFoodDelete();
         }
 
-        else if (id == R.id.action_save_food_external_db) {
-            new SaveFoodOnExternalDatabase().execute();
-        } else if (id == R.id.action_retrieve_food_external_db) {
-            new GetFoodInfoOnExternalDatabase().execute();
-        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -239,6 +229,46 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     // Public Interface to be implemented in MainActivity.
     public interface OnFoodSaved {
         void onFoodSavedSuccessfully();
+    }
+
+
+    /**
+     * Save local variables in case of restart of fragment (due to re-orientation,
+     * because it went into stopped state, etc).
+     *
+     * <e>Note: onSaveInstanceState doesn't work because it is called when the activity
+     * stops, not when the Fragment does.</e>
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (barcodeScanned != null) {
+            getArguments().putString(BARCODE_SCANNED, barcodeScanned);
+            getArguments().putBoolean(SAVE_ON_SERVER, saveOnServer);
+        }
+    }
+
+    public void setSpinnerSelection(String selection) {
+        int spinnerSelection;
+        switch (selection) {
+            case "g":
+                spinnerSelection = 0;
+                break;
+            case "oz":
+                spinnerSelection = 1;
+                break;
+            case "ml":
+                spinnerSelection = 2;
+                break;
+            case "lb":
+                spinnerSelection = 3;
+                break;
+            default:
+                spinnerSelection = 4;
+                break;
+        }
+        portionUnitsSpinner.setSelection(spinnerSelection);
     }
 
     // *********************************************************************************************
@@ -297,6 +327,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         // Insert/Update food.
         if (foodId < 0) {
             insertFood();
+
         } else {
             updateFood();
         }
@@ -320,9 +351,15 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
                         Toast.LENGTH_SHORT).show();
             }
             Toast.makeText(getActivity(), "Food not created", Toast.LENGTH_SHORT).show();
+
         } else {
-            Toast.makeText(getActivity(), "Food created", Toast.LENGTH_SHORT).show();
-            onFoodSaved.onFoodSavedSuccessfully();
+            if(saveOnServer) {
+                // User scanned food's barcode, but food was not registered. Register it.
+                new SaveFoodOnExternalDatabase().execute();
+            } else {
+                Toast.makeText(getActivity(), "Food created", Toast.LENGTH_SHORT).show();
+                onFoodSaved.onFoodSavedSuccessfully();
+            }
         }
     }
 
@@ -395,11 +432,16 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
 
     // *********************************************************************************************
-    // Inner classes to deal with external database.
+    // Inner classes to deal with external database. They extend from AsyncTask since they
+    // may take perform for a long time, so it's necessary to separate them from the GUI task.
 
+    /**
+     * This task will be executed when the user scans a food's barcode and the food is not
+     * registered in the external database, and the user has input all the food's data and saved it.
+     */
     class SaveFoodOnExternalDatabase extends AsyncTask<String, String, String> {
 
-        // Before starting background thread, show process dialog.
+        // Before starting the background thread, show a process dialog.
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -412,33 +454,35 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
         @Override
         protected String doInBackground(String... params) {
-            // Check for success tag.
-            int success;
+            int codeResponse;
+
             try {
-                // Building parameters.
+                // Set parameters for the HTTP request that will be made.
                 List<NameValuePair> parameters = new ArrayList<>();
-                parameters.add(new BasicNameValuePair("name", "Nutella"));
-                parameters.add(new BasicNameValuePair("portionQuantity", "100"));
-                parameters.add(new BasicNameValuePair("portionUnits", "g"));
-                parameters.add(new BasicNameValuePair("protein", "8.5"));
-                parameters.add(new BasicNameValuePair("carbs", "55.8"));
-                parameters.add(new BasicNameValuePair("fat", "30.2"));
-                parameters.add(new BasicNameValuePair("fiber", "0"));
-                parameters.add(new BasicNameValuePair("barcode", "5423843524182"));
+                parameters.add(new BasicNameValuePair("name", foodName));
+                parameters.add(new BasicNameValuePair("portionQuantity", Double.toString(portionQuantity)));
+                parameters.add(new BasicNameValuePair("portionUnits", portionUnits));
+                parameters.add(new BasicNameValuePair("protein", Double.toString(proteinQuantity)));
+                parameters.add(new BasicNameValuePair("carbs", Double.toString(carbsQuantity)));
+                parameters.add(new BasicNameValuePair("fat", Double.toString(fatQuantity)));
+                parameters.add(new BasicNameValuePair("fiber", Double.toString(fiberQuantity)));
+                parameters.add(new BasicNameValuePair("barcode", barcodeScanned));
 
-                Log.d("Request!", "Starting");
+/*                Log.d("Request!", "Starting");*/
 
-                // HTTP request.
+                // Perform HTTP request and store the response into a JSON object.
                 JSONObject json = jsonParser.makeHttpRequest(URL_INSERT_FOOD, "POST", parameters);
-                Log.d("Insertion attempt", json.toString());
+/*                Log.d("Insertion attempt", json.toString());*/
 
-                // JSON success tag.
-                success = json.getInt(TAG_SUCCESS);
-                if (success == 1) {
-                    Log.d("Insertion Successful!", json.toString());
+                // Get code response from the JSON object.
+                codeResponse = json.getInt(TAG_CODE_RESPONSE);
+                if (codeResponse == 1) {
+/*                    Log.d("Insertion Successful!", json.toString());*/
+                    // Food inserted into external database successfully.
                     return json.getString(TAG_MESSAGE);
                 } else {
-                    Log.d("Insertion Failure!", json.getString(TAG_MESSAGE));
+/*                    Log.d("Insertion Failure!", json.getString(TAG_MESSAGE));*/
+                    // Failure upon food insertion into external database.
                     return json.getString(TAG_MESSAGE);
                 }
             } catch (JSONException e) {
@@ -451,14 +495,23 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         protected void onPostExecute(String file_url) {
             progressDialog.dismiss();
             if (file_url != null) {
+                Toast.makeText(getActivity(), "Food created", Toast.LENGTH_SHORT).show();
+                // Show the response message (TAG_MESSAGE) from the server in a toast.
                 Toast.makeText(getActivity(), file_url, Toast.LENGTH_LONG).show();
+                onFoodSaved.onFoodSavedSuccessfully();
             }
         }
     }
 
+    /**
+     * Having the food's barcode, this task attempts to retrieve the food's information
+     * from the external database, and assigns all the retrieved data into the input fields.
+     */
     class GetFoodInfoOnExternalDatabase extends AsyncTask<String, String, String> {
 
-        // Before starting background thread, show process dialog.
+        private JSONObject foodRetrieved;
+
+        // Before starting the background thread, show a process dialog.
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -471,27 +524,31 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
 
         @Override
         protected String doInBackground(String... params) {
-            // Check for success tag.
-            int success;
+            int codeResponse;
+
             try {
-                // Building parameters.
+                // Set parameters for the HTTP request that will be made.
                 List<NameValuePair> parameters = new ArrayList<>();
-                parameters.add(new BasicNameValuePair("barcode", "5423843524182"));
+                parameters.add(new BasicNameValuePair("barcode", barcodeScanned));
+/*                Log.d("Request!", "Starting");*/
 
-                Log.d("Request!", "Starting");
-
-                // HTTP request.
+                // Perform HTTP request and store the response into a JSON object.
                 JSONObject json = jsonParser.makeHttpRequest(URL_GET_FOOD, "POST", parameters);
-                Log.d("Insertion attempt", json.toString());
+/*                Log.d("Insertion attempt", json.toString());*/
 
-                // JSON success tag.
-                success = json.getInt(TAG_SUCCESS);
-                if (success == 1) {
-                    Log.d("Retrieval Successful!", json.toString());
-                    return json.getJSONObject("food").toString();
-                    //return json.getString(TAG_MESSAGE);
-                } else {
-                    Log.d("Retrieval Failure!", json.getString(TAG_MESSAGE));
+                // Get code response from the JSON object.
+                codeResponse = json.getInt(TAG_CODE_RESPONSE);
+                if (codeResponse == 1) {
+/*                    Log.d("Retrieval Successful!", json.toString());*/
+                    foodRetrieved = json.getJSONObject("food");
+                    return json.getString(TAG_MESSAGE);
+                } else if (codeResponse == 2) {
+                    // Enable insertion in external database.
+                    saveOnServer = true;
+                    return json.getString(TAG_MESSAGE);
+                }
+                else {
+                    //Log.d("Retrieval Failure!", json.getString(TAG_MESSAGE));
                     return json.getString(TAG_MESSAGE);
                 }
             } catch (JSONException e) {
@@ -504,7 +561,23 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         protected void onPostExecute(String file_url) {
             progressDialog.dismiss();
             if (file_url != null) {
+                // Show the response message (TAG_MESSAGE) from the server in a toast.
                 Toast.makeText(getActivity(), file_url, Toast.LENGTH_LONG).show();
+
+                // Assign retrieved food's info (if any) to the input fields.
+                if (foodRetrieved != null) {
+                    try {
+                        foodNameEditText.setText(foodRetrieved.getString("Name"));
+                        portionEditText.setText(foodRetrieved.getString("PortionQuantity"));
+                        setSpinnerSelection(foodRetrieved.getString("PortionUnits"));
+                        proteinEditText.setText(foodRetrieved.getString("Protein"));
+                        carbsEditText.setText(foodRetrieved.getString("Carbs"));
+                        fatEditText.setText(foodRetrieved.getString("Fat"));
+                        fiberEditText.setText(foodRetrieved.getString("Fiber"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
