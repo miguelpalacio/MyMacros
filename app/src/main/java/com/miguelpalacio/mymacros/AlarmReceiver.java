@@ -1,10 +1,14 @@
 package com.miguelpalacio.mymacros;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -53,6 +57,10 @@ public class AlarmReceiver extends BroadcastReceiver {
             json = prefs.getString(PlannerFragment.KEY_MEAL_FAT_LIST, null);
             macroList = gson.fromJson(json, type);
             fatConsumed = Utilities.getSummation(macroList);
+
+            // Since the day is over, remove all the lists in SharedPreferences (reset).
+            PlannerFragment.setResetLists();
+
         } else {
             proteinConsumed = 0;
             carbsConsumed = 0;
@@ -70,6 +78,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
 
         long logDateTime = System.currentTimeMillis();
+
+/*        Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();*/
 
         // Insert the data into the DailyLogs table of the database.
         databaseAdapter.insertLog(proteinTarget, proteinConsumed, carbsTarget, carbsConsumed,

@@ -17,6 +17,7 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -35,6 +36,8 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
     public static final String KEY_MEAL_CARBS_LIST = "meal_carbs_list";
     public static final String KEY_MEAL_FAT_LIST = "meal_fat_list";
     public static final String KEY_MEAL_FIBER_LIST = "meal_fiber_list";
+
+    private static boolean resetLists;
 
     SharedPreferences sharedPref;
 
@@ -113,7 +116,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // Load the lists with the info for Today's Plan.
-        if (sharedPref.contains(KEY_MEAL_ID_LIST)) {
+        if (sharedPref.contains(KEY_MEAL_ID_LIST) && !resetLists) {
             String json;
 
             json = sharedPref.getString(KEY_MEAL_ID_LIST, null);
@@ -145,16 +148,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
             mealFiberList = gson.fromJson(json, type);
 
         } else {
-            mealIdList = new ArrayList<>();
-            mealNameList = new ArrayList<>();
-            mealSummaryList = new ArrayList<>();
-            mealProteinList = new ArrayList<>();
-            mealCarbsList = new ArrayList<>();
-            mealFatList = new ArrayList<>();
-            mealFiberList = new ArrayList<>();
-
-            mealNameList.add(getString(R.string.planner_add_meal));
-            mealSummaryList.add("");
+            initLists();
         }
 
         // When coming back from AddMealFragment, check if user selected a meal.
@@ -226,12 +220,21 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
         if (listHeader != null) {
             setHeaderData();
         }
+
+        // If alarm went off and the activity was still "running", reset lists.
+        if (resetLists) {
+            initLists();
+        }
     }
 
     // Persist changes prior to leave the fragment.
     @Override
     public void onPause() {
         super.onPause();
+
+        if (resetLists) {
+            initLists();
+        }
 
         SharedPreferences.Editor editor = sharedPref.edit();
 
@@ -425,5 +428,40 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
                 decimalFormat.format(targetEnergy) + " " + energyUnits);
 
         itemListAdapter.notifyDataSetChanged();
+    }
+
+    // Init/Reset lists where the information about the meals added to the day is stored.
+    private void initLists() {
+        resetLists = false;
+
+        if (mealIdList != null) {
+            mealIdList.clear();
+            mealNameList.clear();
+            mealSummaryList.clear();
+            mealProteinList.clear();
+            mealCarbsList.clear();
+            mealFatList.clear();
+            mealFiberList.clear();
+        } else {
+            mealIdList = new ArrayList<>();
+            mealNameList = new ArrayList<>();
+            mealSummaryList = new ArrayList<>();
+            mealProteinList = new ArrayList<>();
+            mealCarbsList = new ArrayList<>();
+            mealFatList = new ArrayList<>();
+            mealFiberList = new ArrayList<>();
+        }
+
+        mealNameList.add(getString(R.string.planner_add_meal));
+        mealSummaryList.add("");
+
+        if (itemListAdapter != null) {
+            setHeaderData();
+            itemListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public static void setResetLists() {
+        resetLists = true;
     }
 }

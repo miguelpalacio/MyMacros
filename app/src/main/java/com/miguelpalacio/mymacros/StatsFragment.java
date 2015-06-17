@@ -1,7 +1,9 @@
 package com.miguelpalacio.mymacros;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -254,6 +256,9 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
     }
 
     private void setWeightLineChartData() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String weightUnits = prefs.getString(SettingsFragment.KEY_WEIGHT, "");
+
         int numberOfDays = 30;
         WeightLogs weightLogs = databaseAdapter.getWeightLogs(numberOfDays);
 
@@ -278,10 +283,11 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
 
         for (int i = listLimit; i >= 0; i--) {
             float value = (float) weights.get(i).doubleValue();
+            value = weightUnits.equals("lb") ? (float) (value * 2.2046) : value;
             weightValues.add(new BarEntry(value, listLimit - i));
         }
 
-        LineDataSet weightSet = new LineDataSet(weightValues, "Weight (kg)");
+        LineDataSet weightSet = new LineDataSet(weightValues, "Weight (" + weightUnits + ")");
 
         weightSet.setColor(getResources().getColor(R.color.color_weight));
         weightSet.setCircleColor(getResources().getColor(R.color.color_weight));
@@ -305,8 +311,8 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         int maxWeightIndex = weights.indexOf(Collections.max(weights));
 
         YAxis weightLeftAxis = weightLineChart.getAxisLeft();
-        weightLeftAxis.setAxisMinValue((float) weights.get(minWeightIndex).doubleValue() - 5);
-        weightLeftAxis.setAxisMaxValue((float) weights.get(maxWeightIndex).doubleValue() + 5);
+        weightLeftAxis.setAxisMinValue((float) weights.get(minWeightIndex).doubleValue() - 2);
+        weightLeftAxis.setAxisMaxValue((float) weights.get(maxWeightIndex).doubleValue() + 2);
 
         // Draw the chart.
         weightLineChart.setData(data);
