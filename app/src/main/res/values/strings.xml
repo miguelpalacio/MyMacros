@@ -384,6 +384,14 @@
     <string name="dialog_planner_remove_meal_ok">REMOVE</string>
     <string name="dialog_planner_remove_meal_cancel">Cancel</string>
 
+
+    <!-- *************************************************************************************** -->
+    <!-- Stats Page Strings. -->
+    <string name="stats_macronutrients_previous_days">Macronutrients Previous Days</string>
+    <string name="stats_weekly_intake">Weekly Intake</string>
+    <string name="stats_weight_progress">Weight Progress</string>
+
+
     <!-- *************************************************************************************** -->
     <!-- Misc Strings. -->
 

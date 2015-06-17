@@ -188,7 +188,7 @@
 
             <!-- Pie Chart. -->
             <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/stats_pie_chart"
+                android:id="@+id/meal_pie_chart"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"/>

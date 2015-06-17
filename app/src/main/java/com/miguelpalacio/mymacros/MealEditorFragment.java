@@ -250,7 +250,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                             fatTextView = (TextView) listHeader.findViewById(R.id.meal_fat);
                             fiberTextView = (TextView) listHeader.findViewById(R.id.meal_fiber);
                             energyTextView = (TextView) listHeader.findViewById(R.id.meal_energy);
-                            pieChart = (PieChart) getActivity().findViewById(R.id.stats_pie_chart);
+                            pieChart = (PieChart) getActivity().findViewById(R.id.meal_pie_chart);
 
                             // Since the references are ready, set data in the list header.
                             setHeaderData();

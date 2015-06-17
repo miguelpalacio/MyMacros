@@ -41,7 +41,6 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     private static final String URL_INSERT_FOOD = "http://miguelpalacio.co/mymacros-server/insert-food.php";
     private static final String TAG_CODE_RESPONSE = "codeResponse";
     private static final String TAG_MESSAGE = "message";
-    private static final String TAG_FOOD = "food";
 
     private static final String BARCODE_SCANNED = "barcodeScanned";
     private static final String SAVE_ON_SERVER = "saveOnServer";

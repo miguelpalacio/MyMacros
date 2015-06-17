@@ -16,9 +16,6 @@
     <color name="drawer_item_label">#333333</color>
     <color name="inset_foreground">#4000</color>
 
-<!--    <color name="chart_protein">#64B5F6</color>
-    <color name="chart_carbs">#E57373</color>
-    <color name="chart_fat">#FFF176</color>-->
     <color name="color_protein">#BBDEFB</color>
     <color name="color_carbs">#FFCDD2</color>
     <color name="color_fat">#FFF9C4</color>
@@ -28,9 +25,10 @@
     <color name="color_fat_dark">#FFF59D</color>
     <color name="color_fiber_dark">#BCAAA4</color>
 
-
     <color name="color_protein_darker">#42A5F5</color>
     <color name="color_carbs_darker">#EF5350</color>
     <color name="color_fat_darker">#FFEE58</color>
     <color name="color_fiber_darker">#8d6E63</color>
+
+    <color name="color_weight">#7986CB</color>
 </resources>

@@ -1,21 +1,81 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="com.miguelpalacio.mymacros.StatsFragment">
-
-<!--    &lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="STATS FRAGMENT"
-        android:textColor="#00AA00"/>-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.miguelpalacio.mymacros.StatsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <!-- Pie chart here. -->
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/stats_pie_chart"
-            android:layout_width="200dp"
-            android:layout_height="200dp" />
+        <!-- Macronutrients Previous Days. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stats_macronutrients_previous_days"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/accent"/>
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/stats_bar_chart_macros"
+                android:layout_width="match_parent"
+                android:layout_height="230dp" />
+        </LinearLayout>
+
+        <!-- Weekly Intake. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stats_weekly_intake"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/accent"/>
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/stats_bar_chart_calories"
+                android:layout_width="match_parent"
+                android:layout_height="230dp" />
+        </LinearLayout>
+
+        <!-- Weight Progress. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/stats_weight_progress"
+                android:paddingTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/accent"/>
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/stats_line_chart_weight"
+                android:layout_width="match_parent"
+                android:layout_height="230dp" />
+        </LinearLayout>
     </LinearLayout>
-
-</FrameLayout>
+</ScrollView>
