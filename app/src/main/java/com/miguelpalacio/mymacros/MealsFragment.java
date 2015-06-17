@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.miguelpalacio.mymacros.database.DatabaseAdapter;
 
 /**
  * My Meals Page.

@@ -1,6 +1,5 @@
 package com.miguelpalacio.mymacros;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,7 +9,6 @@ import android.view.ViewGroup;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -21,8 +19,15 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Highlight;
 import com.github.mikephil.charting.utils.LargeValueFormatter;
+import com.miguelpalacio.mymacros.database.DatabaseAdapter;
+import com.miguelpalacio.mymacros.database.datatypes.MacrosConsumed;
+import com.miguelpalacio.mymacros.database.datatypes.WeeklyConsumption;
+import com.miguelpalacio.mymacros.database.datatypes.WeightLogs;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Stats Page.
@@ -48,7 +53,6 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         super.onActivityCreated(savedInstanceState);
 
         databaseAdapter = new DatabaseAdapter(getActivity());
-
 
         // Create a custom MarkerView (extending MarkerView) and specify its layout.
         MyMarkerView mv = new MyMarkerView(getActivity(), R.layout.custom_marker_view);
@@ -78,7 +82,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
 
         macrosBarChart.getAxisRight().setEnabled(false);
 
-        setBarChartPreviousDaysData();
+        setMacrosBarChartData();
 
 
         // Weekly Intake Bar Chart.
@@ -106,7 +110,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
 
         caloriesBarChart.getAxisRight().setEnabled(false);
 
-        setBarChartWeeklyIntakeData();
+        setCaloriesBarChartData();
 
 
         // Weight Progress Line Chart.
@@ -125,27 +129,45 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
 
         weightLineChart.setHighlightEnabled(false);
 
+        weightLineChart.setMarkerView(mv);
+
         Legend weightLegend = weightLineChart.getLegend();
         weightLegend.setPosition(Legend.LegendPosition.BELOW_CHART_RIGHT);
         weightLegend.setYOffset(12f);
         weightLegend.setTextSize(11f);
 
         YAxis weightLeftAxis = weightLineChart.getAxisLeft();
-        weightLeftAxis.setAxisMinValue(0);
+        weightLeftAxis.setStartAtZero(false);
+        weightLeftAxis.setAxisMinValue(70f);
 
         weightLineChart.getAxisRight().setEnabled(false);
 
-        setLineChartWeightProgressData();
+        setWeightLineChartData();
     }
 
-    public void setBarChartPreviousDaysData() {
-        int l = 5;
+    public void setMacrosBarChartData() {
+        int numberOfDays = 5;
+        MacrosConsumed macrosConsumed = databaseAdapter.getMacrosConsumed(numberOfDays);
+
+        List<Double> proteinConsumed;
+        List<Double> carbsConsumed;
+        List<Double> fatConsumed;
+        List<Long> dateLogs;
+
+        proteinConsumed = macrosConsumed.getProteinConsumed();
+        carbsConsumed = macrosConsumed.getCarbsConsumed();
+        fatConsumed = macrosConsumed.getFatConsumed();
+        dateLogs = macrosConsumed.getDateLogs();
+
+        int listLimit = dateLogs.size() - 1;
 
         // Load the labels for the X axis.
+        Calendar c = Calendar.getInstance();
+
         ArrayList<String> xValues = new ArrayList<>();
-        for (int i = 0; i < l; i++) {
-            int day = l - i;
-            xValues.add("Day " + day);
+        for (int i = listLimit; i >= 0; i--) {
+            c.setTimeInMillis(dateLogs.get(i));
+            xValues.add(c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.MONTH));
         }
 
         // Load values for each macronutrient.
@@ -153,27 +175,27 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         ArrayList<BarEntry> carbsValues = new ArrayList<>();
         ArrayList<BarEntry> fatValues = new ArrayList<>();
 
-        for (int i = 0; i < l; i++) {
-            float val = (float) (Math.random() * 100) + 2;
-            proteinValues.add(new BarEntry(val, i));
+        for (int i = listLimit; i >= 0; i--) {
+            float value = (float) proteinConsumed.get(i).doubleValue();
+            proteinValues.add(new BarEntry(value, listLimit - i));
         }
 
-        for (int i = 0; i < l; i++) {
-            float val = (float) (Math.random() * 100) + 2;
-            carbsValues.add(new BarEntry(val, i));
+        for (int i = listLimit; i >= 0; i--) {
+            float value = (float) carbsConsumed.get(i).doubleValue();
+            carbsValues.add(new BarEntry(value, listLimit - i));
         }
 
-        for (int i = 0; i < l; i++) {
-            float val = (float) (Math.random() * 100) + 2;
-            fatValues.add(new BarEntry(val, i));
+        for (int i = listLimit; i >= 0; i--) {
+            float value = (float) fatConsumed.get(i).doubleValue();
+            fatValues.add(new BarEntry(value, listLimit - i));
         }
 
         // Create one dataset for each macro.
-        BarDataSet proteinSet = new BarDataSet(proteinValues, "Protein");
+        BarDataSet proteinSet = new BarDataSet(proteinValues, "Protein (g)");
         proteinSet.setColor(getResources().getColor(R.color.color_protein));
-        BarDataSet carbsSet = new BarDataSet(carbsValues, "Carbohydrates");
+        BarDataSet carbsSet = new BarDataSet(carbsValues, "Carbohydrates (g)");
         carbsSet.setColor(getResources().getColor(R.color.color_carbs));
-        BarDataSet fatSet = new BarDataSet(fatValues, "Fat");
+        BarDataSet fatSet = new BarDataSet(fatValues, "Fat (g)");
         fatSet.setColor(getResources().getColor(R.color.color_fat));
 
         ArrayList<BarDataSet> macrosDataSets = new ArrayList<>();
@@ -192,23 +214,26 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
     }
 
 
-    public void setBarChartWeeklyIntakeData() {
-        int l = 4;
+    public void setCaloriesBarChartData() {
+        int numberOfWeeks = 4;
+        WeeklyConsumption weeklyConsumption = databaseAdapter.getWeeklyConsumption(numberOfWeeks);
+
+        List<Double> caloriesConsumed = weeklyConsumption.getCaloriesConsumed();
+        List<String> weeks = weeklyConsumption.getWeeks();
+
+        int listLimit = weeks.size() - 1;
 
         // Load the labels for the X axis.
         ArrayList<String> xValues = new ArrayList<>();
-        for (int i = 0; i < l; i++) {
-            int day = l - i;
-            xValues.add("Week " + day);
+        for (int i = listLimit; i >= 0; i--) {
+            xValues.add(weeks.get(i));
         }
 
-        // Load values for each macronutrient.
         ArrayList<BarEntry> calorieValues = new ArrayList<>();
 
-
-        for (int i = 0; i < l; i++) {
-            float val = (float) (Math.random() * 100) + 2;
-            calorieValues.add(new BarEntry(val, i));
+        for (int i = listLimit; i >= 0; i--) {
+            float value = (float) caloriesConsumed.get(i).doubleValue();
+            calorieValues.add(new BarEntry(value, listLimit - i));
         }
 
         // Create one dataset for each macro.
@@ -228,25 +253,35 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         caloriesBarChart.invalidate();
     }
 
-    private void setLineChartWeightProgressData() {
+    private void setWeightLineChartData() {
+        int numberOfDays = 30;
+        WeightLogs weightLogs = databaseAdapter.getWeightLogs(numberOfDays);
+
+        List<Double> weights;
+        List<Long> dateLogs;
+
+        weights = weightLogs.getWeights();
+        dateLogs = weightLogs.getDateLogs();
+
+        int listLimit = dateLogs.size() - 1;
+
+        // Load the labels for the X axis.
+        Calendar c = Calendar.getInstance();
 
         ArrayList<String> xValues = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            xValues.add((i) + "");
+        for (int i = listLimit; i >= 0; i--) {
+            c.setTimeInMillis(dateLogs.get(i));
+            xValues.add(c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.MONTH));
         }
 
-        ArrayList<Entry> yValues = new ArrayList<>();
+        ArrayList<Entry> weightValues = new ArrayList<>();
 
-        for (int i = 0; i < 20; i++) {
-
-            float mult = (100 + 1);
-            float val = (float) (Math.random() * mult) + 3;// + (float)
-                                                           // ((mult *
-                                                           // 0.1) / 10);
-            yValues.add(new Entry(val, i));
+        for (int i = listLimit; i >= 0; i--) {
+            float value = (float) weights.get(i).doubleValue();
+            weightValues.add(new BarEntry(value, listLimit - i));
         }
 
-        LineDataSet weightSet = new LineDataSet(yValues, "Weight");
+        LineDataSet weightSet = new LineDataSet(weightValues, "Weight (kg)");
 
         weightSet.setColor(getResources().getColor(R.color.color_weight));
         weightSet.setCircleColor(getResources().getColor(R.color.color_weight));
@@ -255,6 +290,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         weightSet.setDrawCircles(false);
         weightSet.setDrawCircleHole(false);
         weightSet.setValueTextSize(9f);
+        weightSet.setDrawValues(false);
 /*        weightSet.setFillAlpha(65);
         weightSet.setFillColor(Color.BLACK);*/
         weightSet.setDrawCubic(true);
@@ -264,6 +300,15 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
 
         LineData data = new LineData(xValues, dataSets);
 
+        // Adjust Y Axis to show the weight with a nice "resolution".
+        int minWeightIndex = weights.indexOf(Collections.min(weights));
+        int maxWeightIndex = weights.indexOf(Collections.max(weights));
+
+        YAxis weightLeftAxis = weightLineChart.getAxisLeft();
+        weightLeftAxis.setAxisMinValue((float) weights.get(minWeightIndex).doubleValue() - 5);
+        weightLeftAxis.setAxisMaxValue((float) weights.get(maxWeightIndex).doubleValue() + 5);
+
+        // Draw the chart.
         weightLineChart.setData(data);
         weightLineChart.invalidate();
     }

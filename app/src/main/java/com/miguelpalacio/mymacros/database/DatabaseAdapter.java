@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -7,7 +7,16 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.miguelpalacio.mymacros.Food;
+import com.miguelpalacio.mymacros.Meal;
+import com.miguelpalacio.mymacros.MealFood;
+import com.miguelpalacio.mymacros.Utilities;
+import com.miguelpalacio.mymacros.database.datatypes.MacrosConsumed;
+import com.miguelpalacio.mymacros.database.datatypes.WeeklyConsumption;
+import com.miguelpalacio.mymacros.database.datatypes.WeightLogs;
+
 import java.text.DecimalFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -138,9 +147,9 @@ public class DatabaseAdapter {
         String[] columns = {DatabaseHelper.FOOD_ID, DatabaseHelper.NAME,
                 DatabaseHelper.PROTEIN, DatabaseHelper.CARBS, DatabaseHelper.FAT,
                 DatabaseHelper.PORTION_UNITS};
-        String orderBy = DatabaseHelper.NAME;
+        String orderBy = DatabaseHelper.NAME + " COLLATE LOCALIZED ASC";
         Cursor cursor = db.query(DatabaseHelper.TABLE_FOODS, columns,
-        null, null, null, null, orderBy + " COLLATE LOCALIZED ASC");
+        null, null, null, null, orderBy);
 
         List<String> ids = new ArrayList<>();
         List<String> names = new ArrayList<>();
@@ -490,9 +499,9 @@ public class DatabaseAdapter {
         // SELECT Name, Protein, Carbohydrates, Fat FROM Foods;
         String[] columns = {DatabaseHelper.MEAL_ID, DatabaseHelper.NAME,
                 DatabaseHelper.PROTEIN, DatabaseHelper.CARBS, DatabaseHelper.FAT};
-        String orderBy = DatabaseHelper.NAME;
+        String orderBy = DatabaseHelper.NAME + " COLLATE LOCALIZED ASC";
         Cursor cursor = db.query(DatabaseHelper.TABLE_MEALS, columns,
-                null, null, null, null, orderBy + " COLLATE LOCALIZED ASC");
+                null, null, null, null, orderBy);
 
         List<String> ids = new ArrayList<>();
         List<String> names = new ArrayList<>();
@@ -612,6 +621,147 @@ public class DatabaseAdapter {
         contentValues.put(DatabaseHelper.LOG_DATE_TIME, logDateTime);
 
         return db.insert(DatabaseHelper.TABLE_DAILY_LOGS, null, contentValues);
+    }
+
+    /**
+     * Gets the consumption of each macronutrient for the last (given) days.
+     */
+    public MacrosConsumed getMacrosConsumed(int numberOfLogs) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // SELECT ProteinConsumed, CarbsConsumed, FatConsumed, LogDateTime FROM DailyLogs;
+        String[] columns = {DatabaseHelper.PROTEIN_CONSUMED, DatabaseHelper.CARBS_CONSUMED,
+                DatabaseHelper.FAT_CONSUMED, DatabaseHelper.LOG_DATE_TIME};
+        String orderBy = DatabaseHelper.LOG_DATE_TIME + " DESC";
+        Cursor cursor = db.query(DatabaseHelper.TABLE_DAILY_LOGS, columns,
+                null, null, null, null, orderBy, "" + numberOfLogs);
+
+        List<Double> proteinConsumed = new ArrayList<>();
+        List<Double> carbsConsumed = new ArrayList<>();
+        List<Double> fatConsumed = new ArrayList<>();
+        List<Long> dateLogs = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            int index;
+
+            index = cursor.getColumnIndex(DatabaseHelper.PROTEIN_CONSUMED);
+            proteinConsumed.add(cursor.getDouble(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.CARBS_CONSUMED);
+            carbsConsumed.add(cursor.getDouble(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.FAT_CONSUMED);
+            fatConsumed.add(cursor.getDouble(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.LOG_DATE_TIME);
+            dateLogs.add(cursor.getLong(index));
+        }
+        cursor.close();
+
+        return new MacrosConsumed(proteinConsumed, carbsConsumed, fatConsumed, dateLogs);
+    }
+
+    /**
+     * Gets the calorie consumption for the last 4 weeks.
+     */
+    public WeeklyConsumption getWeeklyConsumption(int numberOfWeeks) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        List<Double> caloriesConsumed = new ArrayList<>();
+        List<String> weeks = new ArrayList<>();
+
+        for (int i = 0; i < numberOfWeeks; i++) {
+
+            double caloriesWeek = 0;
+            boolean thereAreLogs = false;
+
+/*            Calendar currentWeek = Calendar.getInstance();
+            currentWeek.add(Calendar.WEEK_OF_YEAR, -(i));
+
+            Calendar previousWeek = Calendar.getInstance();
+            previousWeek.add(Calendar.WEEK_OF_YEAR, -(i + 1));*/
+
+            // Get week and previous week.
+            Calendar currentWeek = Calendar.getInstance();
+            currentWeek.add(Calendar.WEEK_OF_YEAR, -i);
+            currentWeek.add(Calendar.DAY_OF_WEEK, -(currentWeek.get(Calendar.DAY_OF_WEEK)) + 1);
+            currentWeek.add(Calendar.HOUR_OF_DAY, -(currentWeek.get(Calendar.HOUR_OF_DAY)));
+            currentWeek.add(Calendar.MINUTE, -(currentWeek.get(Calendar.MINUTE)));
+
+            Calendar previousWeek = Calendar.getInstance();
+            previousWeek.add(Calendar.WEEK_OF_YEAR, -(i + 1));
+            previousWeek.add(Calendar.DAY_OF_WEEK, -(previousWeek.get(Calendar.DAY_OF_WEEK)) + 2);
+            previousWeek.add(Calendar.HOUR_OF_DAY, -(previousWeek.get(Calendar.HOUR_OF_DAY)));
+            previousWeek.add(Calendar.MINUTE, -(previousWeek.get(Calendar.MINUTE)));
+
+            // Define week label.
+            String week = previousWeek.get(Calendar.DAY_OF_MONTH) + "/" + (1 + previousWeek.get(Calendar.MONTH)) +
+                    " - " + currentWeek.get(Calendar.DAY_OF_MONTH) + "/" + (1 + currentWeek.get(Calendar.MONTH));
+
+            // SELECT ProteinConsumed, CarbsConsumed, FatConsumed, FROM DailyLogs
+            // WHERE logDateTime BETWEEN previousWeek AND week;
+            String[] columns = {DatabaseHelper.PROTEIN_CONSUMED, DatabaseHelper.CARBS_CONSUMED,
+                    DatabaseHelper.FAT_CONSUMED, DatabaseHelper.LOG_DATE_TIME};
+            String whereClause = DatabaseHelper.LOG_DATE_TIME + " BETWEEN ? AND ?";
+            String[] whereArgs = {Long.toString(previousWeek.getTimeInMillis()),
+                    Long.toString(currentWeek.getTimeInMillis())};
+            String orderBy = DatabaseHelper.LOG_DATE_TIME + " DESC";
+
+            Cursor cursor = db.query(DatabaseHelper.TABLE_DAILY_LOGS, columns,
+                    whereClause, whereArgs, null, null, orderBy);
+
+            while (cursor.moveToNext()) {
+                thereAreLogs = true;
+                int index;
+
+                index = cursor.getColumnIndex(DatabaseHelper.PROTEIN_CONSUMED);
+                double protein = cursor.getDouble(index);
+
+                index = cursor.getColumnIndex(DatabaseHelper.CARBS_CONSUMED);
+                double carbs = cursor.getDouble(index);
+
+                index = cursor.getColumnIndex(DatabaseHelper.FAT_CONSUMED);
+                double fat = cursor.getDouble(index);
+
+                caloriesWeek = caloriesWeek + (4 * protein + 4 * carbs + 9 * fat);
+            }
+            cursor.close();
+
+            if (thereAreLogs) {
+                caloriesConsumed.add(caloriesWeek);
+                weeks.add(week);
+            }
+        }
+        return new WeeklyConsumption(caloriesConsumed, weeks);
+    }
+
+    /**
+     * Gets the user weight for the last (given) days.
+     */
+    public WeightLogs getWeightLogs(int numberOfLogs) {
+        SQLiteDatabase db = helper.getReadableDatabase();
+
+        // SELECT UserWeight, LogDateTime FROM DailyLogs;
+        String[] columns = {DatabaseHelper.USER_WEIGHT, DatabaseHelper.LOG_DATE_TIME};
+        String orderBy = DatabaseHelper.LOG_DATE_TIME + " DESC";
+        Cursor cursor = db.query(DatabaseHelper.TABLE_DAILY_LOGS, columns,
+                null, null, null, null, orderBy, "" + numberOfLogs);
+
+        List<Double> weights = new ArrayList<>();
+        List<Long> dateLogs = new ArrayList<>();
+
+        while (cursor.moveToNext()) {
+            int index;
+
+            index = cursor.getColumnIndex(DatabaseHelper.USER_WEIGHT);
+            weights.add(cursor.getDouble(index));
+
+            index = cursor.getColumnIndex(DatabaseHelper.LOG_DATE_TIME);
+            dateLogs.add(cursor.getLong(index));
+        }
+        cursor.close();
+
+        return new WeightLogs(weights, dateLogs);
     }
 
 

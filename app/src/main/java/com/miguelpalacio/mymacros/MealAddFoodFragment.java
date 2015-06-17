@@ -16,6 +16,8 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.miguelpalacio.mymacros.database.DatabaseAdapter;
+
 /**
  * Add Food for Meal page.
  * This page displays the foods saved (using the Foods Fragment layout), so

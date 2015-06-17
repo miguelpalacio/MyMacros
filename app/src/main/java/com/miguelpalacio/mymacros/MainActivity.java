@@ -211,12 +211,13 @@ public class MainActivity extends ActionBarActivity implements
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 58);
 
 /*        // Alarm goes off every minute... just a try-out. Start from AlarmReceiver to do what is needed!
-        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 60000, alarmIntent);*/
+        alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 20000, alarmIntent);*/
 
-        // Sets AlarmReceiver to go off every day at about 12:00 am.
+        // Sets AlarmReceiver to go off every day at about 11:58 pm.
         alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
     }
