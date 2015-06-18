@@ -1,5 +1,6 @@
 package com.miguelpalacio.mymacros;
 
+import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.util.List;
 
@@ -72,4 +73,9 @@ public final class Utilities {
         }
         return accumulated;
     }
+
+    /**
+     * Format numbers with decimal places to show only one place.
+     */
+    public static DecimalFormat decimalFormat = new DecimalFormat("#.#");
 }

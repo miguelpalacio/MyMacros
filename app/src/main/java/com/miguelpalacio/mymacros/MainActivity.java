@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -17,11 +18,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -44,9 +48,12 @@ public class MainActivity extends ActionBarActivity implements
 
     Toolbar toolbar;
 
-    String[] drawerLabels;
+    String[] drawerEntries;
     TypedArray drawerIcons;
     TypedArray drawerIconsSelected;
+
+    String drawerHeaderGoal;
+    String drawerHeaderProgress;
 
     RecyclerView drawerView;
     RecyclerView.LayoutManager drawerLayoutManager;
@@ -116,16 +123,19 @@ public class MainActivity extends ActionBarActivity implements
         setSupportActionBar(toolbar);
 
         // Navigation Drawer.
-        drawerLabels = getResources().getStringArray(R.array.drawer_labels);
+        drawerEntries = getResources().getStringArray(R.array.drawer_labels);
         drawerIcons = getResources().obtainTypedArray(R.array.drawer_icons);
         drawerIconsSelected = getResources().obtainTypedArray(R.array.drawer_icons_selected);
 
         drawerView = (RecyclerView) findViewById(R.id.drawer_recycler);
         drawerView.setHasFixedSize(true);
 
+        setDrawerHeaderGoal("");
+        setDrawerHeaderProgress("");
+
         // Set the adapter for the Drawer's recycler view.
-        drawerAdapter = new DrawerAdapter(drawerLabels, drawerIcons, drawerIconsSelected,
-                "Miguel Palacio", "miguelpalacio@outlook.com", this);
+        drawerAdapter = new DrawerAdapter(drawerEntries, drawerIcons, drawerIconsSelected,
+                drawerHeaderGoal, drawerHeaderProgress, this);
         drawerView.setAdapter(drawerAdapter);
 
         // Set the layout manager for the Drawer's recycler view.
@@ -211,15 +221,23 @@ public class MainActivity extends ActionBarActivity implements
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 58);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 5);
 
 /*        // Alarm goes off every minute... just a try-out. Start from AlarmReceiver to do what is needed!
         alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 20000, alarmIntent);*/
 
-        // Sets AlarmReceiver to go off every day at about 11:58 pm.
+        // Sets AlarmReceiver to go off every day at about 12:05 am.
         alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        setDrawerHeaderGoal("");
+        setDrawerHeaderProgress("");
     }
 
     @Override
@@ -555,6 +573,58 @@ public class MainActivity extends ActionBarActivity implements
         imm.hideSoftInputFromWindow(drawerView.getWindowToken(), 0);
     }
 
+
+    // Update the Current goal label in the Drawer's header.
+    public void setDrawerHeaderGoal(String goal) {
+        // Load the global SharedPreferences file.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String label;
+
+        if (goal.length() > 0) {
+            label = goal;
+        }
+        else if (prefs.contains(ProfileFragment.KEY_GOAL)) {
+            label = prefs.getString(ProfileFragment.KEY_GOAL, "");
+        } else {
+            label = getString(R.string.drawer_header_goal_default);
+        }
+
+        if (drawerView.getChildAt(0) != null) {
+            LinearLayout drawerHeader = (LinearLayout) drawerView.getChildAt(0);
+            TextView textView = (TextView) drawerHeader.findViewById(R.id.drawer_header_goal);
+            textView.setText(label);
+        } else {
+            drawerHeaderGoal = label;
+        }
+    }
+
+    // Update the Today progress label in the Drawer's header.
+    public void setDrawerHeaderProgress(String energyConsumed) {
+        // Load the global SharedPreferences file.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String label = getString(R.string.drawer_header_progress_default);
+
+        if (prefs.contains(ProfileFragment.KEY_ENERGY_NEED)) {
+
+            if (energyConsumed.length() > 0) {
+                label = energyConsumed + "/";
+            } else {
+                label = prefs.getString(PlannerFragment.KEY_ENERGY_CONSUMED, "0") + "/";
+            }
+
+            label = label + prefs.getString(ProfileFragment.KEY_ENERGY_NEED, "");
+            label = label + " " + prefs.getString(SettingsFragment.KEY_ENERGY, "");
+        }
+
+        if (drawerView.getChildAt(0) != null) {
+            LinearLayout drawerHeader = (LinearLayout) drawerView.getChildAt(0);
+            TextView textView = (TextView) drawerHeader.findViewById(R.id.drawer_header_progress);
+            textView.setText(label);
+        } else {
+            drawerHeaderProgress = label;
+        }
+    }
 
     // Getters and Setters.
 

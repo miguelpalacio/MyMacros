@@ -136,12 +136,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     e = Double.parseDouble(sharedPreferences.getString(ProfileFragment.KEY_ENERGY_NEED, "0"));
                     // Convert from kcal into kJ.
                     e = e * 4.184;
-                    eEditor.putString(ProfileFragment.KEY_ENERGY_NEED, "" + decimalFormat.format(e)).apply();
+                    eEditor.putString(ProfileFragment.KEY_ENERGY_NEED, decimalFormat.format(e)).apply();
                 } else {
                     e = Double.parseDouble(sharedPreferences.getString(ProfileFragment.KEY_ENERGY_NEED, "0"));
                     // Convert from kJ into kcal.
                     e = e / 4.184;
-                    eEditor.putString(ProfileFragment.KEY_ENERGY_NEED, "" + decimalFormat.format(e)).apply();
+                    eEditor.putString(ProfileFragment.KEY_ENERGY_NEED, decimalFormat.format(e)).apply();
                 }
 
                 // Change preference summary.

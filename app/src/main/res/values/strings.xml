@@ -29,6 +29,12 @@
     <string name="toolbar_food_edit">Edit Food</string>
     <string name="toolbar_settings">Settings</string>
 
+    <!-- Navigation Drawer header. -->
+    <string name="drawer_header_goal">Current goal:</string>
+    <string name="drawer_header_goal_default">Waiting for data&#8230;</string>
+    <string name="drawer_header_progress">Today progress:</string>
+    <string name="drawer_header_progress_default">Waiting for data&#8230;</string>
+
     <!-- Navigation Drawer entries. -->
     <string-array name="drawer_labels">
         <item>Daily Planner</item>

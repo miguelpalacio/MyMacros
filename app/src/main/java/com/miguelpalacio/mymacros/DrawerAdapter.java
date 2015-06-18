@@ -18,26 +18,26 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
     private static final int TYPE_ROW = 1;
     private static final int TYPE_DIVIDER = 2;
 
-    private final String[] labels;
+    private final String[] entries;
     private final TypedArray icons;
     private final TypedArray icons_selected;
 
-    private String nameLabel;
-    private String emailLabel;
+    private String headerGoal;
+    private String headerProgress;
 
     private ViewHolder.ClickListener clickListener;
 
     // Class constructor.
-    public DrawerAdapter(String[] labels, TypedArray icons, TypedArray icons_selected,
-                         String nameLabel, String emailLabel,  ViewHolder.ClickListener clickListener) {
+    public DrawerAdapter(String[] entries, TypedArray icons, TypedArray icons_selected,
+                         String headerGoal, String headerProgress,  ViewHolder.ClickListener clickListener) {
         super();
 
-        this.labels = labels;
+        this.entries = entries;
         this.icons = icons;
         this.icons_selected = icons_selected;
 
-        this.nameLabel = nameLabel;
-        this.emailLabel = emailLabel;
+        this.headerGoal = headerGoal;
+        this.headerProgress = headerProgress;
 
         this.clickListener = clickListener;
     }
@@ -47,11 +47,11 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
 
         int holderId;
 
-        TextView textView;
-        ImageView imageView;
+        TextView entryLabel;
+        ImageView entryIcon;
 
-        TextView name;
-        TextView email;
+        TextView goal;
+        TextView progress;
 
         View itemView;
 
@@ -66,8 +66,8 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
             if (viewType == TYPE_ROW) {
                 holderId = 1;
 
-                textView = (TextView) itemView.findViewById(R.id.drawer_item_text);
-                imageView = (ImageView) itemView.findViewById(R.id.drawer_item_icon);
+                entryLabel = (TextView) itemView.findViewById(R.id.drawer_item_text);
+                entryIcon = (ImageView) itemView.findViewById(R.id.drawer_item_icon);
 
                 // Set click listener for the row.
                 this.listener = listener;
@@ -78,8 +78,8 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
             else {
                 holderId = 0;
 
-                name = (TextView) itemView.findViewById(R.id.name);
-                email = (TextView) itemView.findViewById(R.id.email);
+                goal = (TextView) itemView.findViewById(R.id.drawer_header_goal);
+                progress = (TextView) itemView.findViewById(R.id.drawer_header_progress);
             }
         }
 
@@ -130,27 +130,27 @@ public class DrawerAdapter extends SelectableAdapter<DrawerAdapter.ViewHolder> {
                 pos = position - 2;
             }
 
-            holder.textView.setText(labels[pos]);
+            holder.entryLabel.setText(entries[pos]);
 
             // For selected row, highlight background and icon.
             if (isSelected(position) && position < 6) {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg_selected);
-                holder.imageView.setImageDrawable(icons_selected.getDrawable(pos));
+                holder.entryIcon.setImageDrawable(icons_selected.getDrawable(pos));
             } else {
                 holder.itemView.setBackgroundResource(R.drawable.custom_bg);
-                holder.imageView.setImageDrawable(icons.getDrawable(pos));
+                holder.entryIcon.setImageDrawable(icons.getDrawable(pos));
             }
         } else if (holder.holderId == 0) {
 
-            holder.name.setText(nameLabel);
-            holder.email.setText(emailLabel);
+            holder.goal.setText(headerGoal);
+            holder.progress.setText(headerProgress);
         }
     }
 
     // Return the number of items present in the list (rows + header + divider).
     @Override
     public int getItemCount() {
-        return labels.length + 2;
+        return entries.length + 2;
     }
 
     // Return the type of the view that is being passed.

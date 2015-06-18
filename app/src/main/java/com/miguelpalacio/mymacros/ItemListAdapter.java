@@ -18,8 +18,8 @@ public class ItemListAdapter extends SelectableAdapter<ItemListAdapter.ViewHolde
     private static final int TYPE_ROW = 1;
     private static final int TYPE_ROW_LAST = 2;
 
-    private final List<String> titles;
-    private final List<String> summaries;
+    private List<String> titles;
+    private List<String> summaries;
 
     private final int headerLayout;
     private final int rowLayout;

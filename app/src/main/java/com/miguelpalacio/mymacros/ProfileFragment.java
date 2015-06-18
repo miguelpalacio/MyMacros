@@ -79,6 +79,8 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
     boolean goalChanged;
 
+    private final DecimalFormat decimalFormat = new DecimalFormat("#.#");
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -248,6 +250,8 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             case KEY_GOAL:
                 setListPrefSummary(goal, KEY_GOAL, "ND");
                 goalChanged = true;
+                MainActivity activity = (MainActivity) getActivity();
+                activity.setDrawerHeaderGoal(goal.getValue());
                 setCalorieNeedSummary();
                 redistributeMacroRate();
                 setMacroIntake();
@@ -438,7 +442,11 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Store the bmr preference value.
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(KEY_ENERGY_NEED, "" + TDEE).apply();
+        editor.putString(KEY_ENERGY_NEED, decimalFormat.format(TDEE)).apply();
+
+        // Update Navigation Drawer Header's Today progress label:
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setDrawerHeaderProgress("");
 
         // Set summary.
         energyNeed.setSummary((int) TDEE + " " + unitsEnergy);
@@ -495,8 +503,6 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         fat = fat / 9;
 
         // Store the values in SharedPreferences.
-
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_PROTEIN_GRAMS, decimalFormat.format(protein)).apply();

@@ -79,7 +79,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         long logDateTime = System.currentTimeMillis();
 
-/*        Toast.makeText(context, "Alarm went off", Toast.LENGTH_SHORT).show();*/
+        Toast.makeText(context, "Alarm went off!!!", Toast.LENGTH_SHORT).show();
 
         // Insert the data into the DailyLogs table of the database.
         databaseAdapter.insertLog(proteinTarget, proteinConsumed, carbsTarget, carbsConsumed,

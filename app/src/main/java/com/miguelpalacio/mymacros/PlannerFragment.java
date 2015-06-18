@@ -36,6 +36,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
     public static final String KEY_MEAL_CARBS_LIST = "meal_carbs_list";
     public static final String KEY_MEAL_FAT_LIST = "meal_fat_list";
     public static final String KEY_MEAL_FIBER_LIST = "meal_fiber_list";
+    public static final String KEY_ENERGY_CONSUMED = "energy_consumed";
 
     private static boolean resetLists;
 
@@ -78,6 +79,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
     ArrayList<Double> mealCarbsList;
     ArrayList<Double> mealFatList;
     ArrayList<Double> mealFiberList;
+    String energyConsumed;
 
     Gson gson;
 
@@ -261,6 +263,8 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
         json = gson.toJson(mealFiberList);
         editor.putString(KEY_MEAL_FIBER_LIST, json);
 
+        editor.putString(KEY_ENERGY_CONSUMED, energyConsumed);
+
         editor.apply();
     }
 
@@ -393,6 +397,11 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
 
         if (energyUnits.equals("kJ"))
             consumedEnergy = 4.184 * consumedEnergy;
+        energyConsumed = decimalFormat.format(consumedEnergy);
+
+        // Update Navigation Drawer's Today progress label.
+        MainActivity activity = (MainActivity) getActivity();
+        activity.setDrawerHeaderProgress(energyConsumed);
 
         // Calculate percentages of consumption.
         int proteinPercentage = (targetProtein > 0) ? (int) (consumedProtein / targetProtein * 100) : 0;
