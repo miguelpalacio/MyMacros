@@ -250,7 +250,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                             carbsTextView = (TextView) listHeader.findViewById(R.id.meal_carbs);
                             fatTextView = (TextView) listHeader.findViewById(R.id.meal_fat);
                             fiberTextView = (TextView) listHeader.findViewById(R.id.meal_fiber);
-                            energyTextView = (TextView) listHeader.findViewById(R.id.meal_energy);
+                            //energyTextView = (TextView) listHeader.findViewById(R.id.meal_energy);
                             pieChart = (PieChart) getActivity().findViewById(R.id.meal_pie_chart);
 
                             // Since the references are ready, set data in the list header.
@@ -261,15 +261,23 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
                             // Chart interaction.
                             pieChart.setHighlightEnabled(true);
                             pieChart.highlightValues(null);
-                            pieChart.setDrawHoleEnabled(false);
+
+                            pieChart.setDrawHoleEnabled(true);
+                            pieChart.setHoleColorTransparent(true);
 
                             pieChart.setTransparentCircleColor(getResources().getColor(R.color.text_background));
-                            pieChart.setTransparentCircleRadius(61f);
+
+                            pieChart.setHoleRadius(35f);
+                            pieChart.setTransparentCircleRadius(42f);
+
+                            pieChart.setDrawCenterText(true);
+                            pieChart.setCenterTextSize(14f);
 
                             pieChart.setRotationAngle(0);
                             pieChart.setRotationEnabled(false);
 
-                            pieChart.setDescription(getString(R.string.pie_chart_meal_description));
+                            //pieChart.setDescription(getString(R.string.pie_chart_meal_description));
+                            pieChart.setDescription("");
                             pieChart.setDescriptionTextSize(12f);
 
                             setPieChartData();
@@ -525,7 +533,7 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
             carbsTextView.setText(decimalFormat.format(totalCarbs) + " g");
             fatTextView.setText(decimalFormat.format(totalFat) + " g");
             fiberTextView.setText(decimalFormat.format(totalFiber) + " g");
-            energyTextView.setText(decimalFormat.format(totalEnergy) + " " + energyUnits);
+            //energyTextView.setText(decimalFormat.format(totalEnergy) + " " + energyUnits);
             nutritionFactsLayout.setVisibility(View.VISIBLE);
         } else {
             nutritionFactsLayout.setVisibility(View.GONE);
@@ -578,6 +586,9 @@ public class MealEditorFragment extends Fragment implements ItemListAdapter.View
         // Hide Chart legend and labels.
         pieChart.getLegend().setEnabled(false);
 /*        pieChart.setDrawSliceText(false);*/
+
+        // Set center text (total energy + units).
+        pieChart.setCenterText(decimalFormat.format(totalEnergy) + " " + energyUnits);
 
         // Refresh chart.
         pieChart.invalidate();

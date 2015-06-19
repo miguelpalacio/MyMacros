@@ -62,6 +62,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="64dp"
+            android:baselineAligned="false"
             android:paddingLeft="8dp"
             android:paddingRight="8dp"
             android:orientation="horizontal">
@@ -88,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="33 g"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:gravity="center"
                     android:fontFamily="sans-serif"
                     android:textColor="@color/secondary_text" />
@@ -116,7 +117,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="33 g"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:gravity="center"
                     android:fontFamily="sans-serif"
                     android:textColor="@color/secondary_text" />
@@ -144,7 +145,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="33 g"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:gravity="center"
                     android:fontFamily="sans-serif"
                     android:textColor="@color/secondary_text" />
@@ -172,7 +173,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="33 g"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:gravity="center"
                     android:fontFamily="sans-serif"
                     android:textColor="@color/secondary_text" />
@@ -180,30 +181,24 @@
 
         </LinearLayout>
 
-        <!-- Energy Distribution. -->
-        <LinearLayout
+<!--        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="64dp"
+            android:baselineAligned="false"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
             android:orientation="horizontal">
 
-            <!-- Pie Chart. -->
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/meal_pie_chart"
+
+            &lt;!&ndash; Energy. &ndash;&gt;
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"/>
-
-            <!-- Energy. -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:layout_marginRight="8dp"
-                android:layout_marginEnd="8dp"
-                android:orientation="vertical" >
+                android:orientation="vertical"
+                android:layout_weight="1">
 
                 <TextView
-                    android:layout_width="120dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/meal_energy"
                     android:textSize="14sp"
@@ -216,16 +211,29 @@
                     android:id="@+id/meal_energy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="1567.5 kcal"
-                    android:textSize="16sp"
+                    android:text="33 g"
+                    android:textSize="14sp"
                     android:gravity="center"
                     android:fontFamily="sans-serif"
                     android:textColor="@color/secondary_text" />
             </LinearLayout>
+
+        </LinearLayout>-->
+
+        <!-- Energy Distribution. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:orientation="horizontal">
+
+            <!-- Pie Chart. -->
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/meal_pie_chart"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
         </LinearLayout>
     </LinearLayout>
-
-
 
 
 
@@ -233,7 +241,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="16dp"
+        android:paddingTop="8dp"
         android:orientation="vertical">
 
         <TextView android:layout_width="match_parent"

@@ -148,7 +148,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
     }
 
     public void setMacrosBarChartData() {
-        int numberOfDays = 5;
+        int numberOfDays = 4;
         MacrosConsumed macrosConsumed = databaseAdapter.getMacrosConsumed(numberOfDays);
 
         List<Double> proteinConsumed;
