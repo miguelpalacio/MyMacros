@@ -309,12 +309,16 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         LineData data = new LineData(xValues, dataSets);
 
         // Adjust Y Axis to show the weight with a nice "resolution".
-        int minWeightIndex = weights.indexOf(Collections.min(weights));
-        int maxWeightIndex = weights.indexOf(Collections.max(weights));
-
         YAxis weightLeftAxis = weightLineChart.getAxisLeft();
-        weightLeftAxis.setAxisMinValue((float) weights.get(minWeightIndex).doubleValue() - 2);
-        weightLeftAxis.setAxisMaxValue((float) weights.get(maxWeightIndex).doubleValue() + 2);
+        int minWeightIndex;
+        int maxWeightIndex;
+        if (weights.size() > 0) {
+            minWeightIndex = weights.indexOf(Collections.min(weights));
+            maxWeightIndex = weights.indexOf(Collections.max(weights));
+
+            weightLeftAxis.setAxisMinValue((float) weights.get(minWeightIndex).doubleValue() - 2);
+            weightLeftAxis.setAxisMaxValue((float) weights.get(maxWeightIndex).doubleValue() + 2);
+        }
 
         // Draw the chart.
         weightLineChart.setData(data);

@@ -9,11 +9,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
+import android.net.Uri;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,7 +36,7 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MainActivity extends ActionBarActivity implements
+public class MainActivity extends AppCompatActivity implements
         DrawerAdapter.ViewHolder.ClickListener,
         FoodsFragment.OnFoodEditorFragment, FoodEditorFragment.OnFoodSaved,
         MealsFragment.OnMealEditorFragment, MealEditorFragment.OnMealSaved,
@@ -45,6 +47,8 @@ public class MainActivity extends ActionBarActivity implements
     private static final String IN_INNER_FRAGMENT = "inInnerFragment";
     private static final String DRAWER_ICON_ANIMATION = "drawerIconAnimation";
     private static final String TOOLBAR_TITLES = "toolbarTitles";
+
+    private static final String KEY_FIRST_START = "firstStart";
 
     Toolbar toolbar;
 
@@ -116,6 +120,16 @@ public class MainActivity extends ActionBarActivity implements
             currentFragment = 0;
             // Init the "stack" with the toolbar titles.
             toolbarTitles = new ArrayList<>();
+
+            // Load the global SharedPreferences file.
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+            // Perform this only the first time the app is started.
+            if (prefs.getBoolean(KEY_FIRST_START, true)) {
+                currentFragment = 15;
+                prefs.edit().putBoolean(KEY_FIRST_START, false).apply();
+                Toast.makeText(this, R.string.first_start_welcome, Toast.LENGTH_LONG).show();
+            }
         }
 
         // Toolbar.
@@ -221,13 +235,14 @@ public class MainActivity extends ActionBarActivity implements
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 5);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 00);
 
 /*        // Alarm goes off every minute... just a try-out. Start from AlarmReceiver to do what is needed!
         alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 20000, alarmIntent);*/
 
-        // Sets AlarmReceiver to go off every day at about 12:05 am.
+        // Sets AlarmReceiver to go off every day at about 12:00 am.
         alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
     }
@@ -406,6 +421,9 @@ public class MainActivity extends ActionBarActivity implements
         // Select initial fragment upon Activity creation.
         if (position == 0) {
             position = 1;
+        } else if (position == 15) {
+            // When the application is started for the first time, bring the user to Profile page.
+            position = 3;
         }
 
         Fragment fragment;
@@ -443,6 +461,7 @@ public class MainActivity extends ActionBarActivity implements
                 return;
 
             case 8:
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://miguelpalacio.co/mymacros/faq.html")));
                 return;
 
             default:
@@ -608,9 +627,9 @@ public class MainActivity extends ActionBarActivity implements
         if (prefs.contains(ProfileFragment.KEY_ENERGY_NEED)) {
 
             if (energyConsumed.length() > 0) {
-                label = energyConsumed + "/";
+                label = energyConsumed + " / ";
             } else {
-                label = prefs.getString(PlannerFragment.KEY_ENERGY_CONSUMED, "0") + "/";
+                label = prefs.getString(PlannerFragment.KEY_ENERGY_CONSUMED, "0") + " / ";
             }
 
             label = label + prefs.getString(ProfileFragment.KEY_ENERGY_NEED, "");
