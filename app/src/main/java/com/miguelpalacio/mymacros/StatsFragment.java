@@ -169,7 +169,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         ArrayList<String> xValues = new ArrayList<>();
         for (int i = listLimit; i >= 0; i--) {
             c.setTimeInMillis(dateLogs.get(i));
-            c.add(Calendar.DAY_OF_MONTH, -1);
+/*            c.add(Calendar.DAY_OF_MONTH, -1);*/
             xValues.add(c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.MONTH));
         }
 
@@ -277,7 +277,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         ArrayList<String> xValues = new ArrayList<>();
         for (int i = listLimit; i >= 0; i--) {
             c.setTimeInMillis(dateLogs.get(i));
-            c.add(Calendar.DAY_OF_MONTH, -1);
+/*            c.add(Calendar.DAY_OF_MONTH, -1);*/
             xValues.add(c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.MONTH));
         }
 

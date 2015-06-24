@@ -675,36 +675,44 @@ public class DatabaseAdapter {
             double caloriesWeek = 0;
             boolean thereAreLogs = false;
 
-/*            Calendar currentWeek = Calendar.getInstance();
-            currentWeek.add(Calendar.WEEK_OF_YEAR, -(i));
+            // Week goes from Monday at 12:05 am, to next Monday at 12:05 am.
 
-            Calendar previousWeek = Calendar.getInstance();
-            previousWeek.add(Calendar.WEEK_OF_YEAR, -(i + 1));*/
+            Calendar weekStart = Calendar.getInstance();
+            weekStart.setTimeInMillis(System.currentTimeMillis());
+            weekStart.add(Calendar.WEEK_OF_YEAR, -(i + 1));
+            weekStart.set(Calendar.DAY_OF_WEEK, 2);
+            weekStart.set(Calendar.HOUR_OF_DAY, 0);
+            weekStart.set(Calendar.MINUTE, 5);
+/*            weekStart.add(Calendar.DAY_OF_WEEK, -(weekStart.get(Calendar.DAY_OF_WEEK)) + 2);
+            weekStart.add(Calendar.HOUR_OF_DAY, -(weekStart.get(Calendar.HOUR_OF_DAY)));
+            weekStart.add(Calendar.MINUTE, -(weekStart.get(Calendar.MINUTE)));*/
 
-            // Get week and previous week.
-            Calendar currentWeek = Calendar.getInstance();
-            currentWeek.add(Calendar.WEEK_OF_YEAR, -i);
-            currentWeek.add(Calendar.DAY_OF_WEEK, -(currentWeek.get(Calendar.DAY_OF_WEEK)) + 1);
-            currentWeek.add(Calendar.HOUR_OF_DAY, -(currentWeek.get(Calendar.HOUR_OF_DAY)));
-            currentWeek.add(Calendar.MINUTE, -(currentWeek.get(Calendar.MINUTE)));
+            Calendar weekEnd = Calendar.getInstance();
+            weekEnd.setTimeInMillis(System.currentTimeMillis());
+            weekEnd.add(Calendar.WEEK_OF_YEAR, -i);
+            // TODO: include the "Week Starts On" preference here!
+/*            weekEnd.clear(Calendar.DAY_OF_WEEK);
+            weekEnd.add(Calendar.DAY_OF_WEEK, 2);*/
+            weekEnd.set(Calendar.DAY_OF_WEEK, 2);
+            weekEnd.set(Calendar.HOUR_OF_DAY, 0);
+            weekEnd.set(Calendar.MINUTE, 5);
 
-            Calendar previousWeek = Calendar.getInstance();
-            previousWeek.add(Calendar.WEEK_OF_YEAR, -(i + 1));
-            previousWeek.add(Calendar.DAY_OF_WEEK, -(previousWeek.get(Calendar.DAY_OF_WEEK)) + 2);
-            previousWeek.add(Calendar.HOUR_OF_DAY, -(previousWeek.get(Calendar.HOUR_OF_DAY)));
-            previousWeek.add(Calendar.MINUTE, -(previousWeek.get(Calendar.MINUTE)));
+            long weekStartInMillis = weekStart.getTimeInMillis();
+            long weekEndInMillis = weekEnd.getTimeInMillis();
+
+            // Change day to show correct period of time on label.
+            weekEnd.add(Calendar.DAY_OF_WEEK, -1);
 
             // Define week label.
-            String week = previousWeek.get(Calendar.DAY_OF_MONTH) + "/" + (1 + previousWeek.get(Calendar.MONTH)) +
-                    " - " + currentWeek.get(Calendar.DAY_OF_MONTH) + "/" + (1 + currentWeek.get(Calendar.MONTH));
+            String week = weekStart.get(Calendar.DAY_OF_MONTH) + "/" + (1 + weekStart.get(Calendar.MONTH)) +
+                    " - " + weekEnd.get(Calendar.DAY_OF_MONTH) + "/" + (1 + weekEnd.get(Calendar.MONTH));
 
             // SELECT ProteinConsumed, CarbsConsumed, FatConsumed, FROM DailyLogs
-            // WHERE logDateTime BETWEEN previousWeek AND week;
+            // WHERE logDateTime BETWEEN weekStart AND week;
             String[] columns = {DatabaseHelper.PROTEIN_CONSUMED, DatabaseHelper.CARBS_CONSUMED,
                     DatabaseHelper.FAT_CONSUMED, DatabaseHelper.LOG_DATE_TIME};
             String whereClause = DatabaseHelper.LOG_DATE_TIME + " BETWEEN ? AND ?";
-            String[] whereArgs = {Long.toString(previousWeek.getTimeInMillis()),
-                    Long.toString(currentWeek.getTimeInMillis())};
+            String[] whereArgs = {Long.toString(weekStartInMillis), Long.toString(weekEndInMillis)};
             String orderBy = DatabaseHelper.LOG_DATE_TIME + " DESC";
 
             Cursor cursor = db.query(DatabaseHelper.TABLE_DAILY_LOGS, columns,

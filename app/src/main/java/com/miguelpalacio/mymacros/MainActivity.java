@@ -235,14 +235,14 @@ public class MainActivity extends AppCompatActivity implements
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 00);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 2);
+        calendar.set(Calendar.SECOND, 0);
 
 /*        // Alarm goes off every minute... just a try-out. Start from AlarmReceiver to do what is needed!
         alarmManager.setInexactRepeating(AlarmManager.RTC, System.currentTimeMillis(), 20000, alarmIntent);*/
 
-        // Sets AlarmReceiver to go off every day at about 12:00 am.
+        // Sets AlarmReceiver to go off every day at about 12:02 am.
         alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY, alarmIntent);
     }

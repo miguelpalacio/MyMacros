@@ -25,11 +25,11 @@ public class AlarmBootReceiver extends BroadcastReceiver {
 
             Calendar calendar = Calendar.getInstance();
             calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, 23);
-            calendar.set(Calendar.MINUTE, 59);
-            calendar.set(Calendar.SECOND, 00);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 2);
+            calendar.set(Calendar.SECOND, 0);
 
-            // Sets AlarmReceiver to go off every day at approximately 12:00 am.
+            // Sets AlarmReceiver to go off every day at approximately 12:02 am.
             alarmManager.setInexactRepeating(AlarmManager.RTC, calendar.getTimeInMillis(),
                     AlarmManager.INTERVAL_DAY, alarmIntent);
         }

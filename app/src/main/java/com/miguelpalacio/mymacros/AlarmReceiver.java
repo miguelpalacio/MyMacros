@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -16,22 +17,47 @@ import com.miguelpalacio.mymacros.database.DatabaseAdapter;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * When this receiver is triggered, store some user data into the database.
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
+    static String LAST_DATE_ALARM_TRIGGERED = "lastDateAlarmTriggered";
+
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        //Toast.makeText(context, "Hey, I was executed!", Toast.LENGTH_SHORT).show();
+        // Load the data from SharedPreferences.
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        // This alarm may be triggered more than once a day; in order to avoid this behavior,
+        // register the last time it went off and check that it was a at least a day before.
+
+        long lastDateTriggered = prefs.getLong(LAST_DATE_ALARM_TRIGGERED, 0);
+
+        // Get calendar (Date only).
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        // If last time the alarm went off, wasn't at least a day before, abort.
+        if (calendar.getTimeInMillis() <= lastDateTriggered) {
+/*            Log.d("Time registered:", "" + lastDateTriggered);
+            Log.d("Time Calendar:", "" + calendar.getTimeInMillis());*/
+            return;
+        }
+
+        // Store the date the alarm went off for further comparisons.
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(LAST_DATE_ALARM_TRIGGERED, calendar.getTimeInMillis()).apply();
 
         // Log some user data into the database.
         DatabaseAdapter databaseAdapter = new DatabaseAdapter(context);
-
-        // Load the data from SharedPreferences.
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
         Gson gson = new Gson();
         Type type = new TypeToken<ArrayList<Double>>(){}.getType();
