@@ -128,7 +128,29 @@ public class DatabaseAdapter {
         String whereClause = DatabaseHelper.FOOD_ID + " = ?";
         String[] whereArgs = {Long.toString(foodId)};
 
-        return db.delete(DatabaseHelper.TABLE_FOODS, whereClause, whereArgs);
+        int foodDeleted;
+        boolean transactionSuccessful = true;
+
+        // Perform the deletions on the Meals and MealFoods tables by means of a transaction.
+        db.beginTransaction();
+        try {
+            foodDeleted = db.delete(DatabaseHelper.TABLE_FOODS, whereClause, whereArgs);
+
+            // Delete the rows corresponding to food in the MealFoods table.
+            int foodsDeleted = db.delete(DatabaseHelper.TABLE_MEAL_FOODS, whereClause, whereArgs);
+
+            if (foodDeleted != 1 || foodsDeleted < 1) {
+                transactionSuccessful = false;
+            }
+
+            if (transactionSuccessful) {
+                db.setTransactionSuccessful();
+            }
+        } finally {
+            db.endTransaction();
+        }
+
+        return foodDeleted;
     }
 
     /**
@@ -460,18 +482,18 @@ public class DatabaseAdapter {
         String whereClause = DatabaseHelper.MEAL_ID + " = ?";
         String[] whereArgs = {Long.toString(mealId)};
 
-        int mealsDeleted;
+        int mealDeleted;
         boolean transactionSuccessful = true;
 
         // Perform the deletions on the Meals and MealFoods tables by means of a transaction.
         db.beginTransaction();
         try {
-            mealsDeleted = db.delete(DatabaseHelper.TABLE_MEALS, whereClause, whereArgs);
+            mealDeleted = db.delete(DatabaseHelper.TABLE_MEALS, whereClause, whereArgs);
 
             // Delete the foods corresponding to meal in the MealFoods table.
             int foodsDeleted = db.delete(DatabaseHelper.TABLE_MEAL_FOODS, whereClause, whereArgs);
 
-            if (mealsDeleted != 1 || foodsDeleted < 1) {
+            if (mealDeleted != 1 || foodsDeleted < 1) {
                 transactionSuccessful = false;
             }
 
@@ -482,7 +504,7 @@ public class DatabaseAdapter {
             db.endTransaction();
         }
 
-        return mealsDeleted;
+        return mealDeleted;
     }
 
     /**
@@ -836,6 +858,17 @@ public class DatabaseAdapter {
                         FOOD_ID + " INTEGER, " +
                         FOOD_QUANTITY + " REAL, " +
                         "PRIMARY KEY (" + MEAL_ID + ", " + FOOD_ID + "));";
+
+/*        private static final String CREATE_MEAL_FOODS_TABLE =
+                "CREATE TABLE " + TABLE_MEAL_FOODS +
+                        " (" + MEAL_ID + " INTEGER, " +
+                        FOOD_ID + " INTEGER, " +
+                        FOOD_QUANTITY + " REAL, " +
+                        "PRIMARY KEY (" + MEAL_ID + ", " + FOOD_ID + ")," +
+                        "FOREIGN KEY(" + MEAL_ID + ") REFERENCES " +
+                        TABLE_MEALS + "(" + MEAL_ID +") ON DELETE CASCADE, " +
+                        "FOREIGN KEY(" + FOOD_ID + ") REFERENCES " +
+                        TABLE_FOODS + "(" + FOOD_ID +") ON DELETE CASCADE);";*/
 
         private static final String CREATE_DAILY_LOGS_TABLE =
                 "CREATE TABLE " + TABLE_DAILY_LOGS +

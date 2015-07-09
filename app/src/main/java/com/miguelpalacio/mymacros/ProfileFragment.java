@@ -62,7 +62,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     private Preference energyNeed;
 
     private SingleLineTextPreference proteinRate;
-    private SingleLineTextPreference carbosRate;
+    private SingleLineTextPreference carbsRate;
     private SingleLineTextPreference fatRate;
 
     private SingleLinePreference proteinGrams;
@@ -109,7 +109,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Macronutrient distribution.
         proteinRate = (SingleLineTextPreference) findPreference(KEY_PROTEIN_RATE);
-        carbosRate = (SingleLineTextPreference) findPreference(KEY_CARBS_RATE);
+        carbsRate = (SingleLineTextPreference) findPreference(KEY_CARBS_RATE);
         fatRate = (SingleLineTextPreference) findPreference(KEY_FAT_RATE);
 
         // Macronutrient intake.
@@ -123,19 +123,22 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Set up listeners on macro rate preferences to enable checkMacroDistribution().
         proteinRate.setOnPreferenceClickListener(new PreferenceCategory.OnPreferenceClickListener() {
-            @Override public boolean onPreferenceClick(Preference preference) {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
                 goalChanged = false;
                 return false;
             }
         });
-        carbosRate.setOnPreferenceClickListener(new PreferenceCategory.OnPreferenceClickListener() {
-            @Override public boolean onPreferenceClick(Preference preference) {
+        carbsRate.setOnPreferenceClickListener(new PreferenceCategory.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
                 goalChanged = false;
                 return false;
             }
         });
         fatRate.setOnPreferenceClickListener(new PreferenceCategory.OnPreferenceClickListener() {
-            @Override public boolean onPreferenceClick(Preference preference) {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
                 goalChanged = false;
                 return false;
             }
@@ -174,7 +177,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         setListPrefSummary(goal, KEY_GOAL, "ND");
 
         setMacroRateSummary(proteinRate);
-        setMacroRateSummary(carbosRate);
+        setMacroRateSummary(carbsRate);
         setMacroRateSummary(fatRate);
 
         setMacroIntake();
@@ -195,6 +198,16 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+
+        // In case of numeric preference check that there's a number.
+/*        if (sharedPreferences.getString(key, "0").length() == 0 && (key.equals(KEY_AGE) ||
+                key.equals(KEY_HEIGHT) || key.equals(KEY_WEIGHT)) || key.equals(KEY_PROTEIN_RATE) ||
+                key.equals(KEY_CARBS_RATE) || key.equals(KEY_FAT_RATE)) {*/
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            //editor.putString(key, "0").apply();
+/*        }*/
+
         switch (key) {
 
             case KEY_GENDER:
@@ -206,6 +219,10 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
 
             case KEY_AGE:
+                if (sharedPreferences.getString(key, "0").length() == 0) {
+                    age.setText("0");
+                    editor.putString(key, "0").apply();
+                }
                 setAgeSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
@@ -214,6 +231,10 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
 
             case KEY_HEIGHT:
+                if (sharedPreferences.getString(key, "0").length() == 0) {
+                    height.setText("0");
+                    editor.putString(key, "0").apply();
+                }
                 setHeightSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
@@ -230,6 +251,10 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
 
             case KEY_WEIGHT:
+                if (sharedPreferences.getString(key, "0").length() == 0) {
+                    weight.setText("0");
+                    editor.putString(key, "0").apply();
+                }
                 setWeightSummary();
                 setBmrSummary();
                 setCalorieNeedSummary();
@@ -259,18 +284,30 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
 
             case KEY_PROTEIN_RATE:
+                if (sharedPreferences.getString(key, "0").length() == 0) {
+                    proteinRate.setText("0");
+                    editor.putString(key, "0").apply();
+                }
                 setMacroRateSummary(proteinRate);
                 checkMacroDistribution();
                 setMacroIntake();
                 break;
 
             case KEY_CARBS_RATE:
-                setMacroRateSummary(carbosRate);
+                if (sharedPreferences.getString(key, "0").length() == 0) {
+                    carbsRate.setText("0");
+                    editor.putString(key, "0").apply();
+                }
+                setMacroRateSummary(carbsRate);
                 checkMacroDistribution();
                 setMacroIntake();
                 break;
 
             case KEY_FAT_RATE:
+                if (sharedPreferences.getString(key, "0").length() == 0) {
+                    fatRate.setText("0");
+                    editor.putString(key, "0").apply();
+                }
                 setMacroRateSummary(fatRate);
                 checkMacroDistribution();
                 setMacroIntake();
@@ -304,7 +341,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             if (height.getText().equals("0")) {
                 height.setSummary(defaultSummary1);
             } else {
-                height.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_HEIGHT, "") + " cm");
+                height.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_HEIGHT, "0") + " cm");
             }
         } else {
             yourData.addPreference(heightEng);
@@ -327,7 +364,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         }
 
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        double w = Double.parseDouble(getPreferenceScreen().getSharedPreferences().getString(KEY_WEIGHT, ""));
+        double w = Double.parseDouble(getPreferenceScreen().getSharedPreferences().getString(KEY_WEIGHT, "0"));
 
         if (unitsWeight.equals("kg")) {
             weight.setSummary(decimalFormat.format(w) + " kg");
@@ -462,8 +499,8 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         if (goalChanged) {
             return;
         }
-        // Check that proteinRate + carbosRate + fatRate = 100.
-        if (Integer.parseInt(proteinRate.getText()) + Integer.parseInt(carbosRate.getText()) +
+        // Check that proteinRate + carbsRate + fatRate = 100.
+        if (Integer.parseInt(proteinRate.getText()) + Integer.parseInt(carbsRate.getText()) +
                 Integer.parseInt(fatRate.getText()) != 100) {
             Toast.makeText(getActivity(), "Macronutrient distribution is not 100 %", Toast.LENGTH_SHORT).show();
         } else {
@@ -484,34 +521,34 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             return;
         }
 
-        double protein, carbos, fat;
+        double protein, carbs, fat;
 
         protein = TDEE * Double.parseDouble(proteinRate.getText()) / 100;
-        carbos = TDEE * Double.parseDouble(carbosRate.getText()) / 100;
+        carbs = TDEE * Double.parseDouble(carbsRate.getText()) / 100;
         fat = TDEE * Double.parseDouble(fatRate.getText()) / 100;
 
         // Convert to kcal if needed.
         if (unitsEnergy.equals("kJ")) {
             protein = protein / 4.184;
-            carbos = carbos / 4.184;
+            carbs = carbs / 4.184;
             fat = fat / 4.184;
         }
 
-        // Calculate grams per macro. 1 gram of proteinEditText/carbos = 4 kcal, 1 gram of fatEditText = 9 kcal.
+        // Calculate grams per macro. 1 gram of proteinEditText/carbs = 4 kcal, 1 gram of fatEditText = 9 kcal.
         protein = protein / 4;
-        carbos = carbos / 4;
+        carbs = carbs / 4;
         fat = fat / 9;
 
         // Store the values in SharedPreferences.
 
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(KEY_PROTEIN_GRAMS, decimalFormat.format(protein)).apply();
-        editor.putString(KEY_CARBS_GRAMS, decimalFormat.format(carbos)).apply();
+        editor.putString(KEY_CARBS_GRAMS, decimalFormat.format(carbs)).apply();
         editor.putString(KEY_FAT_GRAMS, decimalFormat.format(fat)).apply();
 
         // Set the summaries.
         proteinGrams.setSummary((int) protein + " g/day");
-        carbosGrams.setSummary((int) carbos + " g/day");
+        carbosGrams.setSummary((int) carbs + " g/day");
         fatGrams.setSummary((int) fat + " g/day");
     }
 
@@ -537,7 +574,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Set the values in the corresponding preference items.
         proteinRate.setText(pRate);
-        carbosRate.setText(cRate);
+        carbsRate.setText(cRate);
         fatRate.setText(fRate);
     }
 
