@@ -1,14 +1,10 @@
 package com.miguelpalacio.mymacros;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -24,7 +20,7 @@ import java.util.Calendar;
  */
 public class AlarmReceiver extends BroadcastReceiver {
 
-    static String LAST_DATE_ALARM_TRIGGERED = "lastDateAlarmTriggered";
+    static String KEY_LAST_DATE_ALARM_TRIGGERED = "lastDateAlarmTriggered";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -35,7 +31,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         // This alarm may be triggered more than once a day; in order to avoid this behavior,
         // register the last time it went off and check that it was a at least a day before.
 
-        long lastDateTriggered = prefs.getLong(LAST_DATE_ALARM_TRIGGERED, 0);
+        long lastDateTriggered = prefs.getLong(KEY_LAST_DATE_ALARM_TRIGGERED, 0);
 
         // Get calendar (Date only).
         Calendar calendar = Calendar.getInstance();
@@ -54,7 +50,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         // Store the date the alarm went off for further comparisons.
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong(LAST_DATE_ALARM_TRIGGERED, calendar.getTimeInMillis()).apply();
+        editor.putLong(KEY_LAST_DATE_ALARM_TRIGGERED, calendar.getTimeInMillis()).apply();
 
         // Log some user data into the database.
         DatabaseAdapter databaseAdapter = new DatabaseAdapter(context);
@@ -84,8 +80,8 @@ public class AlarmReceiver extends BroadcastReceiver {
             macroList = gson.fromJson(json, type);
             fatConsumed = Utilities.getSummation(macroList);
 
-            // Since the day is over, remove all the lists in SharedPreferences (reset).
-            PlannerFragment.setResetLists();
+            // Since the day is over, reset all the planner's lists in SharedPreferences.
+            editor.putBoolean(PlannerFragment.KEY_RESET_LISTS, true).apply();
 
         } else {
             proteinConsumed = 0;
@@ -105,7 +101,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         long logDateTime = System.currentTimeMillis();
 
-        //Toast.makeText(context, "Alarm went off!!!", Toast.LENGTH_SHORT).show();
+/*        Toast.makeText(context, "Alarm went off!!!", Toast.LENGTH_SHORT).show();*/
 
         // Insert the data into the DailyLogs table of the database.
         databaseAdapter.insertLog(proteinTarget, proteinConsumed, carbsTarget, carbsConsumed,

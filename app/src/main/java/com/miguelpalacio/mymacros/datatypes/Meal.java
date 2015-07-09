@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.datatypes;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,6 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.datatypes;
+
+import com.miguelpalacio.mymacros.datatypes.Food;
 
 /**
  * This class, inheriting from Food, adds the foodQuantityList property to be used in MyMeals pages.

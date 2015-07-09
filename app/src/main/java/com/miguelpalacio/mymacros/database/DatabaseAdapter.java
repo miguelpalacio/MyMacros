@@ -7,9 +7,9 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.miguelpalacio.mymacros.Food;
-import com.miguelpalacio.mymacros.Meal;
-import com.miguelpalacio.mymacros.MealFood;
+import com.miguelpalacio.mymacros.datatypes.Food;
+import com.miguelpalacio.mymacros.datatypes.Meal;
+import com.miguelpalacio.mymacros.datatypes.MealFood;
 import com.miguelpalacio.mymacros.Utilities;
 import com.miguelpalacio.mymacros.database.datatypes.MacrosConsumed;
 import com.miguelpalacio.mymacros.database.datatypes.WeeklyConsumption;

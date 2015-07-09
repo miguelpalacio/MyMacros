@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.datatypes;
 
 /**
  * Food class. Matches the definition of Foods in the database.

@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.miguelpalacio.mymacros.database.DatabaseAdapter;
+import com.miguelpalacio.mymacros.datatypes.Meal;
 
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
@@ -37,8 +38,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
     public static final String KEY_MEAL_FAT_LIST = "meal_fat_list";
     public static final String KEY_MEAL_FIBER_LIST = "meal_fiber_list";
     public static final String KEY_ENERGY_CONSUMED = "energy_consumed";
-
-    private static boolean resetLists;
+    public static final String KEY_RESET_LISTS = "reset_lists";
 
     SharedPreferences sharedPref;
 
@@ -118,7 +118,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
         sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         // Load the lists with the info for Today's Plan.
-        if (sharedPref.contains(KEY_MEAL_ID_LIST) && !resetLists) {
+        if (sharedPref.contains(KEY_MEAL_ID_LIST) && !sharedPref.getBoolean(KEY_RESET_LISTS, false)) {
             String json;
 
             json = sharedPref.getString(KEY_MEAL_ID_LIST, null);
@@ -224,7 +224,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
         }
 
         // If alarm went off and the activity was still "running", reset lists.
-        if (resetLists) {
+        if (sharedPref.getBoolean(KEY_RESET_LISTS, false)) {
             initLists();
         }
     }
@@ -234,7 +234,7 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
     public void onPause() {
         super.onPause();
 
-        if (resetLists) {
+        if (sharedPref.getBoolean(KEY_RESET_LISTS, false)) {
             initLists();
         }
 
@@ -441,7 +441,8 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
 
     // Init/Reset lists where the information about the meals added to the day is stored.
     private void initLists() {
-        resetLists = false;
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(KEY_RESET_LISTS, false).apply();
 
         if (mealIdList != null) {
             mealIdList.clear();
@@ -468,9 +469,5 @@ public class PlannerFragment extends Fragment implements ItemListAdapter.ViewHol
             setHeaderData();
             itemListAdapter.notifyDataSetChanged();
         }
-    }
-
-    public static void setResetLists() {
-        resetLists = true;
     }
 }

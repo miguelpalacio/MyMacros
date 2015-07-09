@@ -33,6 +33,8 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.PercentFormatter;
 import com.miguelpalacio.mymacros.database.DatabaseAdapter;
+import com.miguelpalacio.mymacros.datatypes.Meal;
+import com.miguelpalacio.mymacros.datatypes.MealFood;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
