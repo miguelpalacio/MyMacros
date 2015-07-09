@@ -68,6 +68,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         macrosBarChart.setPinchZoom(false);
         macrosBarChart.setDrawBarShadow(false);
         macrosBarChart.setDrawGridBackground(false);
+        macrosBarChart.setHighlightEnabled(false);
 
         //macrosBarChart.setMarkerView(mv);
 
@@ -96,6 +97,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         caloriesBarChart.setPinchZoom(false);
         caloriesBarChart.setDrawBarShadow(false);
         caloriesBarChart.setDrawGridBackground(false);
+        caloriesBarChart.setHighlightEnabled(false);
 
         //caloriesBarChart.setMarkerView(mv);
 
@@ -169,7 +171,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         ArrayList<String> xValues = new ArrayList<>();
         for (int i = listLimit; i >= 0; i--) {
             c.setTimeInMillis(dateLogs.get(i));
-/*            c.add(Calendar.DAY_OF_MONTH, -1);*/
+            c.add(Calendar.DAY_OF_MONTH, -1);
             xValues.add(c.get(Calendar.DAY_OF_MONTH) + "/" + c.get(Calendar.MONTH));
         }
 
@@ -195,11 +197,11 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
 
         // Create one dataset for each macro.
         BarDataSet proteinSet = new BarDataSet(proteinValues, "Protein (g)");
-        proteinSet.setColor(getResources().getColor(R.color.color_protein));
+        proteinSet.setColor(getResources().getColor(R.color.color_protein_dark));
         BarDataSet carbsSet = new BarDataSet(carbsValues, "Carbohydrates (g)");
-        carbsSet.setColor(getResources().getColor(R.color.color_carbs));
+        carbsSet.setColor(getResources().getColor(R.color.color_carbs_dark));
         BarDataSet fatSet = new BarDataSet(fatValues, "Fat (g)");
-        fatSet.setColor(getResources().getColor(R.color.color_fat));
+        fatSet.setColor(getResources().getColor(R.color.color_fat_dark));
 
         ArrayList<BarDataSet> macrosDataSets = new ArrayList<>();
         macrosDataSets.add(proteinSet);
@@ -240,7 +242,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         }
 
         // Create one dataset for each macro.
-        BarDataSet calorieSet = new BarDataSet(calorieValues, "Calorie Intake");
+        BarDataSet calorieSet = new BarDataSet(calorieValues, "Calorie Intake (kcal)");
         calorieSet.setColor(getResources().getColor(R.color.color_fiber_dark));
         calorieSet.setBarSpacePercent(55f);
 
@@ -293,7 +295,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
 
         weightSet.setColor(getResources().getColor(R.color.color_weight));
         weightSet.setCircleColor(getResources().getColor(R.color.color_weight));
-        weightSet.setLineWidth(1f);
+        weightSet.setLineWidth(2f);
         weightSet.setCircleSize(3f);
         weightSet.setDrawCircles(false);
         weightSet.setDrawCircleHole(false);
@@ -301,7 +303,7 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
         weightSet.setDrawValues(false);
 /*        weightSet.setFillAlpha(65);
         weightSet.setFillColor(Color.BLACK);*/
-        weightSet.setDrawCubic(true);
+        //weightSet.setDrawCubic(true);
 
         ArrayList<LineDataSet> dataSets = new ArrayList<>();
         dataSets.add(weightSet);
@@ -316,8 +318,8 @@ public class StatsFragment extends Fragment implements OnChartValueSelectedListe
             minWeightIndex = weights.indexOf(Collections.min(weights));
             maxWeightIndex = weights.indexOf(Collections.max(weights));
 
-            weightLeftAxis.setAxisMinValue((float) weights.get(minWeightIndex).doubleValue() - 2);
-            weightLeftAxis.setAxisMaxValue((float) weights.get(maxWeightIndex).doubleValue() + 2);
+            weightLeftAxis.setAxisMinValue((float) weights.get(minWeightIndex).doubleValue() - 1);
+            weightLeftAxis.setAxisMaxValue((float) weights.get(maxWeightIndex).doubleValue() + 1);
         }
 
         // Draw the chart.
