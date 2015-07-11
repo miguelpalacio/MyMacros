@@ -9,14 +9,14 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.miguelpalacio.mymacros.MainActivity;
-import com.miguelpalacio.mymacros.TwoInputPreference;
+import com.miguelpalacio.mymacros.custom.components.TwoInputPreference;
 import com.miguelpalacio.mymacros.views.ProfileFragment;
 import com.miguelpalacio.mymacros.views.SettingsFragment;
-import com.miguelpalacio.mymacros.SingleLinePreference;
-import com.miguelpalacio.mymacros.SingleLineTextPreference;
+import com.miguelpalacio.mymacros.custom.components.SingleLinePreference;
+import com.miguelpalacio.mymacros.custom.components.SingleLineTextPreference;
 import com.miguelpalacio.mymacros.helpers.Utilities;
-import com.miguelpalacio.mymacros.models.NutritionFormulae;
-import com.miguelpalacio.mymacros.models.UnitsConverter;
+import com.miguelpalacio.mymacros.model.NutritionFormulae;
+import com.miguelpalacio.mymacros.model.UnitsConverter;
 
 /**
  * Presenter for the ProfileFragment.

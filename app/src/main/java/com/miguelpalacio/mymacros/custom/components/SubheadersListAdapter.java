@@ -1,10 +1,12 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.custom.components;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.miguelpalacio.mymacros.R;
 
 /**
  * Adapter for lists of items with <b>subheaders</b> done using RecyclerView.

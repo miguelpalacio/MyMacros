@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.views;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,12 +21,12 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Highlight;
 import com.github.mikephil.charting.utils.LargeValueFormatter;
-import com.miguelpalacio.mymacros.database.DatabaseAdapter;
-import com.miguelpalacio.mymacros.database.datatypes.MacrosConsumed;
-import com.miguelpalacio.mymacros.database.datatypes.WeeklyConsumption;
-import com.miguelpalacio.mymacros.database.datatypes.WeightLogs;
+import com.miguelpalacio.mymacros.R;
+import com.miguelpalacio.mymacros.model.DatabaseAdapter;
+import com.miguelpalacio.mymacros.datatypes.MacrosConsumed;
+import com.miguelpalacio.mymacros.datatypes.WeeklyConsumption;
+import com.miguelpalacio.mymacros.datatypes.WeightLogs;
 import com.miguelpalacio.mymacros.helpers.MyMarkerView;
-import com.miguelpalacio.mymacros.views.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;

@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.model;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

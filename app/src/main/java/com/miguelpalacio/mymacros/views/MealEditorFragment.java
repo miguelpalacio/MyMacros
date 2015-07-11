@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -32,11 +32,13 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.PercentFormatter;
-import com.miguelpalacio.mymacros.database.DatabaseAdapter;
+import com.miguelpalacio.mymacros.custom.components.ItemListAdapter;
+import com.miguelpalacio.mymacros.MainActivity;
+import com.miguelpalacio.mymacros.R;
+import com.miguelpalacio.mymacros.model.DatabaseAdapter;
 import com.miguelpalacio.mymacros.datatypes.Meal;
 import com.miguelpalacio.mymacros.datatypes.MealFood;
 import com.miguelpalacio.mymacros.helpers.Utilities;
-import com.miguelpalacio.mymacros.views.SettingsFragment;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

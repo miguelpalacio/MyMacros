@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.views;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -11,7 +11,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.miguelpalacio.mymacros.database.DatabaseAdapter;
+import com.miguelpalacio.mymacros.R;
+import com.miguelpalacio.mymacros.custom.components.SubheadersListAdapter;
+import com.miguelpalacio.mymacros.model.DatabaseAdapter;
 
 /**
  * My Meals Page.

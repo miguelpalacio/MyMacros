@@ -11,9 +11,9 @@ import android.preference.PreferenceManager;
 
 import com.miguelpalacio.mymacros.MainActivity;
 import com.miguelpalacio.mymacros.R;
-import com.miguelpalacio.mymacros.SingleLinePreference;
-import com.miguelpalacio.mymacros.SingleLineTextPreference;
-import com.miguelpalacio.mymacros.TwoInputPreference;
+import com.miguelpalacio.mymacros.custom.components.SingleLinePreference;
+import com.miguelpalacio.mymacros.custom.components.SingleLineTextPreference;
+import com.miguelpalacio.mymacros.custom.components.TwoInputPreference;
 import com.miguelpalacio.mymacros.presenters.ProfilePresenter;
 
 /**

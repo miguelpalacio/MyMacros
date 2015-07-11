@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/selected_item"
-    tools:context="com.miguelpalacio.mymacros.PlannerFragment">
+    tools:context="com.miguelpalacio.mymacros.views.PlannerFragment">
 
     <!-- Targets. -->
     <LinearLayout

@@ -23,7 +23,7 @@
             android:summary="@string/profile_height_summary"
             android:defaultValue="@integer/profile_height_default"
             android:inputType="number" />
-        <com.miguelpalacio.mymacros.TwoInputPreference
+        <com.miguelpalacio.mymacros.custom.components.TwoInputPreference
             android:key="profile_height_eng"
             android:title="@string/profile_height"
             android:summary="@string/profile_height_summary"
@@ -39,7 +39,7 @@
             android:title="@string/profile_bmr"
             android:defaultValue="@string/profile_bmr_default"
             android:editable="true" />
-<!--        <com.miguelpalacio.mymacros.SingleLinePreference
+<!--        <com.miguelpalacio.mymacros.custom.components.SingleLinePreference
             android:key="Test"
             android:title="Test"
             android:summary="Another test" />-->
@@ -74,19 +74,19 @@
     <PreferenceCategory
         android:title="@string/profile_category_macronutrient_distribution"
         android:key="profile_macronutrient_distribution">
-        <com.miguelpalacio.mymacros.SingleLineTextPreference
+        <com.miguelpalacio.mymacros.custom.components.SingleLineTextPreference
             android:key="profile_protein_rate"
             android:title="@string/profile_protein_rate"
             android:summary="@string/profile_protein_rate_summary"
             android:defaultValue="@integer/profile_protein_dist_default"
             android:inputType="number" />
-        <com.miguelpalacio.mymacros.SingleLineTextPreference
+        <com.miguelpalacio.mymacros.custom.components.SingleLineTextPreference
             android:key="profile_carbohydrates_rate"
             android:title="@string/profile_carbohydrates_rate"
             android:summary="@string/profile_carbohydrates_rate_summary"
             android:defaultValue="@integer/profile_carbohydrates_dist_default"
             android:inputType="number" />
-        <com.miguelpalacio.mymacros.SingleLineTextPreference
+        <com.miguelpalacio.mymacros.custom.components.SingleLineTextPreference
             android:key="profile_fat_rate"
             android:title="@string/profile_fat_rate"
             android:summary="@string/profile_fat_rate_summary"
@@ -97,7 +97,7 @@
             android:title="@string/profile_recommended_dist"
             android:summary="@string/profile_recommended_dist_summary"
             android:selectable="true" />-->
-        <com.miguelpalacio.mymacros.InfoDialogPreference
+        <com.miguelpalacio.mymacros.custom.components.InfoDialogPreference
             android:key="profile_recommended_dist"
             android:title="@string/profile_recommended_dist"
             android:summary="@string/profile_recommended_dist_summary"
@@ -108,13 +108,13 @@
     <PreferenceCategory
         android:title="@string/profile_category_macronutrient_grams"
         android:key="profile_macronutrient_grams">
-        <com.miguelpalacio.mymacros.SingleLinePreference
+        <com.miguelpalacio.mymacros.custom.components.SingleLinePreference
             android:key="profile_protein_grams"
             android:title="@string/profile_protein_grams" />
-        <com.miguelpalacio.mymacros.SingleLinePreference
+        <com.miguelpalacio.mymacros.custom.components.SingleLinePreference
             android:key="profile_carbohydrates_grams"
             android:title="@string/profile_carbohydrates_grams" />
-        <com.miguelpalacio.mymacros.SingleLinePreference
+        <com.miguelpalacio.mymacros.custom.components.SingleLinePreference
             android:key="profile_fat_grams"
             android:title="@string/profile_fat_grams" />
     </PreferenceCategory>
@@ -123,11 +123,11 @@
     <PreferenceCategory
         android:title="@string/profile_category_recommended_intakes"
         android:key="profile_recommended_intakes">
-        <com.miguelpalacio.mymacros.SingleLinePreference
+        <com.miguelpalacio.mymacros.custom.components.SingleLinePreference
             android:key="profile_fiber"
             android:title="@string/profile_fiber"
             android:defaultValue="@string/profile_fiber_default" />
-        <com.miguelpalacio.mymacros.SingleLinePreference
+        <com.miguelpalacio.mymacros.custom.components.SingleLinePreference
             android:key="profile_water"
             android:title="@string/profile_water"
             android:defaultValue="@string/profile_water_default" />

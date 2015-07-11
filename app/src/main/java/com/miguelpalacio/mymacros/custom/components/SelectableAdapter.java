@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.custom.components;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;

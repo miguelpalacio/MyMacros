@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/selected_item"
-    tools:context="com.miguelpalacio.mymacros.StatsFragment">
+    tools:context="com.miguelpalacio.mymacros.views.StatsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.custom.components;
 
 import android.content.Context;
 import android.preference.EditTextPreference;

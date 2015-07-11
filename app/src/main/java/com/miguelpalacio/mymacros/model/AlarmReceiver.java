@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.model;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,8 +8,8 @@ import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.miguelpalacio.mymacros.database.DatabaseAdapter;
 import com.miguelpalacio.mymacros.helpers.Utilities;
+import com.miguelpalacio.mymacros.views.PlannerFragment;
 import com.miguelpalacio.mymacros.views.ProfileFragment;
 import com.miguelpalacio.mymacros.views.SettingsFragment;
 

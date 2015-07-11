@@ -29,13 +29,13 @@
                 android:value=".MainActivity" />-->
         </activity>
 
-        <receiver android:name=".AlarmReceiver">
+        <receiver android:name=".model.AlarmReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".AlarmBootReceiver"
+        <receiver android:name=".model.AlarmBootReceiver"
             android:enabled="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

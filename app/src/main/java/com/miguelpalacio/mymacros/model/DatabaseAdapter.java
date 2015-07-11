@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros.database;
+package com.miguelpalacio.mymacros.model;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -11,9 +11,9 @@ import com.miguelpalacio.mymacros.datatypes.Food;
 import com.miguelpalacio.mymacros.datatypes.Meal;
 import com.miguelpalacio.mymacros.datatypes.MealFood;
 import com.miguelpalacio.mymacros.helpers.Utilities;
-import com.miguelpalacio.mymacros.database.datatypes.MacrosConsumed;
-import com.miguelpalacio.mymacros.database.datatypes.WeeklyConsumption;
-import com.miguelpalacio.mymacros.database.datatypes.WeightLogs;
+import com.miguelpalacio.mymacros.datatypes.MacrosConsumed;
+import com.miguelpalacio.mymacros.datatypes.WeeklyConsumption;
+import com.miguelpalacio.mymacros.datatypes.WeightLogs;
 
 import java.text.DecimalFormat;
 import java.util.Calendar;

@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,10 +20,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.miguelpalacio.mymacros.database.DatabaseAdapter;
+import com.miguelpalacio.mymacros.MainActivity;
+import com.miguelpalacio.mymacros.R;
+import com.miguelpalacio.mymacros.model.DatabaseAdapter;
 import com.miguelpalacio.mymacros.datatypes.Food;
 import com.miguelpalacio.mymacros.helpers.JSONParser;
 import com.miguelpalacio.mymacros.helpers.Utilities;
+import com.miguelpalacio.mymacros.presenters.FoodEditorPresenter;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -76,10 +79,12 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     JSONParser jsonParser;
     ProgressDialog progressDialog;
 
+    //FoodEditorPresenter presenter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-// Enable menu entries to receive calls.
+        // Enable menu entries to receive calls.
         setHasOptionsMenu(true);
 
         // Check if New Food page was requested.
@@ -114,6 +119,7 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        //presenter = new FoodEditorPresenter(getActivity(), onFoodSaved);
         databaseAdapter = new DatabaseAdapter(getActivity());
         jsonParser = new JSONParser();
         saveOnServer = false;
@@ -174,8 +180,6 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         // Check if a food barcode was scanned.
         MainActivity activity = (MainActivity) getActivity();
         if (activity.wasProductScanned()) {
-/*            Toast.makeText(activity, "FORMAT: " + activity.getBarcodeScanFormat(), Toast.LENGTH_SHORT).show();
-            Toast.makeText(activity, "CONTENT: " + activity.getBarcodeScanResult(), Toast.LENGTH_SHORT).show();*/
             barcodeScanned = activity.getBarcodeScanResult();
             new GetFoodInfoOnExternalDatabase().execute();
             activity.setProductScanned(false);
@@ -209,7 +213,6 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         if (id == R.id.action_save_food) {
             saveFood();
         } else if (id == R.id.action_scan_barcode) {
-            //Toast.makeText(getActivity(), "Functionality coming soon", Toast.LENGTH_SHORT).show();
             IntentIntegrator integrator = new IntentIntegrator(getActivity());
             integrator.initiateScan();
         } else if (id == R.id.action_delete_food) {

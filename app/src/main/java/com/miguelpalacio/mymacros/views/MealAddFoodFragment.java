@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.views;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -16,7 +16,9 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.miguelpalacio.mymacros.database.DatabaseAdapter;
+import com.miguelpalacio.mymacros.R;
+import com.miguelpalacio.mymacros.custom.components.SubheadersListAdapter;
+import com.miguelpalacio.mymacros.model.DatabaseAdapter;
 
 /**
  * Add Food for Meal page.

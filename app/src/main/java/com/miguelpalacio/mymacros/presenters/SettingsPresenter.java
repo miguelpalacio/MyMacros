@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.miguelpalacio.mymacros.helpers.Utilities;
-import com.miguelpalacio.mymacros.models.UnitsConverter;
+import com.miguelpalacio.mymacros.model.UnitsConverter;
 import com.miguelpalacio.mymacros.views.ProfileFragment;
 
 /**

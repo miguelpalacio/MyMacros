@@ -30,8 +30,19 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+import com.miguelpalacio.mymacros.custom.components.DrawerAdapter;
+import com.miguelpalacio.mymacros.custom.components.ScrimInsetsFrameLayout;
+import com.miguelpalacio.mymacros.model.AlarmReceiver;
+import com.miguelpalacio.mymacros.views.AddMealFragment;
+import com.miguelpalacio.mymacros.views.FoodEditorFragment;
+import com.miguelpalacio.mymacros.views.FoodsFragment;
+import com.miguelpalacio.mymacros.views.MealAddFoodFragment;
+import com.miguelpalacio.mymacros.views.MealEditorFragment;
+import com.miguelpalacio.mymacros.views.MealsFragment;
+import com.miguelpalacio.mymacros.views.PlannerFragment;
 import com.miguelpalacio.mymacros.views.ProfileFragment;
 import com.miguelpalacio.mymacros.views.SettingsFragment;
+import com.miguelpalacio.mymacros.views.StatsFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;

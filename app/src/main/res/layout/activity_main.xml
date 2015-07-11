@@ -29,7 +29,7 @@
 
     <!-- Side Navigation Drawer UI. -->
     <!-- ScrimInsetsFrameLayout allows 'drawer under the status bar' effect. -->
-    <com.miguelpalacio.mymacros.ScrimInsetsFrameLayout
+    <com.miguelpalacio.mymacros.custom.components.ScrimInsetsFrameLayout
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/scrimInsetsFrameLayout"
         android:layout_width="305dp"
@@ -47,7 +47,7 @@
             android:layout_height="match_parent"
             android:minHeight="?android:attr/listPreferredItemHeight"
             android:fitsSystemWindows="true" />
-    </com.miguelpalacio.mymacros.ScrimInsetsFrameLayout>
+    </com.miguelpalacio.mymacros.custom.components.ScrimInsetsFrameLayout>
 
 </android.support.v4.widget.DrawerLayout>
 

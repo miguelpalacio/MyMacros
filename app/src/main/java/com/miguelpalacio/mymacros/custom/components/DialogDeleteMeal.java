@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.custom.components;
 
 
 import android.app.Activity;
@@ -7,6 +7,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+
+import com.miguelpalacio.mymacros.R;
 
 public class DialogDeleteMeal extends DialogFragment {
 

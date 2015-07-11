@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros.models;
+package com.miguelpalacio.mymacros.model;
 
 import android.content.Context;
 
