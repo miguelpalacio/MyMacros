@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.views;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,9 +9,12 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
+import com.miguelpalacio.mymacros.MainActivity;
+import com.miguelpalacio.mymacros.R;
+import com.miguelpalacio.mymacros.SingleLinePreference;
+import com.miguelpalacio.mymacros.SingleLineTextPreference;
+import com.miguelpalacio.mymacros.TwoInputPreference;
 import com.miguelpalacio.mymacros.presenters.ProfilePresenter;
-
-import java.text.DecimalFormat;
 
 /**
  * @author Miguel Palacio
@@ -85,7 +88,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Instantiate a profilePresenter for this view.
+        // Instantiate a presenter for this view.
         profilePresenter = new ProfilePresenter(getActivity());
 
         // Load the global SharedPreferences file.
@@ -167,20 +170,20 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         weight.setText(sharedPref.getString(KEY_WEIGHT, ""));
 
         // Set up items' summary.
-        setListPrefSummary(gender, KEY_GENDER, "ND");
-        setAgeSummary();
-        setHeightSummary();
-        setWeightSummary();
+        profilePresenter.setListPrefSummary(gender, KEY_GENDER, "ND");
+        age.setSummary(profilePresenter.setAgeSummary(age.getText()));
+        profilePresenter.setHeightSummary(yourData, height, heightEng);
+        weight.setSummary(profilePresenter.setWeightSummary(weight.getText()));
         bmr.setSummary(profilePresenter.getBmrSummary());
 
         energyNeed.setSummary(profilePresenter.getEnergyNeedSummary());
 
-        setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
-        setListPrefSummary(goal, KEY_GOAL, "ND");
+        profilePresenter.setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
+        profilePresenter.setListPrefSummary(goal, KEY_GOAL, "ND");
 
-        setMacroRateSummary(proteinRate);
-        setMacroRateSummary(carbsRate);
-        setMacroRateSummary(fatRate);
+        profilePresenter.setMacroRateSummary(proteinRate);
+        profilePresenter.setMacroRateSummary(carbsRate);
+        profilePresenter.setMacroRateSummary(fatRate);
 
         profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
         fiber.setSummary(profilePresenter.getFiberSummary());
@@ -206,7 +209,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
         switch (key) {
 
             case KEY_GENDER:
-                setListPrefSummary(gender, KEY_GENDER, "ND");
+                profilePresenter.setListPrefSummary(gender, KEY_GENDER, "ND");
                 bmr.setSummary(profilePresenter.getBmrSummary());
                 energyNeed.setSummary(profilePresenter.getEnergyNeedSummary());
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
@@ -218,7 +221,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                     age.setText("0");
                     editor.putString(key, "0").apply();
                 }
-                setAgeSummary();
+                age.setSummary(profilePresenter.setAgeSummary(age.getText()));
                 bmr.setSummary(profilePresenter.getBmrSummary());
                 energyNeed.setSummary(profilePresenter.getEnergyNeedSummary());
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
@@ -230,7 +233,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                     height.setText("0");
                     editor.putString(key, "0").apply();
                 }
-                setHeightSummary();
+                profilePresenter.setHeightSummary(yourData, height, heightEng);
                 bmr.setSummary(profilePresenter.getBmrSummary());
                 energyNeed.setSummary(profilePresenter.getEnergyNeedSummary());
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
@@ -238,7 +241,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
 
             case KEY_HEIGHT_ENG:
-                setHeightSummary();
+                profilePresenter.setHeightSummary(yourData, height, heightEng);
                 bmr.setSummary(profilePresenter.getBmrSummary());
                 energyNeed.setSummary(profilePresenter.getEnergyNeedSummary());
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
@@ -250,7 +253,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                     weight.setText("0");
                     editor.putString(key, "0").apply();
                 }
-                setWeightSummary();
+                weight.setSummary(profilePresenter.setWeightSummary(weight.getText()));
                 bmr.setSummary(profilePresenter.getBmrSummary());
                 energyNeed.setSummary(profilePresenter.getEnergyNeedSummary());
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
@@ -259,7 +262,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
 
             case KEY_ACTIVITY_LEVEL:
-                setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
+                profilePresenter.setListPrefSummary(activityLevel, KEY_ACTIVITY_LEVEL, "ND");
                 bmr.setSummary(profilePresenter.getBmrSummary());
                 energyNeed.setSummary(profilePresenter.getEnergyNeedSummary());
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
@@ -267,7 +270,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 break;
 
             case KEY_GOAL:
-                setListPrefSummary(goal, KEY_GOAL, "ND");
+                profilePresenter.setListPrefSummary(goal, KEY_GOAL, "ND");
                 goalChanged = true;
                 MainActivity activity = (MainActivity) getActivity();
                 activity.setDrawerHeaderGoal(goal.getValue());
@@ -282,7 +285,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                     proteinRate.setText("0");
                     editor.putString(key, "0").apply();
                 }
-                setMacroRateSummary(proteinRate);
+                profilePresenter.setMacroRateSummary(proteinRate);
                 profilePresenter.checkMacroDistribution(goalChanged);
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
                 break;
@@ -292,7 +295,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                     carbsRate.setText("0");
                     editor.putString(key, "0").apply();
                 }
-                setMacroRateSummary(carbsRate);
+                profilePresenter.setMacroRateSummary(carbsRate);
                 profilePresenter.checkMacroDistribution(goalChanged);
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
                 break;
@@ -302,73 +305,12 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                     fatRate.setText("0");
                     editor.putString(key, "0").apply();
                 }
-                setMacroRateSummary(fatRate);
+                profilePresenter.setMacroRateSummary(fatRate);
                 profilePresenter.checkMacroDistribution(goalChanged);
                 profilePresenter.setMacroIntakeSummaries(proteinGrams, carbsGrams, fatGrams);
                 break;
 
         }
-    }
-
-    // Set summary for a generic ListPreference.
-    private void setListPrefSummary(ListPreference p, String key, String defVal) {
-        if (p.getValue().equals(defVal)) {
-            p.setSummary(defaultSummary1);
-        } else {
-            p.setSummary(sharedPref.getString(key, ""));
-        }
-    }
-
-    private void setAgeSummary() {
-        if (age.getText().equals("0")) {
-            age.setSummary(defaultSummary1);
-        } else {
-            age.setSummary(sharedPref.getString(KEY_AGE, ""));
-        }
-    }
-
-    private void setHeightSummary() {
-
-        if (unitsHeight.equals("cm")) {
-            yourData.addPreference(height);
-            yourData.removePreference(heightEng);
-            if (height.getText().equals("0")) {
-                height.setSummary(defaultSummary1);
-            } else {
-                height.setSummary(getPreferenceScreen().getSharedPreferences().getString(KEY_HEIGHT, "0") + " cm");
-            }
-        } else {
-            yourData.addPreference(heightEng);
-            yourData.removePreference(height);
-            String value = heightEng.getValue();
-            if (value.equals("0-0")) {
-                heightEng.setSummary(defaultSummary1);
-            } else {
-                String[] values = value.split("-");
-                heightEng.setSummary(values[0] + " ft, " + values[1] + " in");
-            }
-        }
-    }
-
-    private void setWeightSummary() {
-
-        if (weight.getText().equals("0")) {
-            weight.setSummary(defaultSummary1);
-            return;
-        }
-
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        double w = Double.parseDouble(getPreferenceScreen().getSharedPreferences().getString(KEY_WEIGHT, "0"));
-
-        if (unitsWeight.equals("kg")) {
-            weight.setSummary(decimalFormat.format(w) + " kg");
-        } else {
-            weight.setSummary(decimalFormat.format(w) + " lb");
-        }
-    }
-
-    private void setMacroRateSummary(EditTextPreference p) {
-        p.setSummary(p.getText() + " %");
     }
 
 }

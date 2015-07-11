@@ -23,6 +23,8 @@ import com.google.gson.reflect.TypeToken;
 import com.miguelpalacio.mymacros.database.DatabaseAdapter;
 import com.miguelpalacio.mymacros.datatypes.Meal;
 import com.miguelpalacio.mymacros.helpers.Utilities;
+import com.miguelpalacio.mymacros.views.ProfileFragment;
+import com.miguelpalacio.mymacros.views.SettingsFragment;
 
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;

@@ -26,6 +26,7 @@ import com.miguelpalacio.mymacros.database.datatypes.MacrosConsumed;
 import com.miguelpalacio.mymacros.database.datatypes.WeeklyConsumption;
 import com.miguelpalacio.mymacros.database.datatypes.WeightLogs;
 import com.miguelpalacio.mymacros.helpers.MyMarkerView;
+import com.miguelpalacio.mymacros.views.SettingsFragment;
 
 import java.util.ArrayList;
 import java.util.Calendar;

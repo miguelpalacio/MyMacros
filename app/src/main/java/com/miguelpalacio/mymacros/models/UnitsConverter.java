@@ -20,23 +20,36 @@ public final class UnitsConverter {
 
     // Height.
 
-    public double convertToCentimeters(double ft, double in) {
+    public double feetToCentimeters(double ft, double in) {
         return (ft * 12.0 + in) / 0.3937;
+    }
+
+    public Integer[] centimetersToFeet(double cm) {
+        double h = cm * 0.3937 / 12;
+        Integer[] feetInches = new Integer[2];
+        // ft: feetInches[0], in: feetInches[1].
+        feetInches[0] = (int) h;
+        feetInches[1] = (int) Math.round((h - feetInches[0]) * 12);
+        return feetInches;
     }
 
     // Weight.
 
-    public double convertToPounds(double w) {
+    public double kilogramsToPounds(double w) {
         return w / 2.2046;
+    }
+
+    public double poundsToKilograms(double w) {
+        return w * 2.2046;
     }
 
     // Energy.
 
-    public double convertToJoules(double e) {
+    public double caloriesToJoules(double e) {
         return e * 4.184;
     }
 
-    public double convertToCalories(double e) {
+    public double joulesToCalories(double e) {
         return e / 4.184;
     }
 

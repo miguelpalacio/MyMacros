@@ -9,11 +9,11 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import com.miguelpalacio.mymacros.MainActivity;
-import com.miguelpalacio.mymacros.ProfileFragment;
-import com.miguelpalacio.mymacros.SettingsFragment;
+import com.miguelpalacio.mymacros.TwoInputPreference;
+import com.miguelpalacio.mymacros.views.ProfileFragment;
+import com.miguelpalacio.mymacros.views.SettingsFragment;
 import com.miguelpalacio.mymacros.SingleLinePreference;
 import com.miguelpalacio.mymacros.SingleLineTextPreference;
-import com.miguelpalacio.mymacros.TwoInputPreference;
 import com.miguelpalacio.mymacros.helpers.Utilities;
 import com.miguelpalacio.mymacros.models.NutritionFormulae;
 import com.miguelpalacio.mymacros.models.UnitsConverter;
@@ -29,12 +29,7 @@ public class ProfilePresenter {
     Context context;
     SharedPreferences sharedPref;
 
-    String unitsHeight;
-    String unitsWeight;
-    String unitsEnergy;
-    String unitsLiquid;
-
-    UnitsConverter units;
+    UnitsConverter unitsConverter;
     NutritionFormulae formulae;
 
     public ProfilePresenter(Context context) {
@@ -44,19 +39,13 @@ public class ProfilePresenter {
         // Load the global SharedPreferences file.
         sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
-        // Load current measurement units.
-        unitsHeight = sharedPref.getString(SettingsFragment.KEY_HEIGHT, "");
-        unitsWeight = sharedPref.getString(SettingsFragment.KEY_WEIGHT, "");
-        unitsEnergy = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
-        unitsLiquid = sharedPref.getString(SettingsFragment.KEY_LIQUID, "");
-
         // Instantiate needed classes from model.
-        units = new UnitsConverter(context);
+        unitsConverter = new UnitsConverter(context);
         formulae = new NutritionFormulae(context);
     }
 
 
-/*    // Set summary for a generic ListPreference.
+    // Set summary for a generic ListPreference.
     public void setListPrefSummary(ListPreference p, String key, String defVal) {
         if (p.getValue().equals(defVal)) {
             p.setSummary(defaultSummary1);
@@ -75,6 +64,8 @@ public class ProfilePresenter {
 
     public void setHeightSummary(PreferenceCategory yourData, EditTextPreference height,
                                   TwoInputPreference heightEng) {
+
+        String unitsHeight = sharedPref.getString(SettingsFragment.KEY_HEIGHT, "");
 
         if (unitsHeight.equals("cm")) {
             yourData.addPreference(height);
@@ -104,6 +95,7 @@ public class ProfilePresenter {
         }
 
         double w = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_WEIGHT, "0"));
+        String unitsWeight = sharedPref.getString(SettingsFragment.KEY_WEIGHT, "");
 
         if (unitsWeight.equals("kg")) {
             return (Utilities.decimalFormat.format(w) + " kg");
@@ -114,7 +106,7 @@ public class ProfilePresenter {
 
     public void setMacroRateSummary(EditTextPreference p) {
         p.setSummary(p.getText() + " %");
-    }*/
+    }
 
     /**
      * Defines the BMR according to the data input by the user.
@@ -133,6 +125,10 @@ public class ProfilePresenter {
             return defaultSummary2;
         }
 
+        String unitsHeight = sharedPref.getString(SettingsFragment.KEY_HEIGHT, "");
+        String unitsWeight = sharedPref.getString(SettingsFragment.KEY_WEIGHT, "");
+        String unitsEnergy = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
+
         int a;
         double h;
         double w;
@@ -148,13 +144,13 @@ public class ProfilePresenter {
             String[] values = sharedPref.getString(ProfileFragment.KEY_HEIGHT_ENG, "0-0").split("-");
             double ft = Double.parseDouble(values[0]);
             double in = Double.parseDouble(values[1]);
-            h = units.convertToCentimeters(ft, in);
+            h = unitsConverter.feetToCentimeters(ft, in);
         }
 
         // Get weight and convert it (if necessary) into kg.
         w = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_WEIGHT, "0"));
         if (!unitsWeight.equals("kg"))
-            w = units.convertToPounds(w);
+            w = unitsConverter.kilogramsToPounds(w);
 
         // Calculate BMR for women.
         if (gender.equals("Female")) {
@@ -167,7 +163,7 @@ public class ProfilePresenter {
 
         // Adjust BMR according to units.
         if (unitsEnergy.equals("kJ"))
-            BMR = units.convertToJoules(BMR);
+            BMR = unitsConverter.caloriesToJoules(BMR);
 
         // Store the bmr preference value.
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -200,6 +196,8 @@ public class ProfilePresenter {
         // Update Navigation Drawer Header's Today progress label:
         MainActivity activity = (MainActivity) context;
         activity.setDrawerHeaderProgress("");
+
+        String unitsEnergy = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
 
         // Set summary.
         return ((int) TDEE + " " + unitsEnergy);
@@ -240,16 +238,18 @@ public class ProfilePresenter {
         carbs = TDEE * Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_CARBS_RATE, "0")) / 100;
         fat = TDEE * Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_FAT_RATE, "0")) / 100;
 
+        String unitsEnergy = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
+
         // Convert to kcal if needed.
         if (unitsEnergy.equals("kJ")) {
-            protein = units.convertToCalories(protein);
-            carbs = units.convertToCalories(carbs);
-            fat = units.convertToCalories(fat);
+            protein = unitsConverter.joulesToCalories(protein);
+            carbs = unitsConverter.joulesToCalories(carbs);
+            fat = unitsConverter.joulesToCalories(fat);
         }
 
-        protein = units.caloriesToGrams(protein, UnitsConverter.PROTEIN);
-        carbs = units.caloriesToGrams(carbs, UnitsConverter.CARBS);
-        fat = units.caloriesToGrams(fat, UnitsConverter.FAT);
+        protein = unitsConverter.caloriesToGrams(protein, UnitsConverter.PROTEIN);
+        carbs = unitsConverter.caloriesToGrams(carbs, UnitsConverter.CARBS);
+        fat = unitsConverter.caloriesToGrams(fat, UnitsConverter.FAT);
 
         // Store the values in SharedPreferences.
 
@@ -295,6 +295,8 @@ public class ProfilePresenter {
 
     public String getFiberSummary() {
 
+        String unitsEnergy = sharedPref.getString(SettingsFragment.KEY_ENERGY, "");
+
         double TDEE = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_ENERGY_NEED, "0"));
         double fiber = formulae.getFiberIntake(TDEE, unitsEnergy);
 
@@ -308,6 +310,8 @@ public class ProfilePresenter {
 
     public String getWaterSummary() {
 
+        String unitsWeight = sharedPref.getString(SettingsFragment.KEY_WEIGHT, "");
+        String unitsLiquid = sharedPref.getString(SettingsFragment.KEY_LIQUID, "");
         double weight = Double.parseDouble(sharedPref.getString(ProfileFragment.KEY_WEIGHT, ""));
         double water = formulae.getWaterIntake(weight, unitsWeight, unitsLiquid);
 
