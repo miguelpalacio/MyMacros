@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.helpers;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

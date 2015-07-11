@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.miguelpalacio.mymacros.database.DatabaseAdapter;
 import com.miguelpalacio.mymacros.datatypes.Food;
+import com.miguelpalacio.mymacros.helpers.JSONParser;
+import com.miguelpalacio.mymacros.helpers.Utilities;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;

@@ -10,6 +10,9 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.miguelpalacio.mymacros.models.NutritionFormulae;
+import com.miguelpalacio.mymacros.models.UnitsConversion;
+
 import java.text.DecimalFormat;
 
 /**
@@ -199,14 +202,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 
-        // In case of numeric preference check that there's a number.
-/*        if (sharedPreferences.getString(key, "0").length() == 0 && (key.equals(KEY_AGE) ||
-                key.equals(KEY_HEIGHT) || key.equals(KEY_WEIGHT)) || key.equals(KEY_PROTEIN_RATE) ||
-                key.equals(KEY_CARBS_RATE) || key.equals(KEY_FAT_RATE)) {*/
-
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            //editor.putString(key, "0").apply();
-/*        }*/
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         switch (key) {
 
@@ -261,7 +257,6 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
                 setMacroIntake();
                 setFiberIntake();
                 setWaterIntake();
-                // TODO: store weight changes.
                 break;
 
             case KEY_ACTIVITY_LEVEL:
@@ -397,32 +392,46 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
 
         // Get height and convert it (if necessary) into cm.
         if (unitsHeight.equals("cm")) {
-            h = Double.parseDouble(sharedPref.getString(KEY_HEIGHT, ""));
+            h = Double.parseDouble(sharedPref.getString(KEY_HEIGHT, "0"));
         } else {
-            String[] values = sharedPref.getString(KEY_HEIGHT_ENG, "").split("-");
-            h = (Double.parseDouble(values[0])*12.0+Double.parseDouble(values[1]))/0.39370;
+            String[] values = sharedPref.getString(KEY_HEIGHT_ENG, "0-0").split("-");
+/*            h = (Double.parseDouble(values[0])*12.0+Double.parseDouble(values[1]))/0.39370;*/
+            double ft = Double.parseDouble(values[0]);
+            double in = Double.parseDouble(values[1]);
+            h = UnitsConversion.convertToCentimeters(ft, in);
         }
 
         // Get weight and convert it (if necessary) into kg.
-        if (unitsWeight.equals("kg")) {
-            w = Double.parseDouble(sharedPref.getString(KEY_WEIGHT, ""));
+        w = Double.parseDouble(sharedPref.getString(KEY_WEIGHT, "0"));
+        if (!unitsWeight.equals("kg"))
+            w = UnitsConversion.convertToPounds(w);
+/*        if (unitsWeight.equals("kg")) {
+            w = Double.parseDouble(sharedPref.getString(KEY_WEIGHT, "0"));
         } else {
             w = (Double.parseDouble(sharedPref.getString(KEY_WEIGHT, "")))/2.2046;
-        }
+        }*/
 
-        // See formula for BMR: http://www.bmi-calculator.net/bmr-calculator/bmr-formula.php
         // Calculate BMR for women.
+        if (gender.getValue().equals("Female")) {
+            BMR = NutritionFormulae.getBMR(w, h, a, NutritionFormulae.FEMALE);
+        }
+        // Calculate BMR for men.
+        else {
+            BMR = NutritionFormulae.getBMR(w, h, a, NutritionFormulae.MALE);
+        }
+/*        // See formula for BMR: http://www.bmi-calculator.net/bmr-calculator/bmr-formula.php
         if (gender.getValue().equals("Female")) {
             BMR = 655 + 9.6*w + 1.8*h - 4.7*a;
         }
         // Calculate BMR for men.
         else {
             BMR = 66 + 13.7*w + 5*h - 6.8*a;
-        }
+        }*/
 
         // Set summary.
         if (unitsEnergy.equals("kJ")) {
-            BMR = BMR * 4.184;
+            BMR = UnitsConversion.convertToJoules(BMR);
+/*            BMR = BMR * 4.184;*/
         }
         bmr.setSummary((int) BMR + " " + unitsEnergy);
 
@@ -445,10 +454,10 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             return;
         }
 
-        double TDEE;
+        double TDEE = NutritionFormulae.getTDEE(BMR, activityLevel.getValue(), goal.getValue());
 
         // See formula for TDEE: http://www.bmi-calculator.net/bmr-calculator/harris-benedict-equation/
-        switch (activityLevel.getValue()) {
+/*        switch (activityLevel.getValue()) {
 
             case "Hyperactive":
                 TDEE = BMR * 1.9;
@@ -475,7 +484,7 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             TDEE = TDEE * 0.8;
         } else if (goal.getValue().equals("Bulking")) {
             TDEE = TDEE * 1.2;
-        }
+        }*/
 
         // Store the bmr preference value.
         SharedPreferences.Editor editor = sharedPref.edit();
@@ -500,12 +509,20 @@ public class ProfileFragment extends PreferenceFragment implements SharedPrefere
             return;
         }
         // Check that proteinRate + carbsRate + fatRate = 100.
-        if (Integer.parseInt(proteinRate.getText()) + Integer.parseInt(carbsRate.getText()) +
+        int p = Integer.parseInt(proteinRate.getText());
+        int c = Integer.parseInt(carbsRate.getText());
+        int f = Integer.parseInt(fatRate.getText());
+        if (NutritionFormulae.isValidMacroDistribution(p, c, f)) {
+            Toast.makeText(getActivity(), "Correct distribution", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getActivity(), "Macronutrient distribution is not 100 %", Toast.LENGTH_SHORT).show();
+        }
+/*        if (Integer.parseInt(proteinRate.getText()) + Integer.parseInt(carbsRate.getText()) +
                 Integer.parseInt(fatRate.getText()) != 100) {
             Toast.makeText(getActivity(), "Macronutrient distribution is not 100 %", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(getActivity(), "Correct distribution", Toast.LENGTH_SHORT).show();
-        }
+        }*/
     }
 
     /**

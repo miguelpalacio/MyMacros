@@ -35,6 +35,7 @@ import com.github.mikephil.charting.utils.PercentFormatter;
 import com.miguelpalacio.mymacros.database.DatabaseAdapter;
 import com.miguelpalacio.mymacros.datatypes.Meal;
 import com.miguelpalacio.mymacros.datatypes.MealFood;
+import com.miguelpalacio.mymacros.helpers.Utilities;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;

@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.miguelpalacio.mymacros.datatypes.Food;
 import com.miguelpalacio.mymacros.datatypes.Meal;
 import com.miguelpalacio.mymacros.datatypes.MealFood;
-import com.miguelpalacio.mymacros.Utilities;
+import com.miguelpalacio.mymacros.helpers.Utilities;
 import com.miguelpalacio.mymacros.database.datatypes.MacrosConsumed;
 import com.miguelpalacio.mymacros.database.datatypes.WeeklyConsumption;
 import com.miguelpalacio.mymacros.database.datatypes.WeightLogs;
@@ -705,16 +705,11 @@ public class DatabaseAdapter {
             weekStart.set(Calendar.DAY_OF_WEEK, 2);
             weekStart.set(Calendar.HOUR_OF_DAY, 0);
             weekStart.set(Calendar.MINUTE, 5);
-/*            weekStart.add(Calendar.DAY_OF_WEEK, -(weekStart.get(Calendar.DAY_OF_WEEK)) + 2);
-            weekStart.add(Calendar.HOUR_OF_DAY, -(weekStart.get(Calendar.HOUR_OF_DAY)));
-            weekStart.add(Calendar.MINUTE, -(weekStart.get(Calendar.MINUTE)));*/
 
             Calendar weekEnd = Calendar.getInstance();
             weekEnd.setTimeInMillis(System.currentTimeMillis());
             weekEnd.add(Calendar.WEEK_OF_YEAR, -i);
             // TODO: include the "Week Starts On" preference here!
-/*            weekEnd.clear(Calendar.DAY_OF_WEEK);
-            weekEnd.add(Calendar.DAY_OF_WEEK, 2);*/
             weekEnd.set(Calendar.DAY_OF_WEEK, 2);
             weekEnd.set(Calendar.HOUR_OF_DAY, 0);
             weekEnd.set(Calendar.MINUTE, 5);

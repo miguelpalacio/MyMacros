@@ -1,11 +1,11 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.helpers;
 
 import java.text.DecimalFormat;
 import java.text.Normalizer;
 import java.util.List;
 
 /**
- * Utility functions that can be used across the whole app.
+ * Utility functions for MyMacros.
  */
 public final class Utilities {
 

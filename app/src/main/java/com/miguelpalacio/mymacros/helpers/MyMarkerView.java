@@ -1,4 +1,4 @@
-package com.miguelpalacio.mymacros;
+package com.miguelpalacio.mymacros.helpers;
 
 import android.content.Context;
 import android.widget.TextView;
@@ -7,6 +7,7 @@ import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.data.CandleEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.utils.Utils;
+import com.miguelpalacio.mymacros.R;
 
 /**
  * Custom implementation of the MarkerView.
