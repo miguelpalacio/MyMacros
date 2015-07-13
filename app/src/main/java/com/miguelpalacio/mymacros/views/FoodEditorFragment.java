@@ -406,6 +406,8 @@ public class FoodEditorFragment extends Fragment implements AdapterView.OnItemSe
         if (rowsDeleted == 1) {
             Toast.makeText(getActivity(), "Food deleted", Toast.LENGTH_SHORT).show();
             onFoodSaved.onFoodSavedSuccessfully();
+        } else {
+            Toast.makeText(getActivity(), "There was an internal problem", Toast.LENGTH_SHORT).show();
         }
     }
 

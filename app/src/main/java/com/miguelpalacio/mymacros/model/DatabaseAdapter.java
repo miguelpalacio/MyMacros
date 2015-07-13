@@ -139,7 +139,8 @@ public class DatabaseAdapter {
             // Delete the rows corresponding to food in the MealFoods table.
             int foodsDeleted = db.delete(DatabaseHelper.TABLE_MEAL_FOODS, whereClause, whereArgs);
 
-            if (foodDeleted != 1 || foodsDeleted < 1) {
+            if (foodDeleted != 1 || foodsDeleted < 0) {
+                foodDeleted = -1;
                 transactionSuccessful = false;
             }
 
